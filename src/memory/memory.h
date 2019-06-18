@@ -36,11 +36,6 @@ private:
                                MemoryRegion *region,
                                uint16_t *offset) const;
 
-    class AssignmentProxy {
-    private:
-        uint8_t value;
-    };
-
 public:
     class AssignmentProxy {
     private:
