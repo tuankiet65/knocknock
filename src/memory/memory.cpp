@@ -1,8 +1,8 @@
-#include "memory.h"
+#include "memory/memory.h"
 
 #include <stdexcept>
 
-namespace cpu {
+namespace memory {
 
 namespace {
 

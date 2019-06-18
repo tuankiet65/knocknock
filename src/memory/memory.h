@@ -4,7 +4,7 @@
 
 #define BETWEEN(l, x, r) ((l) <= (x) && (x) <= (r))
 
-namespace cpu {
+namespace memory {
 
 class Memory {
 private:
