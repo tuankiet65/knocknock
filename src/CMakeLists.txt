@@ -13,5 +13,10 @@ set(UNITTEST_FILES
     "${SOURCE_FILES}"
     "memory/memory_unittest.cpp")
 add_executable(knocknock_unittest "${UNITTEST_FILES}" "knocknock_unittest.cpp")
-find_package(Catch2 REQUIRED)
+option(USE_SYSTEM_CATCH2 "If enabled, use system supplied Catch2 instead of the included version in third_party/" OFF)
+if (USE_SYSTEM_CATCH2)
+    find_package(Catch2 REQUIRED)
+else()
+    add_subdirectory("third_party/Catch2")
+endif()
 target_link_libraries(knocknock_unittest Catch2::Catch2)
