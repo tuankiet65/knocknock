@@ -25,6 +25,10 @@ uint8_t Register::d() { return get_msb(de_); }
 uint8_t Register::e() { return get_lsb(de_); }
 uint16_t Register::de() { return de_; }
 
+uint8_t Register::h() { return get_msb(hl_); }
+uint8_t Register::l() { return get_lsb(hl_); }
+uint16_t Register::hl() { return hl_; }
+
 uint16_t Register::sp() { return sp_; }
 uint16_t Register::pc() { return pc_; }
 
@@ -39,6 +43,10 @@ void Register::set_bc(uint16_t value) { bc_ = value; }
 void Register::set_d(uint8_t value) { return set_msb(value, &de_); }
 void Register::set_e(uint8_t value) { return set_lsb(value, &de_); }
 void Register::set_de(uint16_t value) { de_ = value; }
+
+void Register::set_h(uint8_t value) { return set_msb(value, &hl_); }
+void Register::set_l(uint8_t value) { return set_lsb(value, &hl_); }
+void Register::set_hl(uint16_t value) { hl_ = value; }
 
 void Register::set_sp(uint16_t value) { sp_ = value; }
 void Register::set_pc(uint16_t value) { pc_ = value; }

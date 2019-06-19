@@ -29,6 +29,10 @@ public:
     uint8_t e();
     uint16_t de();
 
+    uint8_t h();
+    uint8_t l();
+    uint16_t hl();
+
     uint16_t sp();
     uint16_t pc();
 
@@ -44,6 +48,10 @@ public:
     void set_d(uint8_t value);
     void set_e(uint8_t value);
     void set_de(uint16_t value);
+
+    void set_h(uint8_t value);
+    void set_l(uint8_t value);
+    void set_hl(uint16_t value);
 
     void set_sp(uint16_t value);
     void set_pc(uint16_t value);
