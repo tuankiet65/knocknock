@@ -7,6 +7,18 @@
 namespace memory {
 
 class Memory {
+public:
+    class AssignmentProxy {
+    private:
+        uint8_t value;
+    };
+
+    bool get(uint16_t addr, uint8_t *value) const;
+    bool set(uint16_t addr, uint8_t value);
+
+    uint8_t operator[](uint16_t addr) const;
+    // AssignmentProxy& operator[](uint16_t addr);
+
 private:
     uint8_t rom_0_[0x8000]; // 0x0000 to 0x7fff
     uint8_t ram_video_[0x2000]; // 0x8000 to 0x9fff
@@ -36,17 +48,6 @@ private:
                                MemoryRegion *region,
                                uint16_t *offset) const;
 
-public:
-    class AssignmentProxy {
-    private:
-        uint8_t value;
-    };
-
-    bool get(uint16_t addr, uint8_t *value) const;
-    bool set(uint16_t addr, uint8_t value);
-
-    uint8_t operator[](uint16_t addr) const;
-    // AssignmentProxy& operator[](uint16_t addr);
 };
 
 } // namespace cpu
