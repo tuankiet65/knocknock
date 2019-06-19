@@ -46,7 +46,7 @@ public:
     bool set(uint16_t addr, uint8_t value);
 
     uint8_t operator[](uint16_t addr) const;
-    AssignmentProxy& operator[](uint16_t addr);
+    // AssignmentProxy& operator[](uint16_t addr);
 };
 
 } // namespace cpu

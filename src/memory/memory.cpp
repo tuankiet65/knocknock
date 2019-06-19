@@ -115,7 +115,8 @@ bool Memory::set(uint16_t addr, uint8_t value) {
 
     addr -= offset;
     switch (region) {
-        case ROM_0: rom_0_[addr] = value; break;
+        // ROM is read-only
+        case ROM_0: return false;
         // TODO: implement ROM bank
         case ROM_SWITCHABLE: rom_0_[addr - ROM_SWITCHABLE_OFFSET] = value; break;
         case RAM_VIDEO: ram_video_[addr] = value; break;
@@ -138,7 +139,7 @@ uint8_t Memory::operator[](uint16_t addr) const {
     return result;
 }
 
-Memory::AssignmentProxy& Memory::operator[](uint16_t addr) {
-}
+// Memory::AssignmentProxy& Memory::operator[](uint16_t addr) {
+// }
 
 } // namespace cpu

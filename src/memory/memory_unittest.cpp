@@ -13,4 +13,10 @@ TEST_CASE("get", "[memory]") {
     CHECK_FALSE(mem.get(0xfeaf, &tmp));
 }
 
+TEST_CASE("writing to ROM0", "[memory]") {
+    memory::Memory mem;
 
+    CHECK_FALSE(mem.set(0x0000, 0xff));
+    CHECK_FALSE(mem.set(0x3210, 0xff));
+    CHECK_FALSE(mem.set(0x3fff, 0xff));
+}
