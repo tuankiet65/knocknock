@@ -1,8 +1,13 @@
+#include <glog/logging.h>
+
 #include "cpu/register.h"
 #include "memory/mmu.h"
 #include "memory/ram.h"
 
-int main(int, char**) {
+int main(int argc, char* argv[]) {
+    google::InitGoogleLogging(argv[0]);
+    google::InstallFailureSignalHandler();
+
     cpu::Register reg;
     reg.set_a(0xff);
     reg.set_b(0xff);

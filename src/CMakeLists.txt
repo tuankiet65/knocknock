@@ -10,6 +10,14 @@ set(SOURCE_FILES
     "memory/mmu.cpp"
     "memory/ram.cpp")
 add_executable(knocknock "${SOURCE_FILES}" "knocknock.cpp")
+option(USE_SYSTEM_GLOG "If enabled, use system supplied glog instead of the included version in third_party/" OFF)
+set(WITH_GFLAGS OFF CACHE BOOL "Disable gflags")
+if (USE_SYSTEM_GLOG)
+    find_package(glog REQUIRED)
+else()
+    add_subdirectory("third_party/glog")
+endif()
+target_link_libraries(knocknock glog::glog)
 
 set(UNITTEST_FILES
     "${SOURCE_FILES}"

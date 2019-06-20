@@ -1,3 +1,6 @@
 [submodule "src/third_party/Catch2"]
 	path = src/third_party/Catch2
 	url = https://github.com/catchorg/Catch2
+[submodule "src/third_party/glog"]
+	path = src/third_party/glog
+	url = https://github.com/google/glog

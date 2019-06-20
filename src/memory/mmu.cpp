@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <functional>
 
+#include <glog/logging.h>
+
 namespace memory {
 
 namespace {
@@ -30,11 +32,10 @@ bool MMU::region_does_overlap(MemoryAddr start, MemoryAddr end) const {
 bool MMU::add_region(int type, Memory *region,
                      MemoryAddr start, MemoryAddr end) {
     if (region_does_overlap(start, end)) {
-        /* LOG(ERROR) << "Region overlaps with existing regions: "
-                      << "type = " << type
-                      << "start = " << start
-                      << "end = " << end;
-        */
+        LOG(ERROR) << "Region overlaps with existing regions: "
+                   << "type = " << type << " "
+                   << "start = 0x" << std::hex << start << " "
+                   << "end = 0x" << std::hex << end;
        return true;
     }
 
@@ -47,7 +48,7 @@ bool MMU::read(MemoryAddr addr, MemoryValue *dest) const {
         std::find_if(regions_.begin(), regions_.end(), addr_in_region(addr));
 
     if (region_iter == regions_.end()) {
-        // LOG(ERROR) << "No memory region exists for addr: " << addr;
+        LOG(ERROR) << "No matching region for addr: 0x" << std::hex << addr;
         return false;
     }
 
@@ -59,7 +60,7 @@ bool MMU::write(MemoryAddr addr, MemoryValue value) {
         std::find_if(regions_.begin(), regions_.end(), addr_in_region(addr));
 
     if (region_iter == regions_.end()) {
-        // LOG(ERROR) << "No memory region exists for addr: " << addr;
+        LOG(ERROR) << "No matching region for addr: 0x" << std::hex << addr;
         return false;
     }
 
