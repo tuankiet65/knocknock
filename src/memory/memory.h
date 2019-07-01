@@ -8,16 +8,22 @@
 namespace memory {
 
 using MemoryAddr = uint16_t;
+using MemorySize = uint16_t;
 using MemoryValue = uint8_t;
 
 class MemoryAddrProxy;
 
 class Memory {
 public:
-    virtual bool read(MemoryAddr addr, MemoryValue *dest) const = 0;
-    virtual bool write(MemoryAddr addr, MemoryValue value) = 0;
+    virtual MemoryValue read(MemoryAddr addr) const = 0;
+    virtual void write(MemoryAddr addr, MemoryValue value) = 0;
 
     MemoryAddrProxy operator[](MemoryAddr addr);
+};
+
+class BulkLoadableMemory : public Memory {
+public:
+    virtual bool bulk_load(MemoryAddr addr, MemoryValue data[], size_t len) = 0;
 };
 
 class MemoryAddrProxy {
@@ -28,11 +34,7 @@ public:
         }
 
     operator MemoryValue() const {
-        MemoryValue value;
-        if (!memory_.read(addr_, &value))
-            throw std::out_of_range("addr out of range");
-
-        return value;
+        return memory_.read(addr_);
     }
 
     MemoryAddrProxy& operator=(MemoryValue value) {

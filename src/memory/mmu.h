@@ -26,8 +26,10 @@ private:
 
 class MMU : public Memory {
 public:
-    bool read(MemoryAddr addr, MemoryValue *dest) const;
-    bool write(MemoryAddr addr, MemoryValue value);
+    // Memory overrides
+    MemoryValue read(MemoryAddr addr) const override;
+    void write(MemoryAddr addr, MemoryValue value) override;
+
     bool add_region(int type, Memory *region, MemoryAddr start, MemoryAddr end);
 
     const std::vector<MemoryRegion>& regions() const { return regions_; }
@@ -38,4 +40,4 @@ private:
     std::vector<MemoryRegion> regions_;
 };
 
-} // namespace memory
+}  // namespace memory

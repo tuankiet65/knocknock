@@ -43,28 +43,29 @@ bool MMU::add_region(int type, Memory *region,
     return true;
 }
 
-bool MMU::read(MemoryAddr addr, MemoryValue *dest) const {
+MemoryValue MMU::read(MemoryAddr addr) const {
     auto region_iter =
         std::find_if(regions_.begin(), regions_.end(), addr_in_region(addr));
 
     if (region_iter == regions_.end()) {
-        LOG(ERROR) << "No matching region for addr: 0x" << std::hex << addr;
-        return false;
+        LOG(ERROR) << "No matching region for addr: 0x" << std::hex << addr
+                   << ", returning dummy value";
+        return 0xff;
     }
 
-    return region_iter->region()->read(addr, dest);
+    return region_iter->region()->read(addr);
 }
 
-bool MMU::write(MemoryAddr addr, MemoryValue value) {
+void MMU::write(MemoryAddr addr, MemoryValue value) {
     auto region_iter =
         std::find_if(regions_.begin(), regions_.end(), addr_in_region(addr));
 
     if (region_iter == regions_.end()) {
         LOG(ERROR) << "No matching region for addr: 0x" << std::hex << addr;
-        return false;
+        return;
     }
 
-    return region_iter->region()->write(addr, value);
+    region_iter->region()->write(addr, value);
 }
 
 } // namespace memory

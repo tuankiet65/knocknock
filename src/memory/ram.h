@@ -9,8 +9,9 @@ public:
     static const uint16_t START_ADDR = 0xc000;
     static const uint16_t END_ADDR = 0xdfff;
 
-    bool read(MemoryAddr addr, MemoryValue *dest) const override;
-    bool write(MemoryAddr addr, MemoryValue value) override;
+    // Memory overrides
+    MemoryValue read(MemoryAddr addr) const override;
+    void write(MemoryAddr addr, MemoryValue value) override;
 
 private:
     uint8_t ram_[END_ADDR - START_ADDR + 1];
