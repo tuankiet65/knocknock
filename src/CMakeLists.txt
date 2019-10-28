@@ -18,6 +18,13 @@ else()
     add_subdirectory("third_party/glog")
 endif()
 target_link_libraries(knocknock glog::glog)
+option(USE_SYSTEM_FMT "If enabled, use system supplied fmt instead of the included version in third_party/" OFF)
+if (USE_SYSTEM_FMT)
+    find_package(fmt REQUIRED)
+else()
+    add_subdirectory("third_party/fmt")
+endif()
+target_link_libraries(knocknock fmt::fmt)
 
 set(UNITTEST_FILES
     "${SOURCE_FILES}"
