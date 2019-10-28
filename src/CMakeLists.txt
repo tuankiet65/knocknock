@@ -1,14 +1,17 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(knocknock VERSION 0.0.1)
+set (CMAKE_CXX_STANDARD 17)
 
 include_directories("${PROJECT_SOURCE_DIR}")
 
 set(SOURCE_FILES
-    "cpu/cpu.cpp"
-    "cpu/register.cpp"
-    "memory/memory.cpp"
-    "memory/mmu.cpp"
-    "memory/ram.cpp")
+    # "cpu/cpu.cpp"
+    # "cpu/register.cpp"
+    # "cpu/instructions.cpp"
+    # "memory/memory.cpp"
+    # "memory/mmu.cpp"
+    # "memory/ram.cpp")
+    "cartridge.cpp")
 add_executable(knocknock "${SOURCE_FILES}" "knocknock.cpp")
 option(USE_SYSTEM_GLOG "If enabled, use system supplied glog instead of the included version in third_party/" OFF)
 set(WITH_GFLAGS OFF CACHE BOOL "Disable gflags")
@@ -38,3 +41,4 @@ else()
     add_subdirectory("third_party/Catch2")
 endif()
 target_link_libraries(knocknock_unittest Catch2::Catch2)
+target_link_libraries(knocknock_unittest glog::glog)
