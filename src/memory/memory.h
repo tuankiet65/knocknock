@@ -18,6 +18,10 @@ public:
     virtual MemoryValue read(MemoryAddr addr) const = 0;
     virtual void write(MemoryAddr addr, MemoryValue value) = 0;
 
+    // Helper function to read and write 16-bit values using read() and write()
+    uint16_t read16(MemoryAddr addr) const;
+    void write16(MemoryAddr addr, uint16_t value);
+
     MemoryAddrProxy operator[](MemoryAddr addr);
 };
 
