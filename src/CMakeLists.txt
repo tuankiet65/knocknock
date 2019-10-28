@@ -12,6 +12,7 @@ set(SOURCE_FILES
 add_executable(knocknock "${SOURCE_FILES}" "knocknock.cpp")
 option(USE_SYSTEM_GLOG "If enabled, use system supplied glog instead of the included version in third_party/" OFF)
 set(WITH_GFLAGS OFF CACHE BOOL "Disable gflags")
+set(BUILD_TESTING OFF CACHE BOOL "Disable building unittests for glog")
 if (USE_SYSTEM_GLOG)
     find_package(glog REQUIRED)
 else()
