@@ -6,6 +6,9 @@
 namespace cpu {
 
 class CPU {
+public:
+    CPU(memory::Memory *mem);
+
 private:
     Register8 a_, f_, b_, c_, d_, e_, h_, l_;
     Register16Mirror af_, bc_, de_, hl_;
