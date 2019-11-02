@@ -9,7 +9,7 @@ MemoryAddrProxy Memory::operator[](MemoryAddr addr) {
 uint16_t Memory::read16(MemoryAddr addr) const {
     // Gameboy is little-endian => first byte is LSB, second byte is MSB
     uint16_t result = read(addr);
-    result = (result << 8) | read(addr + 1);
+    result = (read(addr + 1) << 8) | result;
 
     return result;
 }
