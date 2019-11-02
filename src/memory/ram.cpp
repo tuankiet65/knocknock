@@ -9,7 +9,6 @@ MemoryValue RAM::read(MemoryAddr addr) const {
         << "addr out of range for RAM: 0x" << std::hex << addr;
 
     return ram_[addr - START_ADDR];
-    return true;
 }
 
 void RAM::write(MemoryAddr addr, MemoryValue value) {
