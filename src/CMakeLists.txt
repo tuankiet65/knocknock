@@ -6,11 +6,11 @@ include_directories("${PROJECT_SOURCE_DIR}")
 
 set(SOURCE_FILES
     # "cpu/cpu.cpp"
-    # "cpu/register.cpp"
     # "cpu/instructions.cpp"
-    # "memory/memory.cpp"
+    "memory/memory.cpp"
+    "memory/test_memory.cpp"
     # "memory/mmu.cpp"
-    # "memory/ram.cpp")
+    "cpu/operands.cpp"
     "cartridge.cpp")
 add_executable(knocknock "${SOURCE_FILES}" "knocknock.cpp")
 option(USE_SYSTEM_GLOG "If enabled, use system supplied glog instead of the included version in third_party/" OFF)
@@ -32,7 +32,7 @@ target_link_libraries(knocknock fmt::fmt)
 
 set(UNITTEST_FILES
     "${SOURCE_FILES}"
-    "cpu/register_unittest.cpp")
+    "cpu/operands_unittest.cpp")
 add_executable(knocknock_unittest "${UNITTEST_FILES}" "knocknock_unittest.cpp")
 option(USE_SYSTEM_CATCH2 "If enabled, use system supplied Catch2 instead of the included version in third_party/" OFF)
 if (USE_SYSTEM_CATCH2)
@@ -42,3 +42,4 @@ else()
 endif()
 target_link_libraries(knocknock_unittest Catch2::Catch2)
 target_link_libraries(knocknock_unittest glog::glog)
+target_link_libraries(knocknock_unittest fmt::fmt)
