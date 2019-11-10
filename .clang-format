@@ -1,0 +1,14 @@
+---
+# General section
+# Reuse Chromium format
+BasedOnStyle: Chromium
+# But I prefer 4 spaces instead of 2
+IndentWidth: 4
+---
+# C++ section
+Language: Cpp
+# The indent of public: and private:, we want it to be the same as the class declaration
+AccessModifierOffset: -4
+# This makes it easier to deduce if a variable is a pointer or not
+PointerAlignment: Right
+AllowShortCaseLabelsOnASingleLine: true

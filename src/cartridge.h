@@ -11,10 +11,7 @@ using CartridgeContent = std::vector<memory::MemoryValue>;
 
 class Cartridge {
 public:
-    enum GameBoyType {
-        GameBoy,
-        ColorGameBoy
-    };
+    enum GameBoyType { GameBoy, ColorGameBoy };
 
     // enum SuperGameBoyIndicator{
     //     SuperGameBoyEnabled,

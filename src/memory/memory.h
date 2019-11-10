@@ -34,14 +34,12 @@ class MemoryAddrProxy {
 public:
     MemoryAddrProxy(Memory &memory, MemoryAddr addr)
         : memory_(memory), addr_(addr) {
-            // DCHECK(memory)
-        }
-
-    operator MemoryValue() const {
-        return memory_.read(addr_);
+        // DCHECK(memory)
     }
 
-    MemoryAddrProxy& operator=(MemoryValue value) {
+    operator MemoryValue() const { return memory_.read(addr_); }
+
+    MemoryAddrProxy &operator=(MemoryValue value) {
         memory_.write(addr_, value);
         return *this;
     }
@@ -51,4 +49,4 @@ private:
     const MemoryAddr addr_;
 };
 
-} // namespace cpu
+}  // namespace memory

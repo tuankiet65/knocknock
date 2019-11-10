@@ -4,7 +4,7 @@
 
 #include "cartridge.h"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     google::InitGoogleLogging(argv[0]);
     google::InstallFailureSignalHandler();
 

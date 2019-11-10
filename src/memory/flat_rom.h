@@ -25,4 +25,4 @@ private:
     MemoryValue ram_[0x2000];
 };
 
-} // namespace memory
+}  // namespace memory

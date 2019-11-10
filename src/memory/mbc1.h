@@ -17,7 +17,7 @@ public:
     bool bulk_load(MemoryAddr addr, MemoryValue data[], size_t len) override;
 
 private:
-    enum AddressingMode{
+    enum AddressingMode {
         // ROM_0 is mapped to ROM bank 0, ROM_SWITCHABLE is mapped to ROM bank
         // 0b0{bank2_:2}{bank_1:5}, RAM_SWITCHABLE is mapped to RAM bank 0
         // Effective address space: 1 RAM bank * 8kB/RAM bank = 8kB of RAM
@@ -45,9 +45,9 @@ private:
     MemorySize ram_size_;
 
     AddressingMode mode_ = RAM_8K;
-    uint8_t bank1_= 0;
+    uint8_t bank1_ = 0;
     uint8_t bank2_ = 0;
     bool ram_enabled_ = false;
 };
 
-} // namespace memory
+}  // namespace memory

@@ -1,26 +1,26 @@
 #include "memory/mmu.h"
 
+#include <glog/logging.h>
+
 #include <algorithm>
 #include <functional>
-
-#include <glog/logging.h>
 
 namespace memory {
 
 namespace {
 
-using AddrInRegionFunction = std::function<bool(const MemoryRegion&)>;
+using AddrInRegionFunction = std::function<bool(const MemoryRegion &)>;
 
 AddrInRegionFunction addr_in_region(MemoryAddr addr) {
-    return [addr](const MemoryRegion& region) -> bool {
+    return [addr](const MemoryRegion &region) -> bool {
         return BETWEEN(region.start(), addr, region.end());
     };
 }
 
-} // namespace
+}  // namespace
 
 bool MMU::region_does_overlap(MemoryAddr start, MemoryAddr end) const {
-    for (const MemoryRegion& region: regions_) {
+    for (const MemoryRegion &region : regions_) {
         if (BETWEEN(region.start(), start, region.end()) ||
             BETWEEN(region.start(), end, region.end()))
             return true;
@@ -29,14 +29,16 @@ bool MMU::region_does_overlap(MemoryAddr start, MemoryAddr end) const {
     return false;
 }
 
-bool MMU::add_region(int type, Memory *region,
-                     MemoryAddr start, MemoryAddr end) {
+bool MMU::add_region(int type,
+                     Memory *region,
+                     MemoryAddr start,
+                     MemoryAddr end) {
     if (region_does_overlap(start, end)) {
         LOG(ERROR) << "Region overlaps with existing regions: "
                    << "type = " << type << " "
                    << "start = 0x" << std::hex << start << " "
                    << "end = 0x" << std::hex << end;
-       return true;
+        return true;
     }
 
     regions_.push_back(MemoryRegion(type, region, start, end));
@@ -68,4 +70,4 @@ void MMU::write(MemoryAddr addr, MemoryValue value) {
     region_iter->region()->write(addr, value);
 }
 
-} // namespace memory
+}  // namespace memory

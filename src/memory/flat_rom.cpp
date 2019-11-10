@@ -8,8 +8,7 @@ using std::hex;
 
 namespace memory {
 
-FlatROM::FlatROM(MemorySize ram_size)
-    : ram_size_(ram_size) {
+FlatROM::FlatROM(MemorySize ram_size) : ram_size_(ram_size) {
     DCHECK(ram_size_ <= sizeof(ram_));
 }
 
@@ -32,4 +31,4 @@ MemoryValue FlatROM::read(MemoryAddr addr) const {
     return 0xff;
 }
 
-} // namespace memory
+}  // namespace memory

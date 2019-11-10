@@ -17,4 +17,4 @@ private:
     uint8_t ram_[END_ADDR - START_ADDR + 1];
 };
 
-} // namespace memory
+}  // namespace memory

@@ -17,4 +17,4 @@ private:
     memory::Memory *mem_;
 };
 
-} // namespace cpu
+}  // namespace cpu

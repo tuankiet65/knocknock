@@ -1,7 +1,8 @@
 #include "memory/mbc1.h"
 
-#include <cstring>
 #include <glog/logging.h>
+
+#include <cstring>
 
 namespace memory {
 
@@ -91,4 +92,4 @@ MemoryValue MBC1::read(MemoryAddr addr) const {
     return 0xff;
 }
 
-} // namespace memory
+}  // namespace memory

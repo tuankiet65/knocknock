@@ -18,4 +18,4 @@ void RAM::write(MemoryAddr addr, MemoryValue value) {
     ram_[addr - START_ADDR] = value;
 }
 
-}
+}  // namespace memory
