@@ -11,3 +11,4 @@ Current status: doesn't build.
 * [Game Boy(tm) CPU Manual](http://marc.rawer.de/Gameboy/Docs/GBCPUman.pdf), various authors, compiled DP
 * [Gameboy Development Wiki](http://gbdev.gg8.se/wiki/articles/Main_Page)
 * [GameBoy Memory Map](http://gameboy.mongenel.com/dmg/asmmemmap.html) by Randy Mongenel
+* [Awesome GBDev](https://github.com/gbdev/awesome-gbdev)
