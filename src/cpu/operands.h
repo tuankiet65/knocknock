@@ -9,9 +9,17 @@ namespace cpu {
 template <class T>
 class Operand {
 public:
+    Operand() {}
+
     virtual T read() const = 0;
     virtual void write(T value) = 0;
     virtual std::string name() const = 0;
+
+    virtual ~Operand() {}
+
+    // Disable copy and move constructor
+    Operand(const Operand &) = delete;
+    Operand &operator=(const Operand &) = delete;
 };
 
 using Operand8 = Operand<uint8_t>;
