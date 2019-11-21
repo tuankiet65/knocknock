@@ -4,11 +4,11 @@
 #include <glog/logging.h>
 
 #include <fstream>
-#include <memory>
+#include <optional>
 #include <stdexcept>
 #include <string>
 
-#include "filesystem.h"
+#include "base/filesystem.h"
 
 namespace {
 
@@ -137,17 +137,16 @@ Cartridge::Cartridge(const std::string &title,
       content_(content) {}
 
 // static
-bool Cartridge::from_file(fs::path path,
-                          std::unique_ptr<Cartridge> *cartridge) {
+std::optional<Cartridge> Cartridge::from_file(fs::path path) {
     if (!fs::is_regular_file(path)) {
         LOG(ERROR) << fmt::format("{} is not a regular file", path.string());
-        return false;
+        return {};
     }
 
     std::ifstream in(path.native(), std::ios::in | std::ios::binary);
     if (!in) {
         LOG(ERROR) << fmt::format("Unable to open file {}", path.string());
-        return false;
+        return {};
     }
 
     CartridgeContent content;
@@ -166,7 +165,7 @@ bool Cartridge::from_file(fs::path path,
         if (in.fail()) {
             LOG(ERROR) << fmt::format("Error while reading file {}",
                                       path.string());
-            return false;
+            return {};
         }
 
         // Append the entire buffer to the end of content
@@ -179,7 +178,7 @@ bool Cartridge::from_file(fs::path path,
             "Cartridge size too small to contain the information area, "
             "read size = {0:#x} bytes",
             content.size());
-        return false;
+        return {};
     }
 
     std::string title = get_title(content);
@@ -189,13 +188,13 @@ bool Cartridge::from_file(fs::path path,
     size_t rom_size;
     if (!get_rom_size(content, &rom_size)) {
         LOG(ERROR) << "Unable to get ROM size";
-        return false;
+        return {};
     }
 
     size_t ram_size;
     if (!get_ram_size(content, &ram_size)) {
         LOG(ERROR) << "Unable to get RAM size";
-        return false;
+        return {};
     }
 
     uint8_t header_checksum = get_header_checksum(content),
@@ -215,8 +214,5 @@ bool Cartridge::from_file(fs::path path,
     //         "({1:#x})", calculated_checksum, checksum);
     // }
 
-    *cartridge = std::make_unique<Cartridge>(title, gameboy_type, type,
-                                             rom_size, ram_size, content);
-
-    return true;
+    return Cartridge(title, gameboy_type, type, rom_size, ram_size, content);
 }

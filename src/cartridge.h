@@ -1,10 +1,10 @@
 #pragma once
 
-#include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "filesystem.h"
+#include "base/filesystem.h"
 #include "memory/memory.h"
 
 using CartridgeContent = std::vector<memory::MemoryValue>;
@@ -91,7 +91,7 @@ public:
               /* uint8_t mask_rom_version, */
               const CartridgeContent &content_);
 
-    static bool from_file(fs::path path, std::unique_ptr<Cartridge> *cartridge);
+    static std::optional<Cartridge> from_file(fs::path path);
 
     CartridgeContent content() const { return content_; }
     std::string title() const { return title_; }
