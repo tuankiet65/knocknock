@@ -5,6 +5,15 @@
 
 namespace cpu {
 
+namespace {
+
+const uint8_t ZERO_MASK = 0b10000000;
+const uint8_t SUBTRACT_MASK = 0b01000000;
+const uint8_t HALF_CARRY_MASK = 0b00100000;
+const uint8_t CARRY_MASK = 0b00010000;
+
+}  // namespace
+
 Register8::Register8(std::string name) : name_(name) {}
 uint8_t Register8::read() const {
     return value_;
@@ -14,6 +23,49 @@ void Register8::write(uint8_t value) {
 }
 std::string Register8::name() const {
     return name_;
+}
+
+FlagRegister::FlagRegister(std::string name) : Register8::Register8(name){};
+void FlagRegister::set(FlagRegister::Flag flag) {
+    uint8_t value = this->read();
+
+    switch (flag) {
+        case FlagRegister::Flag::Zero: value |= ZERO_MASK; break;
+        case FlagRegister::Flag::Subtract: value |= SUBTRACT_MASK; break;
+        case FlagRegister::Flag::HalfCarry: value |= HALF_CARRY_MASK; break;
+        case FlagRegister::Flag::Carry: value |= CARRY_MASK; break;
+        default: DCHECK(false) << "Unknown flag enum"; break;
+    }
+
+    this->write(value);
+}
+
+void FlagRegister::clear(FlagRegister::Flag flag) {
+    uint8_t value = this->read();
+
+    switch (flag) {
+        case FlagRegister::Flag::Zero: value &= ~ZERO_MASK; break;
+        case FlagRegister::Flag::Subtract: value &= ~SUBTRACT_MASK; break;
+        case FlagRegister::Flag::HalfCarry: value &= ~HALF_CARRY_MASK; break;
+        case FlagRegister::Flag::Carry: value &= ~CARRY_MASK; break;
+        default: DCHECK(false) << "Unknown flag enum"; break;
+    }
+
+    this->write(value);
+}
+
+bool FlagRegister::get(FlagRegister::Flag flag) const {
+    uint8_t value = read();
+
+    switch (flag) {
+        case FlagRegister::Flag::Zero: return value & ZERO_MASK;
+        case FlagRegister::Flag::Subtract: return value & SUBTRACT_MASK;
+        case FlagRegister::Flag::HalfCarry: return value & HALF_CARRY_MASK;
+        case FlagRegister::Flag::Carry: return value & CARRY_MASK;
+    }
+
+    DCHECK(false) << "Unknown flag enum";
+    return false;
 }
 
 Register16::Register16(std::string name) : name_(name) {}

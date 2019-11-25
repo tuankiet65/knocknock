@@ -10,7 +10,8 @@ public:
     CPU(memory::Memory *mem);
 
 private:
-    Register8 a_, f_, b_, c_, d_, e_, h_, l_;
+    Register8 a_, b_, c_, d_, e_, h_, l_;
+    FlagRegister f_;
     Register16Mirror af_, bc_, de_, hl_;
     Register16 sp_, pc_;
 

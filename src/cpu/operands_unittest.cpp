@@ -14,6 +14,48 @@ TEST_CASE("Register8", "[cpu][operands]") {
     REQUIRE(reg8.read() == 0x69);
 }
 
+TEST_CASE("FlagRegister", "[cpu][operands]") {
+    cpu::FlagRegister f("F");
+
+    REQUIRE(f.name() == "F");
+
+    // All off
+    f.write(0b00000000);
+    REQUIRE(f.read() == 0b00000000);
+    REQUIRE(!f.get(cpu::FlagRegister::Flag::Zero));
+    REQUIRE(!f.get(cpu::FlagRegister::Flag::Subtract));
+    REQUIRE(!f.get(cpu::FlagRegister::Flag::HalfCarry));
+    REQUIRE(!f.get(cpu::FlagRegister::Flag::Carry));
+
+    // All on
+    f.write(0b11110000);
+    REQUIRE(f.read() == 0b11110000);
+    REQUIRE(f.get(cpu::FlagRegister::Flag::Zero));
+    REQUIRE(f.get(cpu::FlagRegister::Flag::Subtract));
+    REQUIRE(f.get(cpu::FlagRegister::Flag::HalfCarry));
+    REQUIRE(f.get(cpu::FlagRegister::Flag::Carry));
+
+    // All off
+    f.clear(cpu::FlagRegister::Flag::Zero);
+    f.clear(cpu::FlagRegister::Flag::Subtract);
+    f.clear(cpu::FlagRegister::Flag::HalfCarry);
+    f.clear(cpu::FlagRegister::Flag::Carry);
+    REQUIRE(!f.get(cpu::FlagRegister::Flag::Zero));
+    REQUIRE(!f.get(cpu::FlagRegister::Flag::Subtract));
+    REQUIRE(!f.get(cpu::FlagRegister::Flag::HalfCarry));
+    REQUIRE(!f.get(cpu::FlagRegister::Flag::Carry));
+
+    // All on
+    f.set(cpu::FlagRegister::Flag::Zero);
+    f.set(cpu::FlagRegister::Flag::Subtract);
+    f.set(cpu::FlagRegister::Flag::HalfCarry);
+    f.set(cpu::FlagRegister::Flag::Carry);
+    REQUIRE(f.get(cpu::FlagRegister::Flag::Zero));
+    REQUIRE(f.get(cpu::FlagRegister::Flag::Subtract));
+    REQUIRE(f.get(cpu::FlagRegister::Flag::HalfCarry));
+    REQUIRE(f.get(cpu::FlagRegister::Flag::Carry));
+}
+
 TEST_CASE("Register16", "[cpu][operands]") {
     cpu::Register16 reg16("BC");
 

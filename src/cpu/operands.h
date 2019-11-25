@@ -38,6 +38,17 @@ private:
     uint8_t value_;
 };
 
+class FlagRegister : public Register8 {
+public:
+    FlagRegister(std::string name);
+
+    enum class Flag { Zero, Subtract, HalfCarry, Carry };
+
+    void set(Flag flag);
+    void clear(Flag flag);
+    bool get(Flag flag) const;
+};
+
 class Register16 : public Operand16 {
 public:
     Register16(std::string name);
