@@ -21,7 +21,8 @@ CPU::CPU(memory::Memory *memory)
       de_(&d_, &e_),
       hl_(&h_, &l_),
       sp_("SP"),
-      pc_("PC") {
+      pc_("PC"),
+      cycles_remaining_(0) {
     DCHECK(mem_);
 
     // initialize all registers
@@ -64,6 +65,18 @@ CPU::CPU(memory::Memory *memory)
     mem_->write(0xff4a, 0x00);  //  WY
     mem_->write(0xff4b, 0x00);  //  WX
     mem_->write(0xffff, 0x00);  //  IE
+}
+
+void CPU::step() {
+    if (cycles_remaining_) {
+        cycles_remaining_--;
+        return;
+    }
+
+    Instruction inst = CPU::decode();
+    LOG(INFO) << "Executing instruction: " << inst.disassembly();
+    inst.execute();
+    cycles_remaining_ = inst.cycles();
 }
 
 }  // namespace cpu
