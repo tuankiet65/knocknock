@@ -20,8 +20,7 @@ CPU::CPU(memory::Memory *memory)
       bc_(&b_, &c_),
       de_(&d_, &e_),
       hl_(&h_, &l_),
-      sp_("SP"),
-      pc_("PC") {
+      sp_("SP") {
     DCHECK(mem_);
 
     // initialize all registers
@@ -30,7 +29,7 @@ CPU::CPU(memory::Memory *memory)
     de_.write(0x00d8);
     hl_.write(0x014d);
     sp_.write(0xfffe);
-    pc_.write(0x0100);
+    pc_ = 0x0100;
 
     // initialize IO register
     mem_->write(0xff05, 0x00);  //  TIMA
