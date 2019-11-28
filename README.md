@@ -12,3 +12,6 @@ Current status: doesn't build.
 * [Gameboy Development Wiki](http://gbdev.gg8.se/wiki/articles/Main_Page)
 * [GameBoy Memory Map](http://gameboy.mongenel.com/dmg/asmmemmap.html) by Randy Mongenel
 * [Awesome GBDev](https://github.com/gbdev/awesome-gbdev)
+* https://floooh.github.io/2017/12/10/z80-emu-evolution.html
+* http://www.z80.info/decoding.htm
+* https://gbdev.github.io/gb-opcodes/optables/
