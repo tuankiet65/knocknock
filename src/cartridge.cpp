@@ -47,11 +47,12 @@ Cartridge::GameBoyType get_gameboy_type(const CartridgeContent &content) {
     return Cartridge::GameBoyType::GameBoy;
 }
 
-Cartridge::CartridgeType get_cartridge_type(const CartridgeContent &content) {
-    uint8_t raw_type = content.at(CARTRIDGE_TYPE_ADDR);
+// Cartridge::CartridgeType get_cartridge_type(const CartridgeContent &content)
+// {
+//     uint8_t raw_type = content.at(CARTRIDGE_TYPE_ADDR);
 
-    return static_cast<Cartridge::CartridgeType>(raw_type);
-}
+//     return static_cast<Cartridge::CartridgeType>(raw_type);
+// }
 
 bool get_rom_size(const CartridgeContent &content, size_t *result) {
     uint8_t raw_type = content.at(ROM_SIZE_ADDR);
