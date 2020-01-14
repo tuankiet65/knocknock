@@ -15,3 +15,7 @@ Current status: doesn't build.
 * https://floooh.github.io/2017/12/10/z80-emu-evolution.html
 * http://www.z80.info/decoding.htm
 * https://gbdev.github.io/gb-opcodes/optables/
+* https://raw.githubusercontent.com/floooh/emu-info/master/z80/z80ins.txt
+* https://github.com/floooh/emu-info
+* http://rvbelzen.tripod.com/z80prgtemp/
+* http://rvbelzen.tripod.com/z80prgtemp/fig2-27.htm
