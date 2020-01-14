@@ -43,3 +43,6 @@ endif()
 target_link_libraries(knocknock_unittest Catch2::Catch2)
 target_link_libraries(knocknock_unittest glog::glog)
 target_link_libraries(knocknock_unittest fmt::fmt)
+
+target_compile_options(knocknock PUBLIC -Wall -Wextra -pedantic)
+target_compile_options(knocknock_unittest PUBLIC -Wall -Wextra -pedantic)
