@@ -105,7 +105,6 @@ public:
     // uint8_t mask_rom_version() const { return mask_rom_version_; }
 
 private:
-    CartridgeContent content_;
     std::string title_;
     GameBoyType game_boy_type_;
     // uint8_t licensee_code_;
@@ -113,6 +112,7 @@ private:
     CartridgeType type_;
     size_t rom_size_;
     size_t ram_size_;
+    CartridgeContent content_;
     // Region region_;
     // uint8_t mask_rom_version_;
 };
