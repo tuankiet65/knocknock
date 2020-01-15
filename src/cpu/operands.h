@@ -49,6 +49,19 @@ public:
     bool get(Flag flag) const;
 };
 
+class Register8Sign : public Operand<int8_t> {
+public:
+    Register8Sign(std::string name);
+
+    int8_t read() const override;
+    void write(int8_t value) override;
+    std::string name() const override;
+
+private:
+    std::string name_;
+    int8_t value_;
+};
+
 class Register16 : public Operand16 {
 public:
     Register16(std::string name);

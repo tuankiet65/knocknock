@@ -68,6 +68,17 @@ bool FlagRegister::get(FlagRegister::Flag flag) const {
     return false;
 }
 
+Register8Sign::Register8Sign(std::string name) : name_(name) {}
+int8_t Register8Sign::read() const {
+    return value_;
+}
+void Register8Sign::write(int8_t value) {
+    value_ = value;
+}
+std::string Register8Sign::name() const {
+    return name_;
+}
+
 Register16::Register16(std::string name) : name_(name) {}
 uint16_t Register16::read() const {
     return value_;
