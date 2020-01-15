@@ -25,7 +25,7 @@ std::string Register8::name() const {
     return name_;
 }
 
-FlagRegister::FlagRegister(std::string name) : Register8::Register8(name){};
+FlagRegister::FlagRegister(std::string name) : Register8::Register8(name) {}
 void FlagRegister::set(FlagRegister::Flag flag) {
     uint8_t value = this->read();
 
@@ -111,7 +111,7 @@ Immediate8::Immediate8(uint8_t value) : value_(value) {}
 uint8_t Immediate8::read() const {
     return value_;
 }
-void Immediate8::write(uint8_t value) {
+void Immediate8::write([[maybe_unused]] uint8_t value) {
     DCHECK(false) << "Attempting to write into Immediate8";
 }
 std::string Immediate8::name() const {
@@ -122,7 +122,7 @@ Immediate16::Immediate16(uint16_t value) : value_(value) {}
 uint16_t Immediate16::read() const {
     return value_;
 }
-void Immediate16::write(uint16_t value) {
+void Immediate16::write([[maybe_unused]] uint16_t value) {
     DCHECK(false) << "Attempting to write into Immediate16";
 }
 std::string Immediate16::name() const {
