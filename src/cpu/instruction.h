@@ -92,9 +92,10 @@ public:
         SP,
 
         // Individual flag in the flag register
-        NC,  // No carry?
-        NZ,  // Not zero
-        Z,   // Zero
+        FlagC,   // Carry
+        FlagNC,  // ~Carry
+        FlagZ,   // Zero
+        FlagNZ,  // ~Zero
 
         // Immediates
         Imm8,      // uint8_t

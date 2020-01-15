@@ -94,10 +94,11 @@ std::string Instruction::disassemble_operand(
         case Instruction::Operand::H: return "H";
         case Instruction::Operand::HL: return "HL";
         case Instruction::Operand::L: return "L";
-        case Instruction::Operand::NC: return "NC";
-        case Instruction::Operand::NZ: return "NZ";
         case Instruction::Operand::SP: return "SP";
-        case Instruction::Operand::Z: return "Z";
+        case Instruction::Operand::FlagC: return "C";
+        case Instruction::Operand::FlagNC: return "NC";
+        case Instruction::Operand::FlagZ: return "Z";
+        case Instruction::Operand::FlagNZ: return "NZ";
 
         // Special handling for immediate operands
         case Instruction::Operand::Imm8:
