@@ -73,6 +73,10 @@ std::string Instruction::disassemble_opcode() const {
 std::string Instruction::disassemble_operand(
     Instruction::Operand operand) const {
     switch (operand) {
+        case Instruction::Operand::None:
+            // Not supposed to call this function on None
+            DCHECK(false) << "Calling disassemble_operand on None operand";
+            return "";
         case Instruction::Operand::PtrBC: return "(BC)";
         case Instruction::Operand::PtrC: return "(C)";
         case Instruction::Operand::PtrDE: return "(DE)";
