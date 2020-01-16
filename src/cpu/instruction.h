@@ -127,6 +127,9 @@ public:
     Opcode opcode() const { return opcode_; }
     Operand lhs() const { return lhs_; }
     Operand rhs() const { return rhs_; }
+    std::optional<uint8_t> imm8() const { return imm8_; }
+    std::optional<int8_t> imm8sign() const { return imm8sign_; }
+    std::optional<uint16_t> imm16() const { return imm16_; }
 
     std::string disassemble() const;
 
