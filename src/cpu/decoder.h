@@ -1,4 +1,5 @@
 #pragma once
+
 #include <optional>
 
 #include "cpu/instruction.h"
@@ -45,7 +46,9 @@ private:
 
     Instruction::Opcode opcode_;
     Instruction::Operand lhs_, rhs_;
-    uint16_t imm16_;
+    std::optional<uint8_t> imm8_;
+    std::optional<int8_t> imm8sign_;
+    std::optional<uint16_t> imm16_;
 
     std::optional<Instruction> decoded_instruction_;
 };

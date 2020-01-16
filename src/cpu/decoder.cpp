@@ -278,7 +278,9 @@ void Decoder::reset() {
     opcode_ = Instruction::Opcode::NOP;
     lhs_ = Instruction::Operand::None;
     rhs_ = Instruction::Operand::None;
-    imm16_ = 0;
+    imm8_.reset();
+    imm8sign_.reset();
+    imm16_.reset();
     decoded_instruction_.reset();
 }
 
