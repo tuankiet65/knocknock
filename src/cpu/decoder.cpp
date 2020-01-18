@@ -326,7 +326,7 @@ bool Decoder::decode_rst(uint8_t opcode) {
 }
 
 Decoder::Decoder(const memory::Memory *memory, memory::MemoryAddr *pc)
-    : memory_(memory), pc_(pc), state_(State::INITIAL) {}
+    : state_(State::OPCODE), memory_(memory), pc_(pc) {}
 
 void Decoder::reset() {
     opcode_ = Instruction::Opcode::NOP;
