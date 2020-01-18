@@ -54,16 +54,7 @@ public:
         STOP,
         SUB,
         XOR,
-
-        // Resets
-        RST_00H,
-        RST_08H,
-        RST_10H,
-        RST_18H,
-        RST_20H,
-        RST_28H,
-        RST_30H,
-        RST_38H,
+        RST
     };
 
     enum class Operand {

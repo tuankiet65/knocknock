@@ -33,6 +33,7 @@ private:
     bool decode_cb(uint8_t opcode);
     bool decode_ld_8bit(uint8_t opcode);
     bool decode_alu(uint8_t opcode);
+    bool decode_rst(uint8_t opcode);
     bool decode_assorted(uint8_t opcode);
 
     bool needs_imm8(Instruction::Operand operand);

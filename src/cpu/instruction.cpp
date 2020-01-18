@@ -55,15 +55,7 @@ std::string Instruction::disassemble_opcode() const {
         case Instruction::Opcode::STOP: return "STOP";
         case Instruction::Opcode::SUB: return "SUB";
         case Instruction::Opcode::XOR: return "XOR";
-
-        case Instruction::Opcode::RST_00H: return "RST 00H";
-        case Instruction::Opcode::RST_08H: return "RST 08H";
-        case Instruction::Opcode::RST_10H: return "RST 10H";
-        case Instruction::Opcode::RST_18H: return "RST 18H";
-        case Instruction::Opcode::RST_20H: return "RST 20H";
-        case Instruction::Opcode::RST_28H: return "RST 28H";
-        case Instruction::Opcode::RST_30H: return "RST 30H";
-        case Instruction::Opcode::RST_38H: return "RST 38H";
+        case Instruction::Opcode::RST: return "RST";
     };
 
     DCHECK(false) << fmt::format("Unknown opcode: {}", opcode_);

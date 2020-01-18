@@ -240,55 +240,87 @@ bool Decoder::decode_assorted(uint8_t opcode) {
         case 0xc4: INSTRUCTION(CALL, FlagNZ, Imm16); break;
         case 0xc5: INSTRUCTION(PUSH, BC); break;
         case 0xc6: INSTRUCTION(ADD, A, Imm8); break;
-        case 0xc7: INSTRUCTION(RST_00H); break;
         case 0xc8: INSTRUCTION(RET, FlagZ); break;
         case 0xc9: INSTRUCTION(RET); break;
         case 0xca: INSTRUCTION(JP, FlagZ, Imm16); break;
         case 0xcc: INSTRUCTION(CALL, FlagZ, Imm16); break;
         case 0xcd: INSTRUCTION(CALL, Imm16); break;
         case 0xce: INSTRUCTION(ADC, A, Imm8); break;
-        case 0xcf: INSTRUCTION(RST_08H); break;
         case 0xd0: INSTRUCTION(RET, FlagNC); break;
         case 0xd1: INSTRUCTION(POP, DE); break;
         case 0xd2: INSTRUCTION(JP, FlagNC, Imm16); break;
         case 0xd4: INSTRUCTION(CALL, FlagNC, Imm16); break;
         case 0xd5: INSTRUCTION(PUSH, DE); break;
         case 0xd6: INSTRUCTION(SUB, Imm8); break;
-        case 0xd7: INSTRUCTION(RST_10H); break;
         case 0xd8: INSTRUCTION(RET, FlagC); break;
         case 0xd9: INSTRUCTION(RETI); break;
         case 0xda: INSTRUCTION(JP, FlagC, Imm16); break;
         case 0xdc: INSTRUCTION(CALL, FlagC, Imm16); break;
         case 0xde: INSTRUCTION(SBC, A, Imm8); break;
-        case 0xdf: INSTRUCTION(RST_18H); break;
         case 0xe0: INSTRUCTION(LDH, PtrImm8, A); break;
         case 0xe1: INSTRUCTION(POP, HL); break;
         case 0xe2: INSTRUCTION(LD, PtrC, A); break;
         case 0xe5: INSTRUCTION(PUSH, HL); break;
         case 0xe6: INSTRUCTION(AND, Imm8); break;
-        case 0xe7: INSTRUCTION(RST_20H); break;
         case 0xe8: INSTRUCTION(ADD, SP, Imm8Sign); break;
         case 0xe9: INSTRUCTION(JP, PtrHL); break;
         case 0xea: INSTRUCTION(LD, PtrImm16, A); break;
         case 0xee: INSTRUCTION(XOR, Imm8); break;
-        case 0xef: INSTRUCTION(RST_28H); break;
         case 0xf0: INSTRUCTION(LDH, A, PtrImm8); break;
         case 0xf1: INSTRUCTION(POP, AF); break;
         case 0xf2: INSTRUCTION(LD, A, PtrC); break;
         case 0xf3: INSTRUCTION(DI); break;
         case 0xf5: INSTRUCTION(PUSH, AF); break;
         case 0xf6: INSTRUCTION(OR, Imm8); break;
-        case 0xf7: INSTRUCTION(RST_30H); break;
         case 0xf8: INSTRUCTION(LDHL, SP, Imm8Sign); break;
         case 0xf9: INSTRUCTION(LD, SP, HL); break;
         case 0xfa: INSTRUCTION(LD, A, PtrImm16); break;
         case 0xfb: INSTRUCTION(EI); break;
         case 0xfe: INSTRUCTION(CP, Imm8); break;
-        case 0xff: INSTRUCTION(RST_38H); break;
 
         default: return false;
     }
 
+    // Reachable only if the default case is not reached.
+    return true;
+}
+
+bool Decoder::decode_rst(uint8_t opcode) {
+    switch (opcode) {
+        case 0xc7:
+            INSTRUCTION(RST, Imm8);
+            imm8_ = 0x00;
+            break;
+        case 0xcf:
+            INSTRUCTION(RST, Imm8);
+            imm8_ = 0x08;
+            break;
+        case 0xd7:
+            INSTRUCTION(RST, Imm8);
+            imm8_ = 0x10;
+            break;
+        case 0xdf:
+            INSTRUCTION(RST, Imm8);
+            imm8_ = 0x18;
+            break;
+        case 0xe7:
+            INSTRUCTION(RST, Imm8);
+            imm8_ = 0x20;
+            break;
+        case 0xef:
+            INSTRUCTION(RST, Imm8);
+            imm8_ = 0x28;
+            break;
+        case 0xf7:
+            INSTRUCTION(RST, Imm8);
+            imm8_ = 0x30;
+            break;
+        case 0xff:
+            INSTRUCTION(RST, Imm8);
+            imm8_ = 0x38;
+            break;
+        default: return false;
+    }
     // Reachable only if the default case is not reached.
     return true;
 }
@@ -338,7 +370,8 @@ void Decoder::step() {
         // No immediates follow these instructions.
         // This expression will be short-circuited: if any of the decode
         // succeeds, then others down the line will not be run.
-        if (decode_alu(opcode) || decode_ld_8bit(opcode)) {
+        if (decode_rst(opcode) || decode_ld_8bit(opcode) ||
+            decode_alu(opcode)) {
             assemble();
             return;
         }
