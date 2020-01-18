@@ -64,13 +64,32 @@ static const Instruction::Opcode rot[] = {
 // Decode a CB-prefix instruction. |opcode| is the second byte following the
 // CB prefix.
 bool Decoder::decode_cb(uint8_t opcode) {
-    lhs_ = r[Z(opcode)];
+    auto rz = r[Z(opcode)];
+    uint8_t y = Y(opcode);
 
     switch (X(opcode)) {
-        case 0: opcode_ = rot[Y(opcode)]; break;
-        case 1: opcode_ = Instruction::Opcode::BIT; break;
-        case 2: opcode_ = Instruction::Opcode::RES; break;
-        case 3: opcode_ = Instruction::Opcode::SET; break;
+        case 0:
+            opcode_ = rot[Y(opcode)];
+            lhs_ = rz;
+            break;
+        case 1:
+            opcode_ = Instruction::Opcode::BIT;
+            lhs_ = Instruction::Operand::Imm8;
+            imm8_ = y;
+            rhs_ = rz;
+            break;
+        case 2:
+            opcode_ = Instruction::Opcode::RES;
+            lhs_ = Instruction::Operand::Imm8;
+            imm8_ = y;
+            rhs_ = rz;
+            break;
+        case 3:
+            opcode_ = Instruction::Opcode::SET;
+            lhs_ = Instruction::Operand::Imm8;
+            imm8_ = y;
+            rhs_ = rz;
+            break;
         default: return false;
     }
 
