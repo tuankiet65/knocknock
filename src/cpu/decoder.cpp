@@ -63,7 +63,7 @@ static const Instruction::Opcode rot[] = {
 
 // Decode a CB-prefix instruction. |opcode| is the second byte following the
 // CB prefix.
-void Decoder::decode_cb(uint8_t opcode) {
+bool Decoder::decode_cb(uint8_t opcode) {
     lhs_ = r[Z(opcode)];
 
     switch (X(opcode)) {
@@ -71,34 +71,37 @@ void Decoder::decode_cb(uint8_t opcode) {
         case 1: opcode_ = Instruction::Opcode::BIT; break;
         case 2: opcode_ = Instruction::Opcode::RES; break;
         case 3: opcode_ = Instruction::Opcode::SET; break;
-        default:
-            LOG(ERROR) << fmt::format("Unknown x: {}", X(opcode));
-            INSTRUCTION(NOP);
-            break;
+        default: return false;
     }
+
+    // Reachable only if the default case is not reached.
+    return true;
 }
 
 // Decode 8-bit load instructions. LD (HL), (HL) is repurposed as the HALT
 // instruction
-void Decoder::decode_ld_8bit(uint8_t opcode) {
-    DCHECK(X(opcode) == 1) << fmt::format(
-        "This opcode is not an 8-bit load instruction: {:#02x}", opcode);
-
-    if (opcode == 0x76) {
-        // Special case when both lhs and rhs are (HL)
-        INSTRUCTION(HALT);
-        return;
+bool Decoder::decode_ld_8bit(uint8_t opcode) {
+    if (X(opcode) != 1) {
+        return false;
     }
 
-    opcode_ = Instruction::Opcode::LD;
-    lhs_ = r[Y(opcode)];
-    rhs_ = r[Z(opcode)];
+    // Special case when both lhs and rhs are (HL)
+    if (opcode == 0x76) {
+        INSTRUCTION(HALT);
+    } else {
+        opcode_ = Instruction::Opcode::LD;
+        lhs_ = r[Y(opcode)];
+        rhs_ = r[Z(opcode)];
+    }
+
+    return true;
 }
 
 // Decode ALU instructions.
-void Decoder::decode_alu(uint8_t opcode) {
-    DCHECK(X(opcode) == 2) << fmt::format(
-        "This opcode is not a ALU instruction, [reg8]: {:#02x}", opcode);
+bool Decoder::decode_alu(uint8_t opcode) {
+    if (X(opcode) != 2) {
+        return false;
+    }
 
     Instruction::Operand reg = r[Z(opcode)];
 
@@ -138,14 +141,14 @@ void Decoder::decode_alu(uint8_t opcode) {
             opcode_ = Instruction::Opcode::CP;
             lhs_ = reg;
             break;
-        default:
-            LOG(ERROR) << fmt::format("Unknown y: {}", Y(opcode));
-            INSTRUCTION(NOP);
-            break;
+        default: return false;
     }
+
+    // Reachable only if the default case is not reached.
+    return true;
 }
 
-void Decoder::decode_assorted(uint8_t opcode) {
+bool Decoder::decode_assorted(uint8_t opcode) {
     switch (opcode) {
         case 0x00: INSTRUCTION(NOP); break;
         case 0x01: INSTRUCTION(LD, BC, Imm16); break;
@@ -264,11 +267,11 @@ void Decoder::decode_assorted(uint8_t opcode) {
         case 0xfe: INSTRUCTION(CP, Imm8); break;
         case 0xff: INSTRUCTION(RST_38H); break;
 
-        default:
-            LOG(ERROR) << fmt::format("Unknown instruction: {:#02x}", opcode);
-            INSTRUCTION(NOP);
-            break;
+        default: return false;
     }
+
+    // Reachable only if the default case is not reached.
+    return true;
 }
 
 Decoder::Decoder(const memory::Memory *memory, memory::MemoryAddr *pc)
@@ -302,10 +305,6 @@ void Decoder::step() {
     uint8_t value = memory_->read(*pc_);
     (*pc_)++;
 
-    if (state_ == State::INITIAL) {
-        state_ = State::OPCODE;
-    }
-
     if (state_ == State::OPCODE) {
         // Reset the state machine first
         reset();
@@ -317,43 +316,54 @@ void Decoder::step() {
             return;
         }
 
-        // shortcut for easy to decode opcodes
-        switch (X(opcode)) {
-            case 1: decode_ld_8bit(opcode); break;
-            case 2: decode_alu(opcode); break;
-            default: decode_assorted(opcode); break;
+        // No immediates follow these instructions.
+        // This expression will be short-circuited: if any of the decode
+        // succeeds, then others down the line will not be run.
+        if (decode_alu(opcode) || decode_ld_8bit(opcode)) {
+            assemble();
+            return;
         }
 
-        if (needs_imm8sign(lhs_) || needs_imm8sign(rhs_)) {
-            state_ = State::IMMEDIATE_8_SIGN;
-        } else if (needs_imm8(lhs_) || needs_imm8(rhs_)) {
-            state_ = State::IMMEDIATE_8;
-        } else if (needs_imm16(lhs_) || needs_imm16(rhs_)) {
-            state_ = State::IMMEDIATE_16_LOW;
-        } else {
-            decoded_instruction_.emplace(opcode_, lhs_, rhs_);
-            state_ = State::OPCODE;
+        if (decode_assorted(opcode)) {
+            // Determine whether to read the next immediate or not.
+            if (needs_imm8sign(lhs_) || needs_imm8sign(rhs_)) {
+                state_ = State::IMMEDIATE_8_SIGN;
+            } else if (needs_imm8(lhs_) || needs_imm8(rhs_)) {
+                state_ = State::IMMEDIATE_8;
+            } else if (needs_imm16(lhs_) || needs_imm16(rhs_)) {
+                state_ = State::IMMEDIATE_16_LOW;
+            } else {
+                assemble();
+            }
+            return;
         }
 
+        // If decoded is false, then the opcode is invalid.
+        LOG(ERROR) << fmt::format("Unknown opcode: {:#02x}, assuming NOP",
+                                  opcode);
+        INSTRUCTION(NOP);
         return;
     }
 
     if (state_ == State::CB_PREFIX) {
-        decode_cb(value);
-        decoded_instruction_.emplace(opcode_, lhs_, rhs_);
-        state_ = State::OPCODE;
+        if (!decode_cb(value)) {
+            DCHECK(false) << "Error decoding CB prefix opcode";
+            INSTRUCTION(NOP);
+        }
+
+        assemble();
         return;
     }
 
     if (state_ == State::IMMEDIATE_8) {
-        decoded_instruction_.emplace(opcode_, lhs_, rhs_, value);
-        state_ = State::OPCODE;
+        imm8_ = value;
+        assemble();
         return;
     }
 
     if (state_ == State::IMMEDIATE_8_SIGN) {
-        decoded_instruction_.emplace(opcode_, lhs_, rhs_, (int8_t)(value));
-        state_ = State::OPCODE;
+        imm8sign_ = (int8_t)(value);
+        assemble();
         return;
     }
 
@@ -364,11 +374,34 @@ void Decoder::step() {
     }
 
     if (state_ == State::IMMEDIATE_16_HIGH) {
-        imm16_ = ((uint16_t)(value) << 8) | imm16_;
-        decoded_instruction_.emplace(opcode_, lhs_, rhs_, imm16_);
-        state_ = State::OPCODE;
+        DCHECK(imm16_.has_value()) << "imm16_ does not have any value";
+        imm16_ = ((uint16_t)(value) << 8) | (*imm16_);
+        assemble();
         return;
     }
+}
+
+void Decoder::assemble() {
+    if (imm8_.has_value()) {
+        DCHECK((!imm8sign_.has_value()) && (!imm16_.has_value()))
+            << "imm8_ has a value, and imm8sign_ or imm16_ also have "
+               "values";
+        decoded_instruction_.emplace(opcode_, lhs_, rhs_, *imm8_);
+    } else if (imm8sign_.has_value()) {
+        DCHECK((!imm8_.has_value()) && (!imm16_.has_value()))
+            << "imm8sign_ has a value, and imm8_ or imm16_ also have "
+               "values";
+        decoded_instruction_.emplace(opcode_, lhs_, rhs_, *imm8sign_);
+    } else if (imm16_.has_value()) {
+        DCHECK((!imm8_.has_value()) && (!imm8sign_.has_value()))
+            << "imm16_ has a value, and imm8_ or imm8sign_ also have "
+               "values";
+        decoded_instruction_.emplace(opcode_, lhs_, rhs_, *imm16_);
+    } else {
+        decoded_instruction_.emplace(opcode_, lhs_, rhs_);
+    }
+
+    state_ = State::OPCODE;
 }
 
 }  // namespace cpu

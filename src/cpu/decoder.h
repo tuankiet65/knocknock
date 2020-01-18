@@ -19,7 +19,6 @@ public:
 
 private:
     enum class State {
-        INITIAL,
         OPCODE,
         CB_PREFIX,
         IMMEDIATE_8,
@@ -29,11 +28,12 @@ private:
     };
 
     void reset();
+    void assemble();
 
-    void decode_cb(uint8_t opcode);
-    void decode_ld_8bit(uint8_t opcode);
-    void decode_alu(uint8_t opcode);
-    void decode_assorted(uint8_t opcode);
+    bool decode_cb(uint8_t opcode);
+    bool decode_ld_8bit(uint8_t opcode);
+    bool decode_alu(uint8_t opcode);
+    bool decode_assorted(uint8_t opcode);
 
     bool needs_imm8(Instruction::Operand operand);
     bool needs_imm8sign(Instruction::Operand operand);
