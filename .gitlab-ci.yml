@@ -1,0 +1,30 @@
+default:
+    image: alpine:latest
+    variables:
+        GIT_SUBMODULE_STRATEGY: recursive
+
+stages:
+    - build
+    - test
+    - docs
+
+build:
+    stage: build
+    before_script:
+        - apk update && apk upgrade
+        - apk install build-base cmake
+    script:
+        - mkdir build
+        - cmake -S src -B build
+        - make -C build knocknock
+
+unittest:
+    stage: test
+    before_script:
+        - apk update && apk upgrade
+        - apk install build-base cmake
+    script:
+        - mkdir build
+        - cmake -S src -B build
+        - make -C build knocknock_unittest
+        - ./build/knocknock_unittest
