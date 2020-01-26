@@ -1,7 +1,8 @@
 default:
     image: alpine:latest
-    variables:
-        GIT_SUBMODULE_STRATEGY: recursive
+
+variables:
+    GIT_SUBMODULE_STRATEGY: recursive
 
 stages:
     - build
