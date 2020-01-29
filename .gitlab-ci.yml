@@ -29,3 +29,18 @@ unittest:
         - cmake -S src -B build
         - make -C build knocknock_unittest
         - ./build/knocknock_unittest
+
+pages:
+    stage: docs
+    before_script:
+        - apk update && apk upgrade
+        - apk add doxygen
+    script:
+        - doxygen
+        - mv public/html/* public/
+        - rmdir public/html
+    only:
+        - master
+    artifacts:
+        paths:
+            - public
