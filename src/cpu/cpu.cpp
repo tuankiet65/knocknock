@@ -8,19 +8,19 @@ namespace cpu {
 
 CPU::CPU(memory::Memory *memory)
     : mem_(memory),
-      a_("A"),
-      f_("F"),
-      b_("B"),
-      c_("C"),
-      d_("D"),
-      e_("E"),
-      h_("H"),
-      l_("L"),
+      a_(),
+      b_(),
+      c_(),
+      d_(),
+      e_(),
+      h_(),
+      l_(),
+      f_(),
+      sp_(),
       af_(&a_, &b_),
       bc_(&b_, &c_),
       de_(&d_, &e_),
       hl_(&h_, &l_),
-      sp_("SP") {
     DCHECK(mem_);
 
     // initialize all registers

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #include "memory/memory.h"
 
 namespace cpu {
@@ -13,7 +11,6 @@ public:
 
     virtual T read() const = 0;
     virtual void write(T value) = 0;
-    virtual std::string name() const = 0;
 
     virtual ~Operand() {}
 
@@ -27,20 +24,18 @@ using Operand16 = Operand<uint16_t>;
 
 class Register8 : public Operand8 {
 public:
-    Register8(std::string name);
+    Register8();
 
     uint8_t read() const override;
     void write(uint8_t value) override;
-    std::string name() const override;
 
 private:
-    std::string name_;
     uint8_t value_;
 };
 
 class FlagRegister : public Register8 {
 public:
-    FlagRegister(std::string name);
+    FlagRegister();
 
     enum class Flag { Zero, Subtract, HalfCarry, Carry };
 
@@ -51,27 +46,23 @@ public:
 
 class Register8Sign : public Operand<int8_t> {
 public:
-    Register8Sign(std::string name);
+    Register8Sign();
 
     int8_t read() const override;
     void write(int8_t value) override;
-    std::string name() const override;
 
 private:
-    std::string name_;
     int8_t value_;
 };
 
 class Register16 : public Operand16 {
 public:
-    Register16(std::string name);
+    Register16();
 
     uint16_t read() const override;
     void write(uint16_t value) override;
-    std::string name() const override;
 
 private:
-    std::string name_;
     uint16_t value_;
 };
 
@@ -81,7 +72,6 @@ public:
 
     uint16_t read() const override;
     void write(uint16_t value) override;
-    std::string name() const override;
 
 private:
     Register8 *msb_, *lsb_;
@@ -93,7 +83,6 @@ public:
 
     uint8_t read() const override;
     void write(uint8_t value) override;
-    std::string name() const override;
 
 private:
     const uint8_t value_;
@@ -105,7 +94,6 @@ public:
 
     uint16_t read() const override;
     void write(uint16_t value) override;
-    std::string name() const override;
 
 private:
     const uint16_t value_;
@@ -117,7 +105,6 @@ public:
 
     uint8_t read() const override;
     void write(uint8_t value) override;
-    std::string name() const override;
 
 protected:
     memory::Memory *mem_;
@@ -130,7 +117,6 @@ public:
 
     uint16_t read() const override;
     void write(uint16_t value) override;
-    std::string name() const override;
 
 protected:
     memory::Memory *mem_;
