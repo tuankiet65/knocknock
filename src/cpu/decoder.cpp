@@ -49,14 +49,14 @@ static const Instruction::Operand r[] = {
 };
 
 static const Instruction::Opcode rot[] = {
-    Instruction::Opcode::RLC,  // 0
-    Instruction::Opcode::RRC,  // 1
-    Instruction::Opcode::RL,   // 2
-    Instruction::Opcode::RR,   // 3
-    Instruction::Opcode::SLA,  // 4
-    Instruction::Opcode::SRA,  // 5
-    Instruction::Opcode::SLL,  // 6
-    Instruction::Opcode::SRL   // 7
+    Instruction::Opcode::RLC,   // 0
+    Instruction::Opcode::RRC,   // 1
+    Instruction::Opcode::RL,    // 2
+    Instruction::Opcode::RR,    // 3
+    Instruction::Opcode::SLA,   // 4
+    Instruction::Opcode::SRA,   // 5
+    Instruction::Opcode::SWAP,  // 6
+    Instruction::Opcode::SRL    // 7
 };
 
 }  // namespace
@@ -122,7 +122,7 @@ bool Decoder::decode_alu(uint8_t opcode) {
         return false;
     }
 
-    Instruction::Operand reg = r[Z(opcode)];
+    auto reg = r[Z(opcode)];
 
     switch (Y(opcode)) {
         case 0:  // ADD A, r
@@ -263,7 +263,7 @@ bool Decoder::decode_assorted(uint8_t opcode) {
         case 0xe5: INSTRUCTION(PUSH, HL); break;
         case 0xe6: INSTRUCTION(AND, Imm8); break;
         case 0xe8: INSTRUCTION(ADD, SP, Imm8Sign); break;
-        case 0xe9: INSTRUCTION(JP, PtrHL); break;
+        case 0xe9: INSTRUCTION(JP, HL); break;
         case 0xea: INSTRUCTION(LD, PtrImm16, A); break;
         case 0xee: INSTRUCTION(XOR, Imm8); break;
         case 0xf0: INSTRUCTION(LDH, A, PtrImm8); break;

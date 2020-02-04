@@ -17,7 +17,7 @@ std::string Instruction::disassemble_opcode() const {
         case Instruction::Opcode::RR: return "RR";
         case Instruction::Opcode::SLA: return "SLA";
         case Instruction::Opcode::SRA: return "SRA";
-        case Instruction::Opcode::SLL: return "SLL";
+        case Instruction::Opcode::SWAP: return "SWAP";
         case Instruction::Opcode::SRL: return "SRL";
         case Instruction::Opcode::BIT: return "BIT";
         case Instruction::Opcode::SET: return "SET";

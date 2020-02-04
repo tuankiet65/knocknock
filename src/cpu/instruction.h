@@ -27,7 +27,7 @@ public:
         RR,
         SLA,
         SRA,
-        SLL,
+        SWAP,
         SRL,
         BIT,
         RES,
