@@ -1,10 +1,27 @@
 # knocknock
 
-A WIP Game Boy emulator, written during my downtime at work. The name is choosen
-after the company I'm doing an intern at (exactly which company is left as an
-exercise for the reader)
+A WIP Game Boy emulator, written during my ~~downtime at work. The name is
+choosen after the company I'm doing an intern at (exactly which company is left
+as an exercise for the reader)~~ downtime in school, I've left that company for
+undergraduate studies.
 
-Current status: doesn't build.
+Current status:
+* Can load a cartridge from file and parse its header.
+* The decoder is able to decode instructions, however the CPU can't execute them
+  (yet)
+
+## Build
+You'll need:
+* CMake
+* A recent C++ compiler that supports C++17 (tested: GCC)
+* Doxygen for generating documents.
+
+## Roadmap
+* Implement all instructions
+* Implement all memory modules
+* Implement all peripherals: timers, interrupts
+* Integrate ImGui
+* Documents
 
 ## References
 * [Game Boy: Complete Technical Reference](https://gekkio.fi/files/gb-docs/gbctr.pdf) by Joonas Javanainen
