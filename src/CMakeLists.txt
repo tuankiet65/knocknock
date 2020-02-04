@@ -5,8 +5,9 @@ set (CMAKE_CXX_STANDARD 17)
 include_directories("${PROJECT_SOURCE_DIR}")
 
 set(SOURCE_FILES
-    # "cpu/cpu.cpp"
-    # "cpu/instructions.cpp"
+    "cpu/cpu.cpp"
+    "cpu/instruction.cpp"
+    "cpu/decoder.cpp"
     "memory/memory.cpp"
     "memory/test_memory.cpp"
     # "memory/mmu.cpp"

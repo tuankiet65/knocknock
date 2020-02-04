@@ -1,6 +1,9 @@
 #include "cpu/cpu.h"
 
+#include <fmt/format.h>
 #include <glog/logging.h>
+
+#include <iostream>
 
 #include "memory/memory.h"
 
@@ -21,6 +24,12 @@ CPU::CPU(memory::Memory *memory)
       bc_(&b_, &c_),
       de_(&d_, &e_),
       hl_(&h_, &l_),
+      imm8_(),
+      tmp8_(),
+      imm8sign_(),
+      imm16_(),
+      tmp16_(),
+      decoder_(mem_, &pc_) {
     DCHECK(mem_);
 
     // initialize all registers
@@ -63,6 +72,34 @@ CPU::CPU(memory::Memory *memory)
     mem_->write(0xff4a, 0x00);  //  WY
     mem_->write(0xff4b, 0x00);  //  WX
     mem_->write(0xffff, 0x00);  //  IE
+}
+
+bool CPU::step() {
+    // TODO remove this
+    if (pc_ < 0x100) {
+        return false;
+    }
+
+    decoder_.step();
+
+    if (!decoder_.decoded_instruction().has_value()) {
+        return true;
+    }
+
+    Instruction inst = decoder_.decoded_instruction().value();
+    if (inst.imm8().has_value()) {
+        imm8_.write(inst.imm8().value());
+    }
+    if (inst.imm8sign().has_value()) {
+        imm8sign_.write(inst.imm8sign().value());
+    }
+    if (inst.imm16().has_value()) {
+        imm16_.write(inst.imm16().value());
+    }
+
+    LOG(ERROR) << fmt::format("{:#05x} {}", pc_, inst.disassemble());
+
+    return true;
 }
 
 }  // namespace cpu
