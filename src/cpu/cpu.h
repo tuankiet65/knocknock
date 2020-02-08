@@ -1,6 +1,9 @@
 #pragma once
 
+#include <queue>
+
 #include "cpu/decoder.h"
+#include "cpu/micro_op.h"
 #include "cpu/operands.h"
 #include "memory/memory.h"
 
@@ -26,6 +29,20 @@ private:
     memory::MemoryAddr pc_;
 
     Decoder decoder_;
+
+    std::queue<MicroOp> uop_queue_;
+
+    bool skip_next_instruction_;
+
+    Register8 *operand8_to_register(MicroOp::Operand operand);
+    void execute_uop();
+
+    void nop();
+    void jp(MicroOp::Operand lhs);
+    void jr(MicroOp::Operand lhs);
+    void cskip(MicroOp::Operand lhs);
+    void ld(MicroOp::Operand lhs, MicroOp::Operand rhs);
+    void cp(MicroOp::Operand lhs);
 };
 
 }  // namespace cpu
