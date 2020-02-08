@@ -110,7 +110,11 @@ std::string Instruction::disassemble_operand(
 }  // namespace
 
 Instruction::Instruction(Opcode opcode, Operand lhs, Operand rhs)
-    : opcode_(opcode), lhs_(lhs), rhs_(rhs), imm8_(), imm8sign_(), imm16_() {}
+    : opcode_(opcode), lhs_(lhs), rhs_(rhs), imm8_(), imm8sign_(), imm16_() {
+    // If rhs is not None, then lhs is also not None. Thus it's invalid that
+    // rhs is not None but lhs is None.
+    DCHECK(!((lhs_ == Operand::None) && (rhs_ != Operand::None)));
+}
 
 Instruction::Instruction(Opcode opcode, Operand lhs, Operand rhs, uint8_t imm8)
     : opcode_(opcode),
