@@ -8,6 +8,8 @@ set(SOURCE_FILES
     "cpu/cpu.cpp"
     "cpu/instruction.cpp"
     "cpu/decoder.cpp"
+    "cpu/micro_op.cpp"
+    "cpu/micro_op_decoder.cpp"
     "memory/memory.cpp"
     "memory/test_memory.cpp"
     # "memory/mmu.cpp"
