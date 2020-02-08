@@ -5,13 +5,14 @@
 
 #include <iostream>
 
+#include "cpu/micro_op.h"
+#include "cpu/micro_op_decoder.h"
 #include "memory/memory.h"
 
 namespace cpu {
 
 CPU::CPU(memory::Memory *memory)
-    : mem_(memory),
-      a_(),
+    : a_(),
       b_(),
       c_(),
       d_(),
@@ -19,16 +20,17 @@ CPU::CPU(memory::Memory *memory)
       h_(),
       l_(),
       f_(),
-      sp_(),
       af_(&a_, &b_),
       bc_(&b_, &c_),
       de_(&d_, &e_),
       hl_(&h_, &l_),
+      sp_(),
       imm8_(),
       tmp8_(),
       imm8sign_(),
       imm16_(),
       tmp16_(),
+      mem_(memory),
       decoder_(mem_, &pc_) {
     DCHECK(mem_);
 
