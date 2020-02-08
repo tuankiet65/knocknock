@@ -146,6 +146,7 @@ void CPU::execute_uop() {
         case MicroOp::Opcode::CP: cp(uop.lhs()); break;
         case MicroOp::Opcode::CSKIP: cskip(uop.lhs()); break;
         case MicroOp::Opcode::JR: jr(uop.lhs()); break;
+        case MicroOp::Opcode::SWAP: swap(uop.lhs()); break;
         default:
             DCHECK(false) << "Unknown uop to execute: " << uop.disassemble();
             break;
@@ -211,6 +212,26 @@ void CPU::cp(MicroOp::Operand lhs) {
     } else {
         f_.clear(FlagRegister::Flag::Carry);
     }
+}
+
+void CPU::swap(MicroOp::Operand lhs) {
+    Register8 *reg = operand8_to_register(lhs);
+
+    uint8_t val = reg->read();
+    uint8_t new_val = (val >> 4u) |               // top nibble
+                      (val & 0b00001111u) << 4u;  // bottom nibble
+
+    if (new_val == 0) {
+        f_.set(FlagRegister::Flag::Zero);
+    } else {
+        f_.clear(FlagRegister::Flag::Zero);
+    }
+
+    f_.clear(FlagRegister::Flag::Subtract);
+    f_.clear(FlagRegister::Flag::HalfCarry);
+    f_.clear(FlagRegister::Flag::Carry);
+
+    reg->write(new_val);
 }
 
 }  // namespace cpu

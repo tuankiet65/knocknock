@@ -90,7 +90,21 @@ void cp(Instruction inst, std::queue<MicroOp> *uop_queue) {
     }
 
     uop_queue->push(MicroOp(MicroOp::Opcode::CP, lhs));
-    return;
+}
+
+void swap(Instruction inst, std::queue<MicroOp> *uop_queue) {
+    DCHECK(inst.rhs() == ARG::None);
+
+    MicroOp::Operand lhs;
+    if (inst.lhs() == ARG::PtrHL) {
+        uop_queue->push(MicroOp(MicroOp::Opcode::LD, MicroOp::Operand::Tmp8,
+                                MicroOp::Operand::PtrHL));
+        lhs = MicroOp::Operand::Tmp8;
+    } else {
+        lhs = convert_operand_8(inst.lhs());
+    }
+
+    uop_queue->push(MicroOp(MicroOp::Opcode::SWAP, lhs));
 }
 
 }  // namespace
@@ -102,6 +116,7 @@ void MicroOpDecoder::decode(Instruction inst, std::queue<MicroOp> *uop_queue) {
         case OP::JP: jp(inst, uop_queue); break;
         case OP::JR: jr(inst, uop_queue); break;
         case OP::CP: cp(inst, uop_queue); break;
+        case OP::SWAP: swap(inst, uop_queue); break;
         default:
             DCHECK(false) << "No rules to decode this instruction into uop: "
                           << inst.disassemble();

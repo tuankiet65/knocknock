@@ -43,6 +43,7 @@ private:
     void cskip(MicroOp::Operand lhs);
     void ld(MicroOp::Operand lhs, MicroOp::Operand rhs);
     void cp(MicroOp::Operand lhs);
+    void swap(MicroOp::Operand lhs);
 };
 
 }  // namespace cpu
