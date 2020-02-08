@@ -15,13 +15,14 @@ namespace cpu {
 
 namespace {
 
-
 std::string disassemble_opcode(MicroOp::Opcode opcode) {
     switch (opcode) {
         case MicroOp::Opcode::CP: return "CP";
         case MicroOp::Opcode::JP: return "JP";
         case MicroOp::Opcode::LD: return "LD";
         case MicroOp::Opcode::NOP: return "NOP";
+        case MicroOp::Opcode::CSKIP: return "CSKIP";
+        case MicroOp::Opcode::JR: return "JR";
     }
 
     DCHECK(false) << fmt::format("Unknown uop opcode: {}", opcode);
