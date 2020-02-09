@@ -111,6 +111,10 @@ void rlca(std::queue<MicroOp> *uop_queue) {
     uop_queue->push(MicroOp(MicroOp::Opcode::RLCA));
 }
 
+void rla(std::queue<MicroOp> *uop_queue) {
+    uop_queue->push(MicroOp(MicroOp::Opcode::RLA));
+}
+
 }  // namespace
 
 // static
@@ -122,6 +126,7 @@ void MicroOpDecoder::decode(Instruction inst, std::queue<MicroOp> *uop_queue) {
         case OP::CP: cp(inst, uop_queue); break;
         case OP::SWAP: swap(inst, uop_queue); break;
         case OP::RLCA: rlca(uop_queue); break;
+        case OP::RLA: rla(uop_queue); break;
         default:
             DCHECK(false) << "No rules to decode this instruction into uop: "
                           << inst.disassemble();

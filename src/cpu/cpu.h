@@ -45,6 +45,7 @@ private:
     void cp(MicroOp::Operand lhs);
     void swap(MicroOp::Operand lhs);
     void rlca();
+    void rla();
 };
 
 }  // namespace cpu

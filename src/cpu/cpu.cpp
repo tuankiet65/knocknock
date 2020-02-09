@@ -148,6 +148,7 @@ void CPU::execute_uop() {
         case MicroOp::Opcode::JR: jr(uop.lhs()); break;
         case MicroOp::Opcode::SWAP: swap(uop.lhs()); break;
         case MicroOp::Opcode::RLCA: rlca(); break;
+        case MicroOp::Opcode::RLA: rla(); break;
         default:
             DCHECK(false) << "Unknown uop to execute: " << uop.disassemble();
             break;
@@ -232,7 +233,18 @@ void CPU::rlca() {
     f_.zero = false;
     f_.subtract = false;
     f_.half_carry = false;
+}
 
+void CPU::rla() {
+    uint8_t val = a_.read();
+    uint8_t bit7 = val >> 7u;
+    val = (val << 1u) | (uint8_t)(f_.carry);
+    a_.write(val);
+    f_.carry = bit7;
+
+    f_.zero = false;
+    f_.subtract = false;
+    f_.half_carry = false;
 }
 
 }  // namespace cpu
