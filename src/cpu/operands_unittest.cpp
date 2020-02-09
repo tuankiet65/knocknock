@@ -1,7 +1,6 @@
 #include "cpu/operands.h"
 
 #include <catch2/catch.hpp>
-#include <random>
 
 #include "memory/test_memory.h"
 
@@ -15,41 +14,33 @@ TEST_CASE("Register8", "[cpu][operands]") {
 TEST_CASE("FlagRegister", "[cpu][operands]") {
     cpu::FlagRegister f;
 
-    // All off
-    f.write(0b00000000);
-    REQUIRE(f.read() == 0b00000000);
-    REQUIRE(!f.get(cpu::FlagRegister::Flag::Zero));
-    REQUIRE(!f.get(cpu::FlagRegister::Flag::Subtract));
-    REQUIRE(!f.get(cpu::FlagRegister::Flag::HalfCarry));
-    REQUIRE(!f.get(cpu::FlagRegister::Flag::Carry));
+    SECTION("Raw set, porcelain get") {
+        f.write(0b01010000);
+        REQUIRE(!f.zero);
+        REQUIRE(f.subtract);
+        REQUIRE(!f.half_carry);
+        REQUIRE(f.carry);
 
-    // All on
-    f.write(0b11110000);
-    REQUIRE(f.read() == 0b11110000);
-    REQUIRE(f.get(cpu::FlagRegister::Flag::Zero));
-    REQUIRE(f.get(cpu::FlagRegister::Flag::Subtract));
-    REQUIRE(f.get(cpu::FlagRegister::Flag::HalfCarry));
-    REQUIRE(f.get(cpu::FlagRegister::Flag::Carry));
+        f.write(0b10100000);
+        REQUIRE(f.zero);
+        REQUIRE(!f.subtract);
+        REQUIRE(f.half_carry);
+        REQUIRE(!f.carry);
+    }
 
-    // All off
-    f.clear(cpu::FlagRegister::Flag::Zero);
-    f.clear(cpu::FlagRegister::Flag::Subtract);
-    f.clear(cpu::FlagRegister::Flag::HalfCarry);
-    f.clear(cpu::FlagRegister::Flag::Carry);
-    REQUIRE(!f.get(cpu::FlagRegister::Flag::Zero));
-    REQUIRE(!f.get(cpu::FlagRegister::Flag::Subtract));
-    REQUIRE(!f.get(cpu::FlagRegister::Flag::HalfCarry));
-    REQUIRE(!f.get(cpu::FlagRegister::Flag::Carry));
+    SECTION("Porcelain set, raw get") {
+        f.zero = true;
+        f.subtract = f.zero;
+        f.half_carry = f.subtract;
+        f.carry = f.half_carry;
+        REQUIRE(f.read() == 0b11110000);
 
-    // All on
-    f.set(cpu::FlagRegister::Flag::Zero);
-    f.set(cpu::FlagRegister::Flag::Subtract);
-    f.set(cpu::FlagRegister::Flag::HalfCarry);
-    f.set(cpu::FlagRegister::Flag::Carry);
-    REQUIRE(f.get(cpu::FlagRegister::Flag::Zero));
-    REQUIRE(f.get(cpu::FlagRegister::Flag::Subtract));
-    REQUIRE(f.get(cpu::FlagRegister::Flag::HalfCarry));
-    REQUIRE(f.get(cpu::FlagRegister::Flag::Carry));
+        f.zero = false;
+        f.subtract = f.zero;
+        f.half_carry = f.subtract;
+        f.carry = f.half_carry;
+        REQUIRE(f.read() == 0b00000000);
+    }
 }
 
 TEST_CASE("Register16", "[cpu][operands]") {

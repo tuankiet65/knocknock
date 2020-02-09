@@ -171,16 +171,16 @@ void CPU::jr(MicroOp::Operand lhs) {
 void CPU::cskip(MicroOp::Operand lhs) {
     switch (lhs) {
         case MicroOp::Operand::FlagC:
-            skip_next_instruction_ = f_.get(FlagRegister::Flag::Carry);
+            skip_next_instruction_ = f_.carry;
             break;
         case MicroOp::Operand::FlagNC:
-            skip_next_instruction_ = !f_.get(FlagRegister::Flag::Carry);
+            skip_next_instruction_ = !f_.carry;
             break;
         case MicroOp::Operand::FlagZ:
-            skip_next_instruction_ = f_.get(FlagRegister::Flag::Zero);
+            skip_next_instruction_ = f_.zero;
             break;
         case MicroOp::Operand::FlagNZ:
-            skip_next_instruction_ = !f_.get(FlagRegister::Flag::Zero);
+            skip_next_instruction_ = !f_.zero;
             break;
         default: DCHECK(false); break;
     }
@@ -199,19 +199,10 @@ void CPU::cp(MicroOp::Operand lhs) {
 
     Register8 *reg = operand8_to_register(lhs);
 
-    f_.set(FlagRegister::Flag::Subtract);
-
-    if (a_.read() == reg->read()) {
-        f_.set(FlagRegister::Flag::Zero);
-    } else {
-        f_.clear(FlagRegister::Flag::Zero);
-    }
-
-    if (a_.read() < reg->read()) {
-        f_.set(FlagRegister::Flag::Carry);
-    } else {
-        f_.clear(FlagRegister::Flag::Carry);
-    }
+    f_.subtract = true;
+    f_.zero = (a_.read() == reg->read());  // set if A == reg
+    // TODO: Half-carry
+    f_.carry = (a_.read() < reg->read());  // set if A < reg
 }
 
 void CPU::swap(MicroOp::Operand lhs) {
@@ -221,17 +212,12 @@ void CPU::swap(MicroOp::Operand lhs) {
     uint8_t new_val = (val >> 4u) |               // top nibble
                       (val & 0b00001111u) << 4u;  // bottom nibble
 
-    if (new_val == 0) {
-        f_.set(FlagRegister::Flag::Zero);
-    } else {
-        f_.clear(FlagRegister::Flag::Zero);
-    }
-
-    f_.clear(FlagRegister::Flag::Subtract);
-    f_.clear(FlagRegister::Flag::HalfCarry);
-    f_.clear(FlagRegister::Flag::Carry);
-
     reg->write(new_val);
+
+    f_.zero = (new_val == 0);
+    f_.subtract = false;
+    f_.half_carry = false;
+    f_.carry = false;
 }
 
 }  // namespace cpu

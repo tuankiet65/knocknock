@@ -34,14 +34,23 @@ private:
 };
 
 class FlagRegister : public Register8 {
+private:
+    class Flag {
+    public:
+        Flag(FlagRegister *reg, uint8_t mask);
+        operator bool() const;
+        Flag &operator=(Flag value);
+        Flag &operator=(bool value);
+
+    private:
+        FlagRegister *reg_;
+        uint8_t mask_;
+    };
+
 public:
     FlagRegister();
 
-    enum class Flag { Zero, Subtract, HalfCarry, Carry };
-
-    void set(Flag flag);
-    void clear(Flag flag);
-    bool get(Flag flag) const;
+    Flag zero, subtract, half_carry, carry;
 };
 
 class Register8Sign : public Operand<int8_t> {

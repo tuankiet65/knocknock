@@ -1,18 +1,8 @@
 #include "cpu/operands.h"
 
-#include <fmt/format.h>
 #include <glog/logging.h>
 
 namespace cpu {
-
-namespace {
-
-const uint8_t ZERO_MASK = 0b10000000;
-const uint8_t SUBTRACT_MASK = 0b01000000;
-const uint8_t HALF_CARRY_MASK = 0b00100000;
-const uint8_t CARRY_MASK = 0b00010000;
-
-}  // namespace
 
 Register8::Register8() {}
 uint8_t Register8::read() const {
@@ -22,48 +12,37 @@ void Register8::write(uint8_t value) {
     value_ = value;
 }
 
-FlagRegister::FlagRegister() : Register8::Register8() {}
-void FlagRegister::set(FlagRegister::Flag flag) {
-    uint8_t value = this->read();
+FlagRegister::Flag::Flag(FlagRegister *reg, uint8_t mask)
+    : reg_(reg), mask_(mask) {}
 
-    switch (flag) {
-        case FlagRegister::Flag::Zero: value |= ZERO_MASK; break;
-        case FlagRegister::Flag::Subtract: value |= SUBTRACT_MASK; break;
-        case FlagRegister::Flag::HalfCarry: value |= HALF_CARRY_MASK; break;
-        case FlagRegister::Flag::Carry: value |= CARRY_MASK; break;
-        default: DCHECK(false) << "Unknown flag enum"; break;
-    }
-
-    this->write(value);
+FlagRegister::Flag::operator bool() const {
+    return (reg_->read() & mask_);
 }
 
-void FlagRegister::clear(FlagRegister::Flag flag) {
-    uint8_t value = this->read();
-
-    switch (flag) {
-        case FlagRegister::Flag::Zero: value &= ~ZERO_MASK; break;
-        case FlagRegister::Flag::Subtract: value &= ~SUBTRACT_MASK; break;
-        case FlagRegister::Flag::HalfCarry: value &= ~HALF_CARRY_MASK; break;
-        case FlagRegister::Flag::Carry: value &= ~CARRY_MASK; break;
-        default: DCHECK(false) << "Unknown flag enum"; break;
-    }
-
-    this->write(value);
+FlagRegister::Flag &FlagRegister::Flag::operator=(FlagRegister::Flag value) {
+    *this = (bool)(value);
+    return *this;
 }
 
-bool FlagRegister::get(FlagRegister::Flag flag) const {
-    uint8_t value = read();
-
-    switch (flag) {
-        case FlagRegister::Flag::Zero: return value & ZERO_MASK;
-        case FlagRegister::Flag::Subtract: return value & SUBTRACT_MASK;
-        case FlagRegister::Flag::HalfCarry: return value & HALF_CARRY_MASK;
-        case FlagRegister::Flag::Carry: return value & CARRY_MASK;
+FlagRegister::Flag &FlagRegister::Flag::operator=(bool value) {
+    uint8_t current_value = reg_->read();
+    if (value) {
+        // Turn on the bit.
+        current_value |= mask_;
+    } else {
+        // Turn off the bit.
+        current_value &= (~(mask_));
     }
-
-    DCHECK(false) << "Unknown flag enum";
-    return false;
+    reg_->write(current_value);
+    return *this;
 }
+
+FlagRegister::FlagRegister()
+    : Register8::Register8(),
+      zero(this, 1u << 7),
+      subtract(this, 1u << 6),
+      half_carry(this, 1u << 5),
+      carry(this, 1u << 4) {}
 
 Register8Sign::Register8Sign() {}
 int8_t Register8Sign::read() const {
