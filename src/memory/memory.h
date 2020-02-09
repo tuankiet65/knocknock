@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glog/logging.h>
+
 #include <cstdint>
 #include <stdexcept>
 
@@ -32,20 +34,20 @@ public:
 
 class MemoryAddrProxy {
 public:
-    MemoryAddrProxy(Memory &memory, MemoryAddr addr)
+    MemoryAddrProxy(Memory *memory, MemoryAddr addr)
         : memory_(memory), addr_(addr) {
-        // DCHECK(memory)
+        DCHECK(memory);
     }
 
-    operator MemoryValue() const { return memory_.read(addr_); }
+    operator MemoryValue() const { return memory_->read(addr_); }
 
     MemoryAddrProxy &operator=(MemoryValue value) {
-        memory_.write(addr_, value);
+        memory_->write(addr_, value);
         return *this;
     }
 
 private:
-    Memory &memory_;
+    Memory *memory_;
     const MemoryAddr addr_;
 };
 

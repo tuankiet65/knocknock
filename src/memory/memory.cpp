@@ -3,7 +3,7 @@
 namespace memory {
 
 MemoryAddrProxy Memory::operator[](MemoryAddr addr) {
-    return MemoryAddrProxy(*this, addr);
+    return MemoryAddrProxy(this, addr);
 }
 
 uint16_t Memory::read16(MemoryAddr addr) const {
