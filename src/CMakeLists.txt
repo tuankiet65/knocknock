@@ -35,7 +35,8 @@ target_link_libraries(knocknock fmt::fmt)
 
 set(UNITTEST_FILES
     "${SOURCE_FILES}"
-    "cpu/operands_unittest.cpp")
+    "cpu/operands_unittest.cpp"
+    memory/memory_unittest.cpp)
 add_executable(knocknock_unittest "${UNITTEST_FILES}" "knocknock_unittest.cpp")
 option(USE_SYSTEM_CATCH2 "If enabled, use system supplied Catch2 instead of the included version in third_party/" OFF)
 if (USE_SYSTEM_CATCH2)
