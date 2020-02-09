@@ -31,7 +31,8 @@ CPU::CPU(memory::Memory *memory)
       imm16_(),
       tmp16_(),
       mem_(memory),
-      decoder_(mem_, &pc_) {
+      decoder_(mem_, &pc_),
+      interrupt_enabled_(false) {
     DCHECK(mem_);
 
     // initialize all registers
@@ -149,6 +150,7 @@ void CPU::execute_uop() {
         case MicroOp::Opcode::SWAP: swap(uop.lhs()); break;
         case MicroOp::Opcode::RLCA: rlca(); break;
         case MicroOp::Opcode::RLA: rla(); break;
+        case MicroOp::Opcode::DI: di(); break;
         default:
             DCHECK(false) << "Unknown uop to execute: " << uop.disassemble();
             break;
@@ -245,6 +247,11 @@ void CPU::rla() {
     f_.zero = false;
     f_.subtract = false;
     f_.half_carry = false;
+}
+
+void CPU::di() {
+    // TODO: Interrupt is disable after the instruction AFTER DI is executed.
+    interrupt_enabled_ = false;
 }
 
 }  // namespace cpu

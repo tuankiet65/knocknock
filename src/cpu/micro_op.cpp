@@ -26,6 +26,7 @@ std::string disassemble_opcode(MicroOp::Opcode opcode) {
         case MicroOp::Opcode::SWAP: return "SWAP";
         case MicroOp::Opcode::RLCA: return "RLCA";
         case MicroOp::Opcode::RLA: return "RLA";
+        case MicroOp::Opcode::DI: return "DI";
     }
 
     DCHECK(false) << fmt::format("Unknown uop opcode: {}", opcode);

@@ -37,6 +37,8 @@ private:
     Register8 *operand8_to_register(MicroOp::Operand operand);
     void execute_uop();
 
+    bool interrupt_enabled_;
+
     void nop();
     void jp(MicroOp::Operand lhs);
     void jr(MicroOp::Operand lhs);
@@ -46,6 +48,7 @@ private:
     void swap(MicroOp::Operand lhs);
     void rlca();
     void rla();
+    void di();
 };
 
 }  // namespace cpu
