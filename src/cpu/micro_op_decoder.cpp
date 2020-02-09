@@ -38,7 +38,7 @@ MicroOp::Operand convert_operand_flag(ARG operand) {
     }
 }
 
-void nop(Instruction inst, std::queue<MicroOp> *uop_queue) {
+void nop(std::queue<MicroOp> *uop_queue) {
     uop_queue->push(MicroOp(MicroOp::Opcode::NOP));
 }
 
@@ -112,7 +112,7 @@ void swap(Instruction inst, std::queue<MicroOp> *uop_queue) {
 // static
 void MicroOpDecoder::decode(Instruction inst, std::queue<MicroOp> *uop_queue) {
     switch (inst.opcode()) {
-        case OP::NOP: nop(inst, uop_queue); break;
+        case OP::NOP: nop(uop_queue); break;
         case OP::JP: jp(inst, uop_queue); break;
         case OP::JR: jr(inst, uop_queue); break;
         case OP::CP: cp(inst, uop_queue); break;
