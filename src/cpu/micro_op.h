@@ -9,7 +9,7 @@ namespace cpu {
 
 class MicroOp {
 public:
-    enum class Opcode { NOP, JP, CP, LD, CSKIP, JR, SWAP };
+    enum class Opcode { NOP, JP, CP, LD, CSKIP, JR, SWAP, RLCA};
     enum class Operand {
         None,
         Imm16,

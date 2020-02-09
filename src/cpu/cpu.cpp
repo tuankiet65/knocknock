@@ -147,6 +147,7 @@ void CPU::execute_uop() {
         case MicroOp::Opcode::CSKIP: cskip(uop.lhs()); break;
         case MicroOp::Opcode::JR: jr(uop.lhs()); break;
         case MicroOp::Opcode::SWAP: swap(uop.lhs()); break;
+        case MicroOp::Opcode::RLCA: rlca(); break;
         default:
             DCHECK(false) << "Unknown uop to execute: " << uop.disassemble();
             break;
@@ -218,6 +219,20 @@ void CPU::swap(MicroOp::Operand lhs) {
     f_.subtract = false;
     f_.half_carry = false;
     f_.carry = false;
+}
+
+void CPU::rlca() {
+    // Carry contains the 7th bit
+    f_.carry = (a_.read() >> 7u);
+
+    uint8_t new_val = a_.read();
+    new_val = (new_val << 1u) | (new_val >> 7u);
+    a_.write(new_val);
+
+    f_.zero = false;
+    f_.subtract = false;
+    f_.half_carry = false;
+
 }
 
 }  // namespace cpu
