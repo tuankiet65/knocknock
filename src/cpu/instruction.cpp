@@ -38,6 +38,8 @@ std::string Instruction::disassemble_opcode() const {
         case Instruction::Opcode::JP: return "JP";
         case Instruction::Opcode::JR: return "JR";
         case Instruction::Opcode::LD: return "LD";
+        case Instruction::Opcode::LDI: return "LDI";
+        case Instruction::Opcode::LDD: return "LDD";
         case Instruction::Opcode::LDHL: return "LDHL";
         case Instruction::Opcode::LDH: return "LDH";
         case Instruction::Opcode::NOP: return "NOP";
@@ -73,8 +75,6 @@ std::string Instruction::disassemble_operand(
         case Instruction::Operand::PtrC: return "(C)";
         case Instruction::Operand::PtrDE: return "(DE)";
         case Instruction::Operand::PtrHL: return "(HL)";
-        case Instruction::Operand::PtrHLPlus: return "(HL+)";
-        case Instruction::Operand::PtrHLMinus: return "(HL-)";
         case Instruction::Operand::A: return "A";
         case Instruction::Operand::AF: return "AF";
         case Instruction::Operand::B: return "B";

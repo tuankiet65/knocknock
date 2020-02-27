@@ -48,6 +48,8 @@ public:
         JP,
         JR,
         LD,
+        LDI,
+        LDD,
         LDH,
         LDHL,
         OR,
@@ -91,8 +93,6 @@ public:
         PtrDE, /**< (DE) */
         HL,
         PtrHL,      /**< (HL) */
-        PtrHLPlus,  /**< (HL+) */
-        PtrHLMinus, /**< (HL-) */
         SP,
 
         // Individual flag in the flag register

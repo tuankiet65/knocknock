@@ -203,7 +203,7 @@ bool Decoder::decode_assorted(uint8_t opcode) {
         case 0x1f: INSTRUCTION(RRA); break;
         case 0x20: INSTRUCTION(JR, FlagNZ, Imm8Sign); break;
         case 0x21: INSTRUCTION(LD, HL, Imm16); break;
-        case 0x22: INSTRUCTION(LD, PtrHLPlus, A); break;
+        case 0x22: INSTRUCTION(LDI, PtrHL, A); break;
         case 0x23: INSTRUCTION(INC, HL); break;
         case 0x24: INSTRUCTION(INC, H); break;
         case 0x25: INSTRUCTION(DEC, H); break;
@@ -211,7 +211,7 @@ bool Decoder::decode_assorted(uint8_t opcode) {
         case 0x27: INSTRUCTION(DAA); break;
         case 0x28: INSTRUCTION(JR, FlagZ, Imm8Sign); break;
         case 0x29: INSTRUCTION(ADD, HL, HL); break;
-        case 0x2a: INSTRUCTION(LD, A, PtrHLPlus); break;
+        case 0x2a: INSTRUCTION(LDI, A, PtrHL); break;
         case 0x2b: INSTRUCTION(DEC, HL); break;
         case 0x2c: INSTRUCTION(INC, L); break;
         case 0x2d: INSTRUCTION(DEC, L); break;
@@ -219,7 +219,7 @@ bool Decoder::decode_assorted(uint8_t opcode) {
         case 0x2f: INSTRUCTION(CPL); break;
         case 0x30: INSTRUCTION(JR, FlagNC, Imm8Sign); break;
         case 0x31: INSTRUCTION(LD, SP, Imm16); break;
-        case 0x32: INSTRUCTION(LD, PtrHLMinus, A); break;
+        case 0x32: INSTRUCTION(LDD, PtrHL, A); break;
         case 0x33: INSTRUCTION(INC, SP); break;
         case 0x34: INSTRUCTION(INC, PtrHL); break;
         case 0x35: INSTRUCTION(DEC, PtrHL); break;
@@ -227,7 +227,7 @@ bool Decoder::decode_assorted(uint8_t opcode) {
         case 0x37: INSTRUCTION(SCF); break;
         case 0x38: INSTRUCTION(JR, FlagC, Imm8Sign); break;
         case 0x39: INSTRUCTION(ADD, HL, SP); break;
-        case 0x3a: INSTRUCTION(LD, A, PtrHLMinus); break;
+        case 0x3a: INSTRUCTION(LDD, A, PtrHL); break;
         case 0x3b: INSTRUCTION(DEC, SP); break;
         case 0x3c: INSTRUCTION(INC, A); break;
         case 0x3d: INSTRUCTION(DEC, A); break;
