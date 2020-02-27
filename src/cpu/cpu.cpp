@@ -5,11 +5,12 @@
 
 #include <iostream>
 
-#include "cpu/micro_op.h"
-#include "cpu/micro_op_decoder.h"
 #include "memory/memory.h"
 
 namespace cpu {
+
+using Opcode = Instruction::Opcode;
+using Operand = Instruction::Operand;
 
 CPU::CPU(memory::Memory *memory)
     : a_(),
@@ -26,13 +27,15 @@ CPU::CPU(memory::Memory *memory)
       hl_(&h_, &l_),
       sp_(),
       imm8_(),
-      tmp8_(),
       imm8sign_(),
       imm16_(),
-      tmp16_(),
       mem_(memory),
       decoder_(mem_, &pc_),
-      interrupt_enabled_(false) {
+      interrupt_enabled_(false),
+      ptr_bc_(mem_, bc_),
+      ptr_de_(mem_, de_),
+      ptr_hl_(mem_, hl_),
+      ptr_imm16_(mem_, imm16_) {
     DCHECK(mem_);
 
     // initialize all registers
@@ -77,34 +80,42 @@ CPU::CPU(memory::Memory *memory)
     mem_->write(0xffff, 0x00);  //  IE
 }
 
-Register8 *CPU::operand8_to_register(MicroOp::Operand operand) {
+std::optional<Operand8 *> CPU::get_operand8(Operand operand) {
     switch (operand) {
-        case MicroOp::Operand::A: return &a_;
-        case MicroOp::Operand::B: return &b_;
-        case MicroOp::Operand::C: return &c_;
-        case MicroOp::Operand::D: return &d_;
-        case MicroOp::Operand::E: return &e_;
-        case MicroOp::Operand::H: return &h_;
-        case MicroOp::Operand::L: return &l_;
-        case MicroOp::Operand::Tmp8: return &tmp8_;
-        case MicroOp::Operand::Imm8: return &imm8_;
-        default:
-            CHECK(false) << fmt::format("Wrong operand to request: {}",
-                                        operand);
-            // Will never reach, but GCC will complains if I miss this.
-            return &a_;
+        case Operand::A: return &a_;
+        case Operand::B: return &b_;
+        case Operand::C: return &c_;
+        case Operand::D: return &d_;
+        case Operand::E: return &e_;
+        case Operand::H: return &h_;
+        case Operand::L: return &l_;
+        case Operand::Imm8: return &imm8_;
+        case Operand::PtrBC: return &ptr_bc_;
+        case Operand::PtrDE: return &ptr_de_;
+        case Operand::PtrHL: return &ptr_hl_;
+        case Operand::PtrImm16: return &ptr_imm16_;
     }
+
+    return {};
+}
+
+std::optional<Operand16 *> CPU::get_operand16(Operand operand) {
+    switch (operand) {
+        case Operand::AF: return &af_;
+        case Operand::BC: return &bc_;
+        case Operand::DE: return &de_;
+        case Operand::HL: return &hl_;
+        case Operand::SP: return &sp_;
+        case Operand::Imm16: return &imm16_;
+    }
+
+    return {};
 }
 
 bool CPU::step() {
     // TODO remove this
     if (pc_ < 0x100) {
         return false;
-    }
-
-    if (!uop_queue_.empty()) {
-        execute_uop();
-        return true;
     }
 
     decoder_.step();
@@ -126,97 +137,115 @@ bool CPU::step() {
 
     LOG(ERROR) << fmt::format("{:#05x} {}", pc_, inst.disassemble());
 
-    if (skip_next_instruction_) {
-        skip_next_instruction_ = false;
-        LOG(ERROR) << "Skipping this instruction";
-    } else {
-        MicroOpDecoder::decode(inst, &uop_queue_);
-    }
+    execute_instruction(inst);
 
     return true;
 }
 
-void CPU::execute_uop() {
-    MicroOp uop = uop_queue_.front();
-    uop_queue_.pop();
-
-    switch (uop.opcode()) {
-        case MicroOp::Opcode::NOP: nop(); break;
-        case MicroOp::Opcode::JP: jp(uop.lhs()); break;
-        case MicroOp::Opcode::LD: ld(uop.lhs(), uop.rhs()); break;
-        case MicroOp::Opcode::CP: cp(uop.lhs()); break;
-        case MicroOp::Opcode::CSKIP: cskip(uop.lhs()); break;
-        case MicroOp::Opcode::JR: jr(uop.lhs()); break;
-        case MicroOp::Opcode::SWAP: swap(uop.lhs()); break;
-        case MicroOp::Opcode::RLCA: rlca(); break;
-        case MicroOp::Opcode::RLA: rla(); break;
-        case MicroOp::Opcode::DI: di(); break;
+void CPU::execute_instruction(Instruction inst) {
+    switch (inst.opcode()) {
+        case Opcode::NOP: nop(); break;
+        case Opcode::JP: jp(inst.lhs(), inst.rhs()); break;
+        case Opcode::LD: ld(inst.lhs(), inst.rhs()); break;
+        case Opcode::CP: cp(inst.lhs()); break;
+        case Opcode::JR: jr(inst.lhs(), inst.rhs()); break;
+        case Opcode::SWAP: swap(inst.lhs()); break;
+        case Opcode::RLCA: rlca(); break;
+        case Opcode::RLA: rla(); break;
+        case Opcode::DI: di(); break;
         default:
-            DCHECK(false) << "Unknown uop to execute: " << uop.disassemble();
+            DCHECK(false) << "Instruction not recognized" << inst.disassemble();
             break;
     }
 }
 
 void CPU::nop() {}
 
-void CPU::jp(MicroOp::Operand lhs) {
+// Status: NOT cycle accurate
+void CPU::jp(Operand lhs, Operand rhs) {
+    // One operand
     switch (lhs) {
-        case MicroOp::Operand::Imm16: pc_ = imm16_.read(); break;
-        case MicroOp::Operand::HL: pc_ = hl_.read(); break;
-        default: DCHECK(false); break;
+        case Operand::Imm16: pc_ = imm16_.read(); return;
+        case Operand::HL: pc_ = hl_.read(); return;
     }
-}
 
-void CPU::jr(MicroOp::Operand lhs) {
-    DCHECK(lhs == MicroOp::Operand::Imm8Sign);
-    pc_ += imm8sign_.read();
-}
-
-void CPU::cskip(MicroOp::Operand lhs) {
+    // Two operands
+    bool should_jump = false;
     switch (lhs) {
-        case MicroOp::Operand::FlagC:
-            skip_next_instruction_ = f_.carry;
-            break;
-        case MicroOp::Operand::FlagNC:
-            skip_next_instruction_ = !f_.carry;
-            break;
-        case MicroOp::Operand::FlagZ:
-            skip_next_instruction_ = f_.zero;
-            break;
-        case MicroOp::Operand::FlagNZ:
-            skip_next_instruction_ = !f_.zero;
-            break;
-        default: DCHECK(false); break;
+        case Operand::FlagC: should_jump = f_.carry; break;
+        case Operand::FlagNC: should_jump = !f_.carry; break;
+        case Operand::FlagZ: should_jump = f_.zero; break;
+        case Operand::FlagNZ: should_jump = !f_.zero; break;
+    }
+
+    if (should_jump) {
+        DCHECK(rhs != Operand::Imm16);
+        pc_ = imm16_.read();
     }
 }
 
-void CPU::ld(MicroOp::Operand lhs, MicroOp::Operand rhs) {
-    if (lhs == MicroOp::Operand::Tmp8 && rhs == MicroOp::Operand::PtrHL) {
-        tmp8_.write(mem_->read(hl_.read()));
+// Status: NOT cycle accurate
+void CPU::jr(Operand lhs, Operand rhs) {
+    // One operand
+    if (lhs == Operand::Imm8Sign) {
+        pc_ += imm8sign_.read();
+        return;
     }
 
-    DCHECK(false) << "Unknown ld to execute";
+    // Two operands
+    bool should_jump = false;
+    switch (lhs) {
+        case Operand::FlagC: should_jump = f_.carry; break;
+        case Operand::FlagNC: should_jump = !f_.carry; break;
+        case Operand::FlagZ: should_jump = f_.zero; break;
+        case Operand::FlagNZ: should_jump = !f_.zero; break;
+    }
+
+    if (should_jump) {
+        DCHECK(rhs != Operand::Imm8Sign);
+        pc_ += imm8sign_.read();
+    }
 }
 
-void CPU::cp(MicroOp::Operand lhs) {
+void CPU::ld(Operand lhs, Operand rhs) {
+    // lhs and rhs are Operand8s
+    auto l8 = get_operand8(lhs), r8 = get_operand8(rhs);
+    if (l8 && r8) {
+        (*l8)->write((*r8)->read());
+        return;
+    }
+
+    // lhs and rhs are Operand16s
+    auto l16 = get_operand16(lhs), r16 = get_operand16(rhs);
+    if (l16 && r16) {
+        (*l16)->write((*r16)->read());
+        return;
+    }
+
+    DCHECK(false);
+}
+
+void CPU::cp(Operand lhs) {
     LOG(ERROR) << "Half carry flag not implemented!";
 
-    Register8 *reg = operand8_to_register(lhs);
+    std::optional<Operand8 *> reg = get_operand8(lhs);
+    DCHECK(!reg.has_value());
 
     f_.subtract = true;
-    f_.zero = (a_.read() == reg->read());  // set if A == reg
+    f_.zero = (a_.read() == (*reg)->read());  // set if A == reg
     // TODO: Half-carry
-    f_.carry = (a_.read() < reg->read());  // set if A < reg
+    f_.carry = (a_.read() < (*reg)->read());  // set if A < reg
 }
 
-void CPU::swap(MicroOp::Operand lhs) {
-    Register8 *reg = operand8_to_register(lhs);
+void CPU::swap(Operand lhs) {
+    std::optional<Operand8 *> reg = get_operand8(lhs);
+    DCHECK(!reg.has_value());
 
-    uint8_t val = reg->read();
+    uint8_t val = (*reg)->read();
     uint8_t new_val = (val >> 4u) |               // top nibble
                       (val & 0b00001111u) << 4u;  // bottom nibble
 
-    reg->write(new_val);
+    (*reg)->write(new_val);
 
     f_.zero = (new_val == 0);
     f_.subtract = false;
@@ -250,7 +279,7 @@ void CPU::rla() {
 }
 
 void CPU::di() {
-    // TODO: Interrupt is disable after the instruction AFTER DI is executed.
+    // TODO: Interrupt is disabled after the instruction AFTER DI is executed.
     interrupt_enabled_ = false;
 }
 
