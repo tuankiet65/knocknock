@@ -5,22 +5,23 @@
 namespace cpu {
 
 template <class T>
-class Operand {
+class OperandT {
 public:
-    Operand() {}
+    OperandT() {}
 
     virtual T read() const = 0;
     virtual void write(T value) = 0;
 
-    virtual ~Operand() {}
+    virtual ~OperandT() {}
 
     // Disable copy and move constructor
-    Operand(const Operand &) = delete;
-    Operand &operator=(const Operand &) = delete;
+    OperandT(const OperandT &) = delete;
+    OperandT &operator=(const OperandT &) = delete;
 };
 
-using Operand8 = Operand<uint8_t>;
-using Operand16 = Operand<uint16_t>;
+using Operand8 = OperandT<uint8_t>;
+using Operand8Sign = OperandT<int8_t>;
+using Operand16 = OperandT<uint16_t>;
 
 class Register8 : public Operand8 {
 public:
@@ -53,7 +54,7 @@ public:
     Flag zero, subtract, half_carry, carry;
 };
 
-class Register8Sign : public Operand<int8_t> {
+class Register8Sign : public Operand8Sign {
 public:
     Register8Sign();
 
