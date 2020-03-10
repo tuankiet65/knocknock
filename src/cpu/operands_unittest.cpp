@@ -30,15 +30,15 @@ TEST_CASE("FlagRegister", "[cpu][operands]") {
 
     SECTION("Porcelain set, raw get") {
         f.zero = true;
-        f.subtract = f.zero;
-        f.half_carry = f.subtract;
-        f.carry = f.half_carry;
+        f.subtract = true;
+        f.half_carry = true;
+        f.carry = true;
         REQUIRE(f.read() == 0b11110000);
 
         f.zero = false;
-        f.subtract = f.zero;
-        f.half_carry = f.subtract;
-        f.carry = f.half_carry;
+        f.subtract = false;
+        f.half_carry = false;
+        f.carry = false;
         REQUIRE(f.read() == 0b00000000);
     }
 }
@@ -90,7 +90,6 @@ TEST_CASE("Memory8", "[cpu][operands]") {
         REQUIRE(addr.read() == 1234);
 
         cpu::Memory8 mem8(&mem, addr);
-
         REQUIRE(mem8.read() == 0x69);
     }
 
@@ -139,22 +138,18 @@ TEST_CASE("Memory16", "[cpu][operands]") {
 
     SECTION("Memory16 + Immediate16") {
         cpu::Immediate16 addr(1234);
-
         REQUIRE(addr.read() == 1234);
 
         cpu::Memory16 mem16(&mem, addr);
-
         REQUIRE(mem16.read() == 0x6942);
     }
 
     SECTION("Memory16 + Register16") {
         cpu::Register16 addr;
         addr.write(1234);
-
         REQUIRE(addr.read() == 1234);
 
         cpu::Memory16 mem16(&mem, addr);
-
         REQUIRE(mem16.read() == 0x6942);
     }
 }
