@@ -6,7 +6,7 @@
 
 namespace cpu {
 
-Register8::Register8() {}
+Register8::Register8() : value_(0) {}
 uint8_t Register8::read() const {
     return value_;
 }
@@ -46,7 +46,7 @@ FlagRegister::FlagRegister()
       half_carry(this, 1u << 5),
       carry(this, 1u << 4) {}
 
-Register8Sign::Register8Sign() {}
+Register8Sign::Register8Sign() : value_(0) {}
 int8_t Register8Sign::read() const {
     return value_;
 }
@@ -54,7 +54,7 @@ void Register8Sign::write(int8_t value) {
     value_ = value;
 }
 
-Register16::Register16() {}
+Register16::Register16() : value_(0) {}
 uint16_t Register16::read() const {
     return value_;
 }
