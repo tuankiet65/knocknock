@@ -41,10 +41,10 @@ FlagRegister::Flag &FlagRegister::Flag::operator=(bool value) {
 
 FlagRegister::FlagRegister()
     : Register8::Register8(),
-      zero(this, 1u << 7),
-      subtract(this, 1u << 6),
-      half_carry(this, 1u << 5),
-      carry(this, 1u << 4) {}
+      zero(this, 1u << 7u),
+      subtract(this, 1u << 6u),
+      half_carry(this, 1u << 5u),
+      carry(this, 1u << 4u) {}
 
 Register8Sign::Register8Sign() : value_(0) {}
 int8_t Register8Sign::read() const {
@@ -72,8 +72,8 @@ uint16_t Register16Mirror::read() const {
     return result;
 }
 void Register16Mirror::write(uint16_t value) {
-    msb_->write(value >> 8);
-    lsb_->write(value & 0b0000000011111111);
+    msb_->write(value >> 8u);
+    lsb_->write(value & 0x00FFu);
 }
 
 Immediate8::Immediate8(uint8_t value) : value_(value) {}
