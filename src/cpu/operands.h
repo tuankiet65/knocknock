@@ -15,8 +15,8 @@ public:
     virtual ~OperandT() {}
 
     // Disable copy and move constructor
-    OperandT(const OperandT &) = delete;
-    OperandT &operator=(const OperandT &) = delete;
+    OperandT(const OperandT<T> &) = delete;
+    OperandT(OperandT<T> &&) = delete;
 };
 
 using Operand8 = OperandT<uint8_t>;
