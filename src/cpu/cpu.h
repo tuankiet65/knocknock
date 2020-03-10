@@ -38,6 +38,7 @@ private:
 
     // TODO: remove these
     Memory8 ptr_bc_, ptr_de_, ptr_hl_, ptr_imm16_;
+    Memory8HiMem ptr_c_, ptr_imm8_;
 
     void nop();
     void jp(Instruction::Operand lhs, Instruction::Operand rhs);

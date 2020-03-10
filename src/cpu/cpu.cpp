@@ -35,7 +35,9 @@ CPU::CPU(memory::Memory *memory)
       ptr_bc_(mem_, bc_),
       ptr_de_(mem_, de_),
       ptr_hl_(mem_, hl_),
-      ptr_imm16_(mem_, imm16_) {
+      ptr_imm16_(mem_, imm16_),
+      ptr_c_(mem_, c_),
+      ptr_imm8_(mem_, imm8_) {
     DCHECK(mem_);
 
     // initialize all registers
@@ -85,11 +87,13 @@ std::optional<Operand8 *> CPU::get_operand8(Operand operand) {
         case Operand::A: return &a_;
         case Operand::B: return &b_;
         case Operand::C: return &c_;
+        case Operand::PtrC: return &ptr_c_;
         case Operand::D: return &d_;
         case Operand::E: return &e_;
         case Operand::H: return &h_;
         case Operand::L: return &l_;
         case Operand::Imm8: return &imm8_;
+        case Operand::PtrImm8: return &ptr_imm8_;
         case Operand::PtrBC: return &ptr_bc_;
         case Operand::PtrDE: return &ptr_de_;
         case Operand::PtrHL: return &ptr_hl_;

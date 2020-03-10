@@ -2,6 +2,8 @@
 
 #include <glog/logging.h>
 
+#include "memory/regions.h"
+
 namespace cpu {
 
 Register8::Register8() {}
@@ -97,6 +99,15 @@ uint8_t Memory8::read() const {
 }
 void Memory8::write(uint8_t value) {
     mem_->write(addr_.read(), value);
+}
+
+Memory8HiMem::Memory8HiMem(memory::Memory *mem, const Operand8 &addr)
+    : mem_(mem), addr_(addr) {}
+uint8_t Memory8HiMem::read() const {
+    return mem_->read(0xff00 + addr_.read());
+}
+void Memory8HiMem::write(uint8_t value) {
+    mem_->write(0xff00 + addr_.read(), value);
 }
 
 Memory16::Memory16(memory::Memory *mem, const Operand16 &addr)

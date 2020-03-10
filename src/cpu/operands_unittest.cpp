@@ -101,7 +101,32 @@ TEST_CASE("Memory8", "[cpu][operands]") {
         REQUIRE(addr.read() == 1234);
 
         cpu::Memory8 mem8(&mem, addr);
+        REQUIRE(mem8.read() == 0x69);
+    }
+}
 
+TEST_CASE("Memory8HiMem", "[cpu][operands]") {
+    memory::TestMemory mem;
+    mem.write(0xff10, 0x69);
+
+    REQUIRE(mem.read(0xff10) == 0x69);
+
+    SECTION("Memory8HiMem + Immediate8") {
+        cpu::Immediate8 addr(0x10);
+
+        REQUIRE(addr.read() == 0x10);
+
+        cpu::Memory8HiMem mem8(&mem, addr);
+        REQUIRE(mem8.read() == 0x69);
+    }
+
+    SECTION("Memory8 + Register8") {
+        cpu::Register8 addr;
+        addr.write(0x10);
+
+        REQUIRE(addr.read() == 0x10);
+
+        cpu::Memory8HiMem mem8(&mem, addr);
         REQUIRE(mem8.read() == 0x69);
     }
 }

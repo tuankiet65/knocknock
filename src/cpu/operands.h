@@ -121,6 +121,18 @@ protected:
     const Operand16 &addr_;
 };
 
+class Memory8HiMem : public Operand8 {
+public:
+    Memory8HiMem(memory::Memory *mem, const Operand8 &addr);
+
+    uint8_t read() const override;
+    void write(uint8_t value) override;
+
+protected:
+    memory::Memory *mem_;
+    const Operand8 &addr_;
+};
+
 class Memory16 : public Operand16 {
 public:
     Memory16(memory::Memory *mem, const Operand16 &addr);
