@@ -49,6 +49,28 @@ private:
     void rlca();
     void rla();
     void di();
+    void ei();
+    void call(Instruction::Operand lhs, Instruction::Operand rhs);
+    void ret();
+    void push(Instruction::Operand lhs);
+    void pop(Instruction::Operand lhs);
+    void inc(Instruction::Operand lhs);
+    void ldi(Instruction::Operand lhs, Instruction::Operand rhs);
+    // OR instruction, named "or_" to avoid conflict with the "or" keyword.
+    void or_(Instruction::Operand lhs);
+    // AND instruction, named "and_" to avoid conflict with the "and" keyword.
+    void and_(Instruction::Operand lhs);
+    void dec(Instruction::Operand lhs);
+    // XOR instruction, named "xor_" to avoid conflict with the "xor" keyword.
+    void xor_(Instruction::Operand lhs);
+    void add(Instruction::Operand lhs, Instruction::Operand rhs);
+    void ldd(Instruction::Operand lhs, Instruction::Operand rhs);
+    void sub(Instruction::Operand lhs);
+    void srl(Instruction::Operand lhs);
+    void rr(Instruction::Operand lhs);
+
+    void push_to_stack(uint16_t value);
+    uint16_t pop_from_stack();
 };
 
 }  // namespace cpu

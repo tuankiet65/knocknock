@@ -157,8 +157,28 @@ void CPU::execute_instruction(Instruction inst) {
         case Opcode::RLCA: rlca(); break;
         case Opcode::RLA: rla(); break;
         case Opcode::DI: di(); break;
+        case Opcode::EI: ei(); break;
+        case Opcode::CALL: call(inst.lhs(), inst.rhs()); break;
+        case Opcode::RET: ret(); break;
+        case Opcode::PUSH: push(inst.lhs()); break;
+        case Opcode::POP: pop(inst.lhs()); break;
+        case Opcode::INC: inc(inst.lhs()); break;
+        case Opcode::LDI: ldi(inst.lhs(), inst.rhs()); break;
+        case Opcode::OR: or_(inst.lhs()); break;
+        case Opcode::AND: and_(inst.lhs()); break;
+        case Opcode::DEC: dec(inst.lhs()); break;
+        case Opcode::XOR: xor_(inst.lhs()); break;
+        case Opcode::ADD: add(inst.lhs(), inst.rhs()); break;
+        case Opcode::LDD: ldd(inst.lhs(), inst.rhs()); break;
+        case Opcode::SUB: sub(inst.lhs()); break;
+        case Opcode::SRL: srl(inst.lhs()); break;
+        case Opcode::RR: rr(inst.lhs()); break;
+        // TODO: RRA does not set the zero flag.
+        case Opcode::RRA: rr(Operand::A); break;
+
         default:
-            DCHECK(false) << "Instruction not recognized" << inst.disassemble();
+            DCHECK(false) << "Instruction not recognized: "
+                          << inst.disassemble();
             break;
     }
 }
@@ -285,6 +305,275 @@ void CPU::rla() {
 void CPU::di() {
     // TODO: Interrupt is disabled after the instruction AFTER DI is executed.
     interrupt_enabled_ = false;
+}
+
+void CPU::ei() {
+    // TODO: Interrupt is enabled after the instruction AFTER DI is executed.
+    interrupt_enabled_ = true;
+}
+
+void CPU::call(Operand lhs, Operand rhs) {
+    bool should_jump;
+
+    switch (lhs) {
+        // One operand
+        case Operand::Imm16: should_jump = true; break;
+        // Two operands
+        case Operand::FlagC: should_jump = f_.carry; break;
+        case Operand::FlagNC: should_jump = !f_.carry; break;
+        case Operand::FlagZ: should_jump = f_.zero; break;
+        case Operand::FlagNZ: should_jump = !f_.zero; break;
+    }
+
+    if (should_jump) {
+        // Push current PC onto stack
+        push_to_stack(pc_);
+        pc_ = imm16_.read();
+    }
+}
+
+void CPU::ret() {
+    pc_ = pop_from_stack();
+}
+
+void CPU::push(Operand lhs) {
+    auto value = get_operand16(lhs);
+    DCHECK(value);
+    push_to_stack((*value)->read());
+}
+
+void CPU::pop(Operand lhs) {
+    auto value = get_operand16(lhs);
+    DCHECK(value);
+    (*value)->write(pop_from_stack());
+}
+
+void CPU::push_to_stack(uint16_t value) {
+    // MSB first into SP - 1
+    sp_.write(sp_.read() - 1);
+    mem_->write(sp_.read(), value >> 8u);
+
+    // Then LSB into SP - 2
+    sp_.write(sp_.read() - 1);
+    mem_->write(sp_.read(), value & 0x00FFu);
+}
+
+uint16_t CPU::pop_from_stack() {
+    uint16_t value;
+
+    // LSB first from SP.
+    value = mem_->read(sp_.read());
+    sp_.write(sp_.read() + 1);
+
+    // Then MSB from SP + 1.
+    value |= mem_->read(sp_.read()) << 8;
+    sp_.write(sp_.read() + 1);
+
+    return value;
+}
+
+void CPU::inc(Operand lhs) {
+    auto op8 = get_operand8(lhs);
+    if (op8) {
+        uint8_t new_value = (*op8)->read() + 1;
+        (*op8)->write(new_value);
+
+        LOG(ERROR) << "Half carry flag not implemented";
+        f_.subtract = false;
+        f_.zero = (new_value == 0);
+
+        return;
+    }
+
+    auto op16 = get_operand16(lhs);
+    DCHECK(op16);
+    (*op16)->write((*op16)->read() + 1);
+}
+
+void CPU::ldi(Operand lhs, Operand rhs) {
+    if (lhs == Operand::PtrHL && rhs == Operand::A) {
+        ptr_hl_.write(a_.read());
+        hl_.write(hl_.read() + 1);
+        return;
+    }
+
+    if (lhs == Operand::A && rhs == Operand::PtrHL) {
+        a_.write(ptr_hl_.read());
+        hl_.write(hl_.read() + 1);
+        return;
+    }
+
+    DCHECK(false);
+}
+
+void CPU::or_(Operand lhs) {
+    auto op8 = get_operand8(lhs);
+    DCHECK(op8);
+
+    uint8_t new_value = a_.read() | ((*op8)->read());
+    a_.write(new_value);
+
+    f_.carry = false;
+    f_.half_carry = false;
+    f_.subtract = false;
+    // TODO: correct?
+    f_.zero = (new_value == 0);
+}
+
+void CPU::and_(Operand lhs) {
+    auto op8 = get_operand8(lhs);
+    DCHECK(op8);
+
+    uint8_t new_value = a_.read() & ((*op8)->read());
+    a_.write(new_value);
+
+    f_.carry = false;
+    f_.half_carry = true;
+    f_.subtract = false;
+    // TODO: correct?
+    f_.zero = (new_value == 0);
+}
+
+void CPU::dec(Operand lhs) {
+    auto op8 = get_operand8(lhs);
+    if (op8) {
+        uint8_t new_value = (*op8)->read() - 1;
+        (*op8)->write(new_value);
+
+        LOG(ERROR) << "Half carry flag not implemented";
+        f_.subtract = true;
+        f_.zero = (new_value == 0);
+
+        return;
+    }
+
+    auto op16 = get_operand16(lhs);
+    DCHECK(op16);
+    (*op16)->write((*op16)->read() - 1);
+}
+
+void CPU::xor_(Operand lhs) {
+    auto op8 = get_operand8(lhs);
+    DCHECK(op8);
+
+    uint8_t new_value = a_.read() ^ ((*op8)->read());
+    a_.write(new_value);
+
+    f_.carry = false;
+    f_.half_carry = false;
+    f_.subtract = false;
+    // TODO: correct?
+    f_.zero = (new_value == 0);
+}
+
+void CPU::add(Operand lhs, Operand rhs) {
+    if (lhs == Operand::A) {
+        auto op8 = get_operand8(rhs);
+        DCHECK(op8);
+
+        uint8_t new_value = a_.read() + (*op8)->read();
+        a_.write(new_value);
+
+        LOG(ERROR) << "Carry flag not implemented";
+        LOG(ERROR) << "Half-carry flag not implemented";
+        f_.subtract = false;
+        f_.zero = (new_value == 0);
+
+        return;
+    }
+
+    if (lhs == Operand::HL) {
+        auto op16 = get_operand16(rhs);
+        DCHECK(op16);
+
+        hl_.write(hl_.read() + (*op16)->read());
+
+        LOG(ERROR) << "Carry flag not implemented";
+        LOG(ERROR) << "Half-carry flag not implemented";
+        f_.subtract = false;
+
+        return;
+    }
+
+    if (lhs == Operand::SP && rhs == Operand::Imm8Sign) {
+        sp_.write(sp_.read() + imm8sign_.read());
+
+        LOG(ERROR) << "Carry flag not implemented";
+        LOG(ERROR) << "Half-carry flag not implemented";
+        f_.subtract = false;
+        f_.zero = false;
+    }
+
+    DCHECK(false);
+}
+
+void CPU::ldd(Operand lhs, Operand rhs) {
+    if (lhs == Operand::PtrHL && rhs == Operand::A) {
+        ptr_hl_.write(a_.read());
+        hl_.write(hl_.read() - 1);
+        return;
+    }
+
+    if (lhs == Operand::A && rhs == Operand::PtrHL) {
+        a_.write(ptr_hl_.read());
+        hl_.write(hl_.read() - 1);
+        return;
+    }
+
+    DCHECK(false);
+}
+
+void CPU::sub(Operand lhs) {
+    auto op8 = get_operand8(lhs);
+    DCHECK(op8);
+
+    uint8_t a_value = a_.read(),
+            lhs_value = (*op8)->read();
+
+    // Carry occurs of a_value is smaller than lhs_value.
+    f_.carry = (a_value < lhs_value);
+    LOG(ERROR) << "Half-carry flag not implemented";
+    f_.subtract = true;
+
+    uint8_t new_value = a_.read() - (*op8)->read();
+    f_.zero = (new_value == 0);
+    a_.write(new_value);
+}
+
+void CPU::srl(Operand lhs) {
+    auto op8 = get_operand8(lhs);
+    DCHECK(op8);
+
+    uint8_t new_value = (*op8)->read();
+
+    // Carry flag contains the value of bit 0
+    f_.carry = (new_value & 0x1u);
+
+    new_value >>= 1u;
+
+    f_.half_carry = false;
+    f_.subtract = false;
+    f_.zero = (new_value == 0);
+
+    (*op8)->write(new_value);
+}
+
+void CPU::rr(Operand lhs) {
+    auto op8 = get_operand8(lhs);
+    DCHECK(op8);
+
+    uint8_t new_value = (*op8)->read();
+    uint8_t old_carry = f_.carry;
+
+    // Carry flag contains the value of bit 0
+    f_.carry = (new_value & 0x1u);
+    new_value = (new_value >> 1u) | (old_carry << 7u);
+
+    f_.half_carry = false;
+    f_.subtract = false;
+    f_.zero = (new_value == 0);
+
+    (*op8)->write(new_value);
 }
 
 }  // namespace cpu
