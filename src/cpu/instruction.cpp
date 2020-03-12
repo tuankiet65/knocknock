@@ -41,7 +41,6 @@ std::string Instruction::disassemble_opcode() const {
         case Instruction::Opcode::LDI: return "LDI";
         case Instruction::Opcode::LDD: return "LDD";
         case Instruction::Opcode::LDHL: return "LDHL";
-        case Instruction::Opcode::LDH: return "LDH";
         case Instruction::Opcode::NOP: return "NOP";
         case Instruction::Opcode::OR: return "OR";
         case Instruction::Opcode::POP: return "POP";

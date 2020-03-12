@@ -257,7 +257,7 @@ bool Decoder::decode_assorted(uint8_t opcode) {
         case 0xda: INSTRUCTION(JP, FlagC, Imm16); break;
         case 0xdc: INSTRUCTION(CALL, FlagC, Imm16); break;
         case 0xde: INSTRUCTION(SBC, A, Imm8); break;
-        case 0xe0: INSTRUCTION(LDH, PtrImm8, A); break;
+        case 0xe0: INSTRUCTION(LD, PtrImm8, A); break;
         case 0xe1: INSTRUCTION(POP, HL); break;
         case 0xe2: INSTRUCTION(LD, PtrC, A); break;
         case 0xe5: INSTRUCTION(PUSH, HL); break;
@@ -266,7 +266,7 @@ bool Decoder::decode_assorted(uint8_t opcode) {
         case 0xe9: INSTRUCTION(JP, HL); break;
         case 0xea: INSTRUCTION(LD, PtrImm16, A); break;
         case 0xee: INSTRUCTION(XOR, Imm8); break;
-        case 0xf0: INSTRUCTION(LDH, A, PtrImm8); break;
+        case 0xf0: INSTRUCTION(LD, A, PtrImm8); break;
         case 0xf1: INSTRUCTION(POP, AF); break;
         case 0xf2: INSTRUCTION(LD, A, PtrC); break;
         case 0xf3: INSTRUCTION(DI); break;

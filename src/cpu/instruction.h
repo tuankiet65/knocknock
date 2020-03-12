@@ -50,7 +50,6 @@ public:
         LD,
         LDI,
         LDD,
-        LDH,
         LDHL,
         OR,
         POP,
