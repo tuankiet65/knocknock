@@ -184,6 +184,7 @@ void CPU::execute_instruction(Instruction inst) {
         case Opcode::RR: rr(inst.lhs()); break;
         // TODO: RRA does not set the zero flag.
         case Opcode::RRA: rr(Operand::A); break;
+        case Opcode::ADC: adc(inst.lhs()); break;
 
         default:
             DCHECK(false) << "Instruction not recognized: "
@@ -596,6 +597,22 @@ void CPU::rr(Operand lhs) {
     f_.half_carry = false;
     // Carry flag contains the value of bit 0
     f_.carry = (value & 0x1u);
+}
+
+void CPU::adc(Operand lhs) {
+    auto op8 = get_operand8(lhs);
+    DCHECK(op8);
+
+    uint8_t x = a_.read(), y = (*op8)->read();
+    uint8_t new_value = x + y + f_.carry;
+    a_.write(new_value);
+
+    f_.zero = (new_value == 0);
+    f_.subtract = false;
+    f_.half_carry = (low_nibble(x) + low_nibble(y) + f_.carry > 0xFu);
+    //    x + y + f_.carry > 0xFF
+    // => x                > 0xFF - y - f_.carry
+    f_.carry = (x > (0xFF - y - f_.carry));
 }
 
 }  // namespace cpu
