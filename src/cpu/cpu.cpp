@@ -110,9 +110,8 @@ std::optional<Operand8 *> CPU::get_operand8(Operand operand) {
         case Operand::PtrDE: return &ptr_de_;
         case Operand::PtrHL: return &ptr_hl_;
         case Operand::PtrImm16: return &ptr_imm16_;
+        default: return {};
     }
-
-    return {};
 }
 
 std::optional<Operand16 *> CPU::get_operand16(Operand operand) {
@@ -123,9 +122,8 @@ std::optional<Operand16 *> CPU::get_operand16(Operand operand) {
         case Operand::HL: return &hl_;
         case Operand::SP: return &sp_;
         case Operand::Imm16: return &imm16_;
+        default: return {};
     }
-
-    return {};
 }
 
 bool CPU::step() {
