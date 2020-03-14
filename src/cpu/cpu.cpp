@@ -242,6 +242,16 @@ void CPU::jr(Operand lhs, Operand rhs) {
 }
 
 void CPU::ld(Operand lhs, Operand rhs) {
+    // Special exception for 0x08: LD (Imm16), SP
+    // Load LSB of SP into Imm16 and MSB of SP into Imm16 + 1
+    if (lhs == Operand::PtrImm16 && rhs == Operand::SP) {
+        uint16_t addr = ptr_imm16_.read();
+
+        mem_->write(addr, sp_.read() | 0x00FFu);
+        mem_->write(addr + 1, sp_.read() >> 8u);
+        return;
+    }
+
     // lhs and rhs are Operand8s
     auto l8 = get_operand8(lhs), r8 = get_operand8(rhs);
     if (l8 && r8) {
