@@ -7,3 +7,6 @@
 [submodule "src/third_party/fmt"]
 	path = src/third_party/fmt
 	url = https://github.com/fmtlib/fmt.git
+[submodule "roms/gb-test-roms"]
+	path = roms/gb-test-roms
+	url = https://github.com/retrio/gb-test-roms.git
