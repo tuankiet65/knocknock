@@ -185,6 +185,9 @@ void CPU::execute_instruction(Instruction inst) {
         // TODO: RRA does not set the zero flag.
         case Opcode::RRA: rr(Operand::A); break;
         case Opcode::ADC: adc(inst.lhs()); break;
+        case Opcode::CPL: cpl(); break;
+        case Opcode::SCF: scf(); break;
+        case Opcode::CCF: ccf(); break;
 
         default:
             DCHECK(false) << "Instruction not recognized: "
@@ -613,6 +616,25 @@ void CPU::adc(Operand lhs) {
     //    x + y + f_.carry > 0xFF
     // => x                > 0xFF - y - f_.carry
     f_.carry = (x > (0xFF - y - f_.carry));
+}
+
+void CPU::cpl() {
+    a_.write(~a_.read());
+
+    f_.subtract = true;
+    f_.half_carry = true;
+}
+
+void CPU::scf() {
+    f_.subtract = false;
+    f_.half_carry = false;
+    f_.carry = true;
+}
+
+void CPU::ccf() {
+    f_.subtract = false;
+    f_.half_carry = false;
+    f_.carry = !f_.carry;
 }
 
 }  // namespace cpu

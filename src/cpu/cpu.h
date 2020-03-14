@@ -69,6 +69,9 @@ private:
     void srl(Instruction::Operand lhs);
     void rr(Instruction::Operand lhs);
     void adc(Instruction::Operand lhs);
+    void cpl();
+    void scf();
+    void ccf();
 
     void push_to_stack(uint16_t value);
     uint16_t pop_from_stack();
