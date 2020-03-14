@@ -215,7 +215,7 @@ void CPU::jp(Operand lhs, Operand rhs) {
     }
 
     if (should_jump) {
-        DCHECK(rhs != Operand::Imm16);
+        DCHECK(rhs == Operand::Imm16);
         pc_ = imm16_.read();
     }
 }
