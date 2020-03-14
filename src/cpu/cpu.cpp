@@ -21,7 +21,7 @@ CPU::CPU(memory::Memory *memory)
       h_(),
       l_(),
       f_(),
-      af_(&a_, &b_),
+      af_(&a_, &f_),
       bc_(&b_, &c_),
       de_(&d_, &e_),
       hl_(&h_, &l_),
