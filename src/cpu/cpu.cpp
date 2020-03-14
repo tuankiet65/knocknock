@@ -492,13 +492,16 @@ void CPU::add(Operand lhs, Operand rhs) {
         auto op8 = get_operand8(rhs);
         DCHECK(op8);
 
-        uint8_t new_value = a_.read() + (*op8)->read();
+        uint8_t x = a_.read(), y = (*op8)->read();
+        uint8_t new_value = x + y;
         a_.write(new_value);
 
-        LOG(ERROR) << "Carry flag not implemented";
-        LOG(ERROR) << "Half-carry flag not implemented";
-        f_.subtract = false;
         f_.zero = (new_value == 0);
+        f_.subtract = false;
+        f_.half_carry = (low_nibble(x) + low_nibble(y) > 0xFu);
+        //    x + y > 0xFF
+        // => x     > 0xFF - y
+        f_.carry = (x > (0xFF - y));
 
         return;
     }
@@ -507,11 +510,15 @@ void CPU::add(Operand lhs, Operand rhs) {
         auto op16 = get_operand16(rhs);
         DCHECK(op16);
 
-        hl_.write(hl_.read() + (*op16)->read());
+        uint16_t x = hl_.read(), y = (*op16)->read();
+        uint16_t new_value = x + y;
+        hl_.write(new_value);
 
-        LOG(ERROR) << "Carry flag not implemented";
-        LOG(ERROR) << "Half-carry flag not implemented";
         f_.subtract = false;
+        f_.half_carry = ((x & 0x0FFFu) + (y & 0x0FFFu) > 0x0FFFu);
+        //    x + y > 0xFFFF
+        // => x     > 0xFFFF - y
+        f_.carry = (x > (0xFFFF - y));
 
         return;
     }
