@@ -456,12 +456,15 @@ void CPU::and_(Operand lhs) {
 void CPU::dec(Operand lhs) {
     auto op8 = get_operand8(lhs);
     if (op8) {
-        uint8_t new_value = (*op8)->read() - 1;
+        uint8_t value = (*op8)->read();
+        uint8_t new_value = value - 1;
         (*op8)->write(new_value);
 
-        LOG(ERROR) << "Half carry flag not implemented";
-        f_.subtract = true;
         f_.zero = (new_value == 0);
+        f_.subtract = true;
+        // If the low nibble of value is 0b0000 then 0b0000 - 0b1 would generate
+        // a borrow.
+        f_.half_carry = (low_nibble(value) == 0x0u);
 
         return;
     }
