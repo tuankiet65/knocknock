@@ -1,6 +1,5 @@
 #include "cpu/cpu.h"
 
-#include <fmt/format.h>
 #include <glog/logging.h>
 
 #include <iostream>
