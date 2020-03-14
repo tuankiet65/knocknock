@@ -393,12 +393,15 @@ uint16_t CPU::pop_from_stack() {
 void CPU::inc(Operand lhs) {
     auto op8 = get_operand8(lhs);
     if (op8) {
-        uint8_t new_value = (*op8)->read() + 1;
+        uint8_t value = (*op8)->read();
+        uint8_t new_value = value + 1;
         (*op8)->write(new_value);
 
-        LOG(ERROR) << "Half carry flag not implemented";
-        f_.subtract = false;
         f_.zero = (new_value == 0);
+        f_.subtract = false;
+        // If the low nibble of value is 0b1111 then 0b1111 + 0b1 would generate
+        // a carry bit.
+        f_.half_carry = (low_nibble(value) == 0xFu);
 
         return;
     }
