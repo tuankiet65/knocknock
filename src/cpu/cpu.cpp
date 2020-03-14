@@ -437,7 +437,6 @@ void CPU::or_(Operand lhs) {
     f_.carry = false;
     f_.half_carry = false;
     f_.subtract = false;
-    // TODO: correct?
     f_.zero = (new_value == 0);
 }
 
@@ -451,7 +450,6 @@ void CPU::and_(Operand lhs) {
     f_.carry = false;
     f_.half_carry = true;
     f_.subtract = false;
-    // TODO: correct?
     f_.zero = (new_value == 0);
 }
 
@@ -483,7 +481,6 @@ void CPU::xor_(Operand lhs) {
     f_.carry = false;
     f_.half_carry = false;
     f_.subtract = false;
-    // TODO: correct?
     f_.zero = (new_value == 0);
 }
 
