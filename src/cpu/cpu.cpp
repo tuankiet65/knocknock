@@ -275,10 +275,10 @@ void CPU::cp(Operand lhs) {
 
     uint8_t x = a_.read(), y = (*reg)->read();
 
-    f_.carry = (x < y);
-    f_.half_carry = (low_nibble(x) < high_nibble(y));
-    f_.subtract = true;
     f_.zero = (x == y);
+    f_.subtract = true;
+    f_.half_carry = (low_nibble(x) < low_nibble(y));
+    f_.carry = (x < y);
 }
 
 void CPU::swap(Operand lhs) {
