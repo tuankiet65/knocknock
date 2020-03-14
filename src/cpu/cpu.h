@@ -72,6 +72,13 @@ private:
     void cpl();
     void scf();
     void ccf();
+    void rra();
+    void rlc(Instruction::Operand lhs);
+    void rl(Instruction::Operand lhs);
+    void rrc(Instruction::Operand lhs);
+    void rrca();
+    void sla(Instruction::Operand lhs);
+    void sra(Instruction::Operand lhs);
 
     void push_to_stack(uint16_t value);
     uint16_t pop_from_stack();

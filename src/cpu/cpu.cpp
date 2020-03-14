@@ -182,12 +182,17 @@ void CPU::execute_instruction(Instruction inst) {
         case Opcode::SUB: sub(inst.lhs()); break;
         case Opcode::SRL: srl(inst.lhs()); break;
         case Opcode::RR: rr(inst.lhs()); break;
-        // TODO: RRA does not set the zero flag.
-        case Opcode::RRA: rr(Operand::A); break;
+        case Opcode::RRA: rra(); break;
         case Opcode::ADC: adc(inst.lhs()); break;
         case Opcode::CPL: cpl(); break;
         case Opcode::SCF: scf(); break;
         case Opcode::CCF: ccf(); break;
+        case Opcode::RL: rl(inst.lhs()); break;
+        case Opcode::RLC: rlc(inst.lhs()); break;
+        case Opcode::RRC: rrc(inst.lhs()); break;
+        case Opcode::RRCA: rrca(); break;
+        case Opcode::SLA: sla(inst.lhs()); break;
+        case Opcode::SRA: sra(inst.lhs()); break;
 
         default:
             DCHECK(false) << "Instruction not recognized: "
@@ -298,29 +303,44 @@ void CPU::swap(Operand lhs) {
     f_.carry = false;
 }
 
-void CPU::rlca() {
-    // Carry contains the 7th bit
-    f_.carry = (a_.read() >> 7u);
+void CPU::rlc(Operand lhs) {
+    auto op8 = get_operand8(lhs);
+    DCHECK(op8);
 
-    uint8_t new_val = a_.read();
-    new_val = (new_val << 1u) | (new_val >> 7u);
-    a_.write(new_val);
+    uint8_t value = (*op8)->read();
+    uint8_t new_value = (value << 1u) | (value >> 7u);
+    (*op8)->write(new_value);
 
-    f_.zero = false;
+    f_.zero = (new_value == 0);
     f_.subtract = false;
     f_.half_carry = false;
+    f_.carry = (value >> 7u);
 }
 
-void CPU::rla() {
-    uint8_t val = a_.read();
-    uint8_t bit7 = val >> 7u;
-    val = (val << 1u) | f_.carry;
-    a_.write(val);
-    f_.carry = bit7;
-
+// Specialization of RLC for A register. RRCA set the zero flag to 0, unlike RLC
+void CPU::rlca() {
+    rlc(Operand::A);
     f_.zero = false;
+}
+
+void CPU::rl(Operand lhs) {
+    auto op8 = get_operand8(lhs);
+    DCHECK(op8);
+
+    uint8_t value = (*op8)->read(), carry = f_.carry;
+    uint8_t new_value = (value << 1u) | carry;
+    (*op8)->write(new_value);
+
+    f_.zero = (new_value == 0);
     f_.subtract = false;
     f_.half_carry = false;
+    f_.carry = (value >> 7u);
+}
+
+// Specialization of RLC for A register. RRCA set the zero flag to 0, unlike RLC
+void CPU::rla() {
+    rl(Operand::A);
+    f_.zero = false;
 }
 
 void CPU::di() {
@@ -635,6 +655,62 @@ void CPU::ccf() {
     f_.subtract = false;
     f_.half_carry = false;
     f_.carry = !f_.carry;
+}
+
+// Specialization of RR for A register. RRA set the zero flag to 0, unlike RR.
+void CPU::rra() {
+    rr(Operand::A);
+
+    f_.zero = false;
+}
+
+void CPU::rrc(Operand lhs) {
+    auto op8 = get_operand8(lhs);
+    DCHECK(op8);
+
+    uint8_t value = (*op8)->read();
+    uint8_t new_value = (value >> 1u) | ((value & 0x1u) << 7u);
+    (*op8)->write(new_value);
+
+    f_.zero = (new_value == 0);
+    f_.subtract = false;
+    f_.half_carry = false;
+    f_.carry = (value & 0x1u);
+}
+
+// Specialization of RRC for A register. RRCA set the zero flag to 0, unlike RRC.
+void CPU::rrca() {
+    rrc(Operand::A);
+
+    f_.zero = false;
+}
+
+void CPU::sla(Operand lhs) {
+    auto op8 = get_operand8(lhs);
+    DCHECK(op8);
+
+    uint8_t value = (*op8)->read();
+    uint8_t new_value = value << 1u;
+    (*op8)->write(new_value);
+
+    f_.zero = (new_value == 0);
+    f_.subtract = false;
+    f_.half_carry = false;
+    f_.carry = (value >> 7u);
+}
+
+void CPU::sra(Operand lhs) {
+    auto op8 = get_operand8(lhs);
+    DCHECK(op8);
+
+    uint8_t value = (*op8)->read();
+    uint8_t new_value = (value >> 1u) | ((value >> 7u) << 7u);
+    (*op8)->write(new_value);
+
+    f_.zero = (new_value == 0);
+    f_.subtract = false;
+    f_.half_carry = false;
+    f_.carry = (value & 0x1u);
 }
 
 }  // namespace cpu
