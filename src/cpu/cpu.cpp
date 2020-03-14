@@ -9,6 +9,18 @@
 
 namespace cpu {
 
+namespace {
+
+uint8_t low_nibble(uint8_t value) {
+    return value & 0x0Fu;
+}
+
+uint8_t high_nibble(uint8_t value) {
+    return value >> 4u;
+}
+
+}  // namespace
+
 using Opcode = Instruction::Opcode;
 using Operand = Instruction::Operand;
 
@@ -250,15 +262,15 @@ void CPU::ld(Operand lhs, Operand rhs) {
 }
 
 void CPU::cp(Operand lhs) {
-    LOG(ERROR) << "Half carry flag not implemented!";
+    auto reg = get_operand8(lhs);
+    DCHECK(reg);
 
-    std::optional<Operand8 *> reg = get_operand8(lhs);
-    DCHECK(!reg.has_value());
+    uint8_t x = a_.read(), y = (*reg)->read();
 
+    f_.carry = (x < y);
+    f_.half_carry = (low_nibble(x) < high_nibble(y));
     f_.subtract = true;
-    f_.zero = (a_.read() == (*reg)->read());  // set if A == reg
-    // TODO: Half-carry
-    f_.carry = (a_.read() < (*reg)->read());  // set if A < reg
+    f_.zero = (x == y);
 }
 
 void CPU::swap(Operand lhs) {
