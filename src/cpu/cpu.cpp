@@ -311,7 +311,7 @@ void CPU::rlca() {
 void CPU::rla() {
     uint8_t val = a_.read();
     uint8_t bit7 = val >> 7u;
-    val = (val << 1u) | (uint8_t)(f_.carry);
+    val = (val << 1u) | f_.carry;
     a_.write(val);
     f_.carry = bit7;
 
