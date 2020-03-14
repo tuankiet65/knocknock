@@ -283,12 +283,10 @@ void CPU::cp(Operand lhs) {
 
 void CPU::swap(Operand lhs) {
     std::optional<Operand8 *> reg = get_operand8(lhs);
-    DCHECK(!reg.has_value());
+    DCHECK(reg.has_value());
 
     uint8_t val = (*reg)->read();
-    uint8_t new_val = (val >> 4u) |               // top nibble
-                      (val & 0b00001111u) << 4u;  // bottom nibble
-
+    uint8_t new_val = high_nibble(val) | (low_nibble(val) << 4u);
     (*reg)->write(new_val);
 
     f_.zero = (new_val == 0);
