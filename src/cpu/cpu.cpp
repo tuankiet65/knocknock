@@ -238,7 +238,7 @@ void CPU::jr(Operand lhs, Operand rhs) {
     }
 
     if (should_jump) {
-        DCHECK(rhs != Operand::Imm8Sign);
+        DCHECK(rhs == Operand::Imm8Sign);
         pc_ += imm8sign_.read();
     }
 }
