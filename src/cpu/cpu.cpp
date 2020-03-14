@@ -584,18 +584,19 @@ void CPU::rr(Operand lhs) {
     auto op8 = get_operand8(lhs);
     DCHECK(op8);
 
-    uint8_t new_value = (*op8)->read();
-    uint8_t old_carry = f_.carry;
+    uint8_t value = (*op8)->read();
+    uint8_t carry = f_.carry;
 
-    // Carry flag contains the value of bit 0
-    f_.carry = (new_value & 0x1u);
-    new_value = (new_value >> 1u) | (old_carry << 7u);
-
-    f_.half_carry = false;
-    f_.subtract = false;
-    f_.zero = (new_value == 0);
+    uint8_t new_value = (value >> 1u)     // shift the old value to the left
+                        | (carry << 7u);  // and make the 7th bit the carry
 
     (*op8)->write(new_value);
+
+    f_.zero = (new_value == 0);
+    f_.subtract = false;
+    f_.half_carry = false;
+    // Carry flag contains the value of bit 0
+    f_.carry = (value & 0x1u);
 }
 
 }  // namespace cpu
