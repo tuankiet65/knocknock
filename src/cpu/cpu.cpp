@@ -384,7 +384,7 @@ uint16_t CPU::pop_from_stack() {
     sp_.write(sp_.read() + 1);
 
     // Then MSB from SP + 1.
-    value |= mem_->read(sp_.read()) << 8;
+    value |= mem_->read(sp_.read()) << 8u;
     sp_.write(sp_.read() + 1);
 
     return value;
