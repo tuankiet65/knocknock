@@ -555,17 +555,14 @@ void CPU::sub(Operand lhs) {
     auto op8 = get_operand8(lhs);
     DCHECK(op8);
 
-    uint8_t a_value = a_.read(),
-            lhs_value = (*op8)->read();
-
-    // Carry occurs of a_value is smaller than lhs_value.
-    f_.carry = (a_value < lhs_value);
-    LOG(ERROR) << "Half-carry flag not implemented";
-    f_.subtract = true;
-
-    uint8_t new_value = a_.read() - (*op8)->read();
-    f_.zero = (new_value == 0);
+    uint8_t x = a_.read(), y = (*op8)->read();
+    uint8_t new_value = x - y;
     a_.write(new_value);
+
+    f_.zero = (new_value == 0);
+    f_.subtract = true;
+    f_.half_carry = (low_nibble(x) < low_nibble(y));
+    f_.carry = (x < y);
 }
 
 void CPU::srl(Operand lhs) {
