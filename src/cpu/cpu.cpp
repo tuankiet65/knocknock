@@ -183,7 +183,7 @@ void CPU::execute_instruction(Instruction inst) {
         case Opcode::SRL: srl(inst.lhs()); break;
         case Opcode::RR: rr(inst.lhs()); break;
         case Opcode::RRA: rra(); break;
-        case Opcode::ADC: adc(inst.lhs()); break;
+        case Opcode::ADC: adc(inst.lhs(), inst.rhs()); break;
         case Opcode::CPL: cpl(); break;
         case Opcode::SCF: scf(); break;
         case Opcode::CCF: ccf(); break;
@@ -622,8 +622,10 @@ void CPU::rr(Operand lhs) {
     f_.carry = (value & 0x1u);
 }
 
-void CPU::adc(Operand lhs) {
-    auto op8 = get_operand8(lhs);
+void CPU::adc(Operand lhs, Operand rhs) {
+    DCHECK(lhs == Operand::A);
+
+    auto op8 = get_operand8(rhs);
     DCHECK(op8);
 
     uint8_t x = a_.read(), y = (*op8)->read();
