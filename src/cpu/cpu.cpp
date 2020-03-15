@@ -629,16 +629,19 @@ void CPU::adc(Operand lhs, Operand rhs) {
     auto op8 = get_operand8(rhs);
     DCHECK(op8);
 
-    uint8_t x = a_.read(), y = (*op8)->read();
-    uint8_t new_value = x + y + f_.carry;
+    uint8_t x = a_.read(), y = (*op8)->read(), carry = f_.carry;
+    uint8_t new_value = x + y + carry;
     a_.write(new_value);
 
     f_.zero = (new_value == 0);
     f_.subtract = false;
-    f_.half_carry = (low_nibble(x) + low_nibble(y) + f_.carry > 0xFu);
-    //    x + y + f_.carry > 0xFF
-    // => x                > 0xFF - y - f_.carry
-    f_.carry = (x > (0xFF - y - f_.carry));
+    f_.half_carry = ((low_nibble(x) + low_nibble(y) + carry) > 0x0Fu);
+
+    // There are two possible scenarios here:
+    // * (x + y) overflows => (x + y + carry) overflows
+    // * x + y == 0xff, which does not overflow, but if carry = 1 then
+    //   x + y + carry == 0, which overflows.
+    f_.carry = (x > (0xFFu - y)) || (x + y == 0xFFu && carry);
 }
 
 void CPU::sbc(Operand lhs, Operand rhs) {
