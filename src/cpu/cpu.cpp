@@ -194,6 +194,9 @@ void CPU::execute_instruction(Instruction inst) {
         case Opcode::RRCA: rrca(); break;
         case Opcode::SLA: sla(inst.lhs()); break;
         case Opcode::SRA: sra(inst.lhs()); break;
+        case Opcode::BIT: bit(inst.lhs(), inst.rhs()); break;
+        case Opcode::RES: res(inst.lhs(), inst.rhs()); break;
+        case Opcode::SET: set(inst.lhs(), inst.rhs()); break;
 
         default:
             DCHECK(false) << "Instruction not recognized: "
@@ -738,6 +741,41 @@ void CPU::sra(Operand lhs) {
     f_.subtract = false;
     f_.half_carry = false;
     f_.carry = (value & 0x1u);
+}
+
+void CPU::bit(Operand lhs, Operand rhs) {
+    DCHECK(lhs == Operand::Imm8);
+
+    auto op8 = get_operand8(rhs);
+    DCHECK(op8);
+
+    uint8_t x = imm8_.read(), y = (*op8)->read();
+
+    f_.zero = !(y & (1u << x));
+    f_.subtract = false;
+    f_.half_carry = true;
+}
+
+void CPU::res(Operand lhs, Operand rhs) {
+    DCHECK(lhs == Operand::Imm8);
+
+    auto op8 = get_operand8(rhs);
+    DCHECK(op8);
+
+    uint8_t x = imm8_.read(), y = (*op8)->read();
+    uint8_t new_value = y & (~(1u << x));
+    (*op8)->write(new_value);
+}
+
+void CPU::set(Operand lhs, Operand rhs) {
+    DCHECK(lhs == Operand::Imm8);
+
+    auto op8 = get_operand8(rhs);
+    DCHECK(op8);
+
+    uint8_t x = imm8_.read(), y = (*op8)->read();
+    uint8_t new_value = y | (1u << x);
+    (*op8)->write(new_value);
 }
 
 }  // namespace cpu
