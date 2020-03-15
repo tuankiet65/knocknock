@@ -69,6 +69,7 @@ private:
     void srl(Instruction::Operand lhs);
     void rr(Instruction::Operand lhs);
     void adc(Instruction::Operand lhs, Instruction::Operand rhs);
+    void sbc(Instruction::Operand lhs, Instruction::Operand rhs);
     void cpl();
     void scf();
     void ccf();
