@@ -4,7 +4,7 @@ set(SOURCE_FILES
         "cpu/decoder.cpp"
         "memory/memory.cpp"
         "memory/test_memory.cpp"
-        # "memory/mmu.cpp"
+        "memory/mmu.cpp"
         "cpu/operands.cpp"
         "cartridge.cpp")
 add_executable(knocknock "${SOURCE_FILES}" "knocknock.cpp")

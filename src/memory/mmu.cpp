@@ -1,25 +1,13 @@
 #include "memory/mmu.h"
 
+#include <fmt/format.h>
 #include <glog/logging.h>
-
-#include <algorithm>
-#include <functional>
 
 namespace memory {
 
-namespace {
+MMU::MMU() : regions_() {}
 
-using AddrInRegionFunction = std::function<bool(const MemoryRegion &)>;
-
-AddrInRegionFunction addr_in_region(MemoryAddr addr) {
-    return [addr](const MemoryRegion &region) -> bool {
-        return BETWEEN(region.start(), addr, region.end());
-    };
-}
-
-}  // namespace
-
-bool MMU::region_does_overlap(MemoryAddr start, MemoryAddr end) const {
+bool MMU::has_overlapping_regions(MemoryAddr start, MemoryAddr end) const {
     for (const MemoryRegion &region : regions_) {
         if (BETWEEN(region.start(), start, region.end()) ||
             BETWEEN(region.start(), end, region.end()))
@@ -29,45 +17,42 @@ bool MMU::region_does_overlap(MemoryAddr start, MemoryAddr end) const {
     return false;
 }
 
-bool MMU::add_region(int type,
-                     Memory *region,
-                     MemoryAddr start,
-                     MemoryAddr end) {
-    if (region_does_overlap(start, end)) {
+bool MMU::register_region(Memory *region, MemoryAddr start, MemoryAddr end) {
+    DCHECK(start >= end) << fmt::format("end ({}) < start({})", end, start);
+
+    if (has_overlapping_regions(start, end)) {
         LOG(ERROR) << "Region overlaps with existing regions: "
-                   << "type = " << type << " "
                    << "start = 0x" << std::hex << start << " "
                    << "end = 0x" << std::hex << end;
-        return true;
+        return false;
     }
 
-    regions_.push_back(MemoryRegion(type, region, start, end));
+    regions_.emplace_back(MemoryRegion(region, start, end));
     return true;
 }
 
 MemoryValue MMU::read(MemoryAddr addr) const {
-    auto region_iter =
-        std::find_if(regions_.begin(), regions_.end(), addr_in_region(addr));
-
-    if (region_iter == regions_.end()) {
-        LOG(ERROR) << "No matching region for addr: 0x" << std::hex << addr
-                   << ", returning dummy value";
-        return 0xff;
+    for (const auto &region : regions_) {
+        if (BETWEEN(region.start(), addr, region.end())) {
+            return region.region()->read(addr);
+        }
     }
 
-    return region_iter->region()->read(addr);
+    LOG(ERROR) << fmt::format(
+        "No matching region for addr {:#04x}, returning junk value", addr);
+    return 0xff;
 }
 
 void MMU::write(MemoryAddr addr, MemoryValue value) {
-    auto region_iter =
-        std::find_if(regions_.begin(), regions_.end(), addr_in_region(addr));
-
-    if (region_iter == regions_.end()) {
-        LOG(ERROR) << "No matching region for addr: 0x" << std::hex << addr;
-        return;
+    for (const auto &region : regions_) {
+        if (BETWEEN(region.start(), addr, region.end())) {
+            region.region()->write(addr, value);
+            return;
+        }
     }
 
-    region_iter->region()->write(addr, value);
+    LOG(ERROR) << fmt::format(
+        "No matching region for addr {:#04x}, ignoring write", addr);
 }
 
 }  // namespace memory
