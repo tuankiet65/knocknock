@@ -16,7 +16,7 @@ build:
         - apk add build-base cmake
     script:
         - mkdir build
-        - cmake -B build
+        - cmake -B build -DCMAKE_BUILD_TYPE=Release
         - make -C build knocknock
 
 unittest:
@@ -26,7 +26,7 @@ unittest:
         - apk add build-base cmake
     script:
         - mkdir build
-        - cmake -B build
+        - cmake -B build -DCMAKE_BUILD_TYPE=Release
         - make -C build knocknock_unittest
         - ./build/knocknock_unittest
 
