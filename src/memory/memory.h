@@ -29,7 +29,7 @@ public:
 
 class ROMLoadableMemory : public Memory {
 public:
-    virtual bool bulk_load(MemoryAddr addr, MemoryValue data[], size_t len) = 0;
+    virtual bool load_rom(const std::vector<MemoryValue> &rom) = 0;
 };
 
 class MemoryAddrProxy {

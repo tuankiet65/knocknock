@@ -19,7 +19,7 @@ public:
 
     MemoryValue read(MemoryAddr addr) const override;
     void write(MemoryAddr addr, MemoryValue value) override;
-    bool bulk_load(MemoryAddr addr, MemoryValue data[], size_t len) override;
+    bool load_rom(const std::vector<MemoryValue> &rom) override;
 
 private:
     MemorySize ram_size_;

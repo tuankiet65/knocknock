@@ -31,4 +31,13 @@ MemoryValue FlatROM::read(MemoryAddr addr) const {
     return 0xff;
 }
 
+bool FlatROM::load_rom(const std::vector<MemoryValue> &rom) {
+    if (rom.size() > sizeof(this->rom_)) {
+        return false;
+    }
+
+    std::copy(rom.begin(), rom.end(), rom_);
+    return true;
+}
+
 }  // namespace memory

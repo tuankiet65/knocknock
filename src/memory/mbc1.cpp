@@ -12,11 +12,12 @@ MBC1::MBC1(MemorySize rom_size, MemorySize ram_size)
     // DCHECK(ram_size <= sizeof(ram_)) << "RAM size too large";
 }
 
-bool MBC1::bulk_load(MemoryAddr addr, MemoryValue data[], size_t len) {
-    // DCHECK((addr + len) <= rom_size_);
-    // TODO: check data_len
-    // TODO: is it this easy?
-    std::memcpy(rom_, data, len);
+bool MBC1::load_rom(const std::vector<MemoryValue> &rom) {
+    if (rom.size() > rom_size_) {
+        return false;
+    }
+
+    std::copy(rom.begin(), rom.end(), rom_);
     return true;
 }
 
