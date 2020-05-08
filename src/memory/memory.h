@@ -10,7 +10,7 @@
 namespace memory {
 
 using MemoryAddr = uint16_t;
-using MemorySize = uint16_t;
+using MemorySize = uint32_t;
 using MemoryValue = uint8_t;
 
 class MemoryAddrProxy;
