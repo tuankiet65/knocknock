@@ -3,12 +3,15 @@
 #include "memory/memory.h"
 
 namespace memory {
-// Flat ROM, with no memory controller and no banks. Represents these cartridge
-// types:
-//  * 0x00: ROM only
-//  * 0x08: ROM only + RAM
-//  * 0x09: ROM only + RAM + BATT
-class FlatROM : public BulkLoadableMemory {
+
+/**
+ * Flat ROM, with no memory controller and no banks. Optional external RAM
+ * can be included. Represents these cartridge types:
+ *  * 0x00: ROM only
+ *  * 0x08: ROM only + RAM
+ *  * 0x09: ROM only + RAM + BATT
+ */
+class FlatROM : public ROMLoadableMemory {
 public:
     // ram_size_ needs to be specified in case the cartridge sports external
     // RAM (which is mapped to the cartridge RAM region)

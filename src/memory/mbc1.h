@@ -4,11 +4,16 @@
 
 namespace memory {
 
-// Memory Bank Controller 1, for handling cartridge type:
-//  * 0x01 (ROM + MBC1)
-//  * 0x02 (ROM + MBC1 + RAM)
-//  * 0x05 (ROM + MBC1 + RAM + BATT)
-class MBC1 : public BulkLoadableMemory {
+/**
+ * The Memory Bank Controller 1, which features up to 2MByte of ROM and/or
+ * 32KByte of RAM.
+ *
+ * These cartridge types corresponds to MBC1:
+ * * 0x01 (ROM + MBC1)
+ * * 0x02 (ROM + MBC1 + RAM)
+ * * 0x05 (ROM + MBC1 + RAM + BATT)
+ */
+class MBC1 : public ROMLoadableMemory {
 public:
     MBC1(MemorySize rom_size, MemorySize ram_size);
 

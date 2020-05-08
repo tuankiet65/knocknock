@@ -27,7 +27,7 @@ public:
     MemoryAddrProxy operator[](MemoryAddr addr);
 };
 
-class BulkLoadableMemory : public Memory {
+class ROMLoadableMemory : public Memory {
 public:
     virtual bool bulk_load(MemoryAddr addr, MemoryValue data[], size_t len) = 0;
 };
