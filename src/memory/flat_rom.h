@@ -1,6 +1,7 @@
 #pragma once
 
 #include "memory/memory.h"
+#include "memory/regions.h"
 
 namespace memory {
 
@@ -13,8 +14,10 @@ namespace memory {
  */
 class FlatROM : public ROMLoadableMemory {
 public:
-    // ram_size_ needs to be specified in case the cartridge sports external
-    // RAM (which is mapped to the cartridge RAM region)
+    /**
+     * Initialize a Flat ROM with optional external RAM.
+     * @param ram_size Size of the external RAM, or 0 if not available.
+     */
     FlatROM(MemorySize ram_size);
 
     MemoryValue read(MemoryAddr addr) const override;
@@ -22,10 +25,11 @@ public:
     bool load_rom(const std::vector<MemoryValue> &rom) override;
 
 private:
-    MemorySize ram_size_;
+    const MemorySize ram_size_;
+    const MemoryAddr ram_end_addr_;
 
-    MemoryValue rom_[0x8fff];
-    MemoryValue ram_[0x2000];
+    MemoryValue rom_[ROM_0_SIZE + ROM_SWITCHABLE_SIZE];
+    MemoryValue ram_[RAM_EXTERNAL_SIZE];
 };
 
 }  // namespace memory

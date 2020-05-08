@@ -1,34 +1,47 @@
 #include "memory/flat_rom.h"
 
+#include <fmt/format.h>
 #include <glog/logging.h>
 
 #include "memory/memory.h"
 
-using std::hex;
-
 namespace memory {
 
-FlatROM::FlatROM(MemorySize ram_size) : ram_size_(ram_size) {
+FlatROM::FlatROM(MemorySize ram_size)
+    : ram_size_(ram_size),
+      ram_end_addr_(RAM_EXTERNAL_BEGIN + ram_size_ - 1),
+      rom_(),
+      ram_() {
     DCHECK(ram_size_ <= sizeof(ram_));
 }
 
 MemoryValue FlatROM::read(MemoryAddr addr) const {
-    if (BETWEEN(0x0000, addr, 0x3fff)) {
+    if (BETWEEN(ROM_0_BEGIN, addr, ROM_0_END) ||
+        BETWEEN(ROM_SWITCHABLE_BEGIN, addr, ROM_SWITCHABLE_END)) {
         return rom_[addr];
     }
 
-    if (BETWEEN(0xa000, addr, 0xbfff)) {
-        if ((addr - 0xa000) >= ram_size_) {
-            LOG(ERROR) << "Out of range RAM read at addr 0x" << hex << addr
-                       << ", returning dummy value";
-            return 0xff;
-        }
-
-        return ram_[addr];
+    if (BETWEEN(RAM_EXTERNAL_BEGIN, addr, ram_end_addr_)) {
+        return ram_[addr - RAM_EXTERNAL_BEGIN];
     }
 
-    DCHECK(false) << "Access to invalid FlatROM range: 0x" << hex << addr;
+    DCHECK(false) << fmt::format("Invalid read at {:#04x}", addr);
     return 0xff;
+}
+
+void FlatROM::write(MemoryAddr addr, MemoryValue value) {
+    if (BETWEEN(ROM_0_BEGIN, addr, ROM_0_END) ||
+        BETWEEN(ROM_SWITCHABLE_BEGIN, addr, ROM_SWITCHABLE_END)) {
+        rom_[addr] = value;
+        return;
+    }
+
+    if (BETWEEN(RAM_EXTERNAL_BEGIN, addr, ram_end_addr_)) {
+        ram_[addr - RAM_EXTERNAL_BEGIN] = value;
+        return;
+    }
+
+    DCHECK(false) << fmt::format("Invalid write at {:#04x}", addr);
 }
 
 bool FlatROM::load_rom(const std::vector<MemoryValue> &rom) {
