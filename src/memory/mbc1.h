@@ -72,8 +72,8 @@ private:
 
     AddressingMode mode_;
 
-    static const MemorySize ROM_BANK_SIZE = 0x4000;
-    static const MemorySize RAM_BANK_SIZE = 0x2000;
+    static constexpr MemorySize ROM_BANK_SIZE = 0x4000;
+    static constexpr MemorySize RAM_BANK_SIZE = 0x2000;
 
     /**
      * ROM region. There are a maximum of 128 ROM banks, which resolves to
