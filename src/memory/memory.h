@@ -1,9 +1,8 @@
 #pragma once
 
-#include <glog/logging.h>
-
 #include <cstdint>
 #include <stdexcept>
+#include <vector>
 
 #define BETWEEN(l, m, r) ((l) <= (m) && (m) <= (r))
 
@@ -34,22 +33,12 @@ public:
 
 class MemoryAddrProxy {
 public:
-    MemoryAddrProxy(Memory *memory, MemoryAddr addr)
-        : memory_(memory), addr_(addr) {
-        DCHECK(memory);
-    }
+    MemoryAddrProxy(Memory *memory, MemoryAddr addr);
 
-    operator MemoryValue() const { return memory_->read(addr_); }
+    operator MemoryValue() const;
 
-    MemoryAddrProxy &operator=(MemoryAddrProxy other) {
-        *this = (MemoryValue)(other);
-        return *this;
-    }
-
-    MemoryAddrProxy &operator=(MemoryValue value) {
-        memory_->write(addr_, value);
-        return *this;
-    }
+    MemoryAddrProxy &operator=(MemoryAddrProxy other);
+    MemoryAddrProxy &operator=(MemoryValue value);
 
 private:
     Memory *memory_;

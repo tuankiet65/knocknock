@@ -1,6 +1,7 @@
 #include "joypad.h"
 
 #include <fmt/format.h>
+#include <glog/logging.h>
 
 namespace peripherals {
 
