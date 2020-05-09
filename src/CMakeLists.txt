@@ -6,6 +6,7 @@ set(SOURCE_FILES
         "memory/test_memory.cpp"
         "memory/mmu.cpp"
         "memory/flat_rom.cpp"
+        "memory/mbc1.cpp"
         "cpu/operands.cpp"
         "cartridge.cpp"
         peripherals/joypad.cpp)
@@ -22,6 +23,7 @@ set(UNITTEST_FILES
         "cpu/operands_unittest.cpp"
         memory/memory_unittest.cpp
         memory/flat_rom_unittest.cpp
+        memory/mbc1_unittest.cpp
         peripherals/joypad_unittest.cpp)
 add_executable(knocknock_unittest "${UNITTEST_FILES}" "knocknock_unittest.cpp")
 target_include_directories(knocknock_unittest PRIVATE .)
