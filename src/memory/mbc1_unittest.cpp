@@ -2,24 +2,15 @@
 
 #include "memory/mbc1.h"
 #include "memory/regions.h"
+#include "memory/unittest_utils.h"
 
 namespace memory {
 
 namespace {
 
-constexpr MemorySize ROM_BANK_SIZE = 0x4000;
 constexpr MemorySize RAM_BANK_SIZE = 0x2000;
 
 }  // namespace
-
-void fill_rom_bank(std::vector<MemoryValue> *rom,
-                   uint8_t bank,
-                   MemoryValue value) {
-    uint32_t start_addr = (uint32_t)(bank)*ROM_BANK_SIZE;
-
-    std::fill(rom->begin() + start_addr,
-              rom->begin() + start_addr + ROM_BANK_SIZE, value);
-}
 
 void check_rom_bank_value(MBC1 *mem, uint8_t bank, uint8_t value) {
     if (bank == 0) {
@@ -58,19 +49,14 @@ void check_ram_bank_value(MBC1 *mem, uint8_t bank, uint8_t value) {
 }
 
 TEST_CASE("ROM Banking mode", "[memory][mbc1]") {
-    // Uses a 64 bank ROM.
-    const MemorySize rom_size = 64 * ROM_BANK_SIZE;
-
-    // First we generate the ROM.
-    std::vector<MemoryValue> rom(rom_size);
-    fill_rom_bank(&rom, 0x00, 0x01);
-    fill_rom_bank(&rom, 0x01, 0x02);
-    fill_rom_bank(&rom, 0x10, 0x10);
-    fill_rom_bank(&rom, 0x21, 0x20);
+    // Generate a ROM with 64 banks, bank 0x00 filled with 0x01, bank 0x01
+    // filled with 0x02, bank 0x10 filled with 0x10, bank 0x21 filled with 0x20.
+    std::vector<MemoryValue> rom = testing::generate_test_rom(
+        64, {{0x00, 0x01}, {0x01, 0x02}, {0x10, 0x10}, {0x21, 0x20}});
 
     // Then we create the MBC and load the generated ROM in.
     // 64 ROM banks, 1 RAM bank.
-    MBC1 mem(rom_size, RAM_BANK_SIZE);
+    MBC1 mem(rom.size(), RAM_BANK_SIZE);
     mem.load_rom(rom);
 
     // Change to ROM addressing mode.
@@ -79,8 +65,8 @@ TEST_CASE("ROM Banking mode", "[memory][mbc1]") {
     check_rom_bank_value(&mem, 0x00, 0x01);
     check_rom_bank_value(&mem, 0x01, 0x02);
     check_rom_bank_value(&mem, 0x10, 0x10);
-    // We previously fill bank 0x21 to 0x20. When we attempt to read from
-    // bank 0x20, it should read from bank 0x21 instead.
+    // We previously filled bank 0x21 to 0x20. If we attempt to read from
+    // bank 0x20 now, it should read from bank 0x21 instead.
     check_rom_bank_value(&mem, 0x20, 0x20);
 
     // Enable RAM.
@@ -92,18 +78,14 @@ TEST_CASE("ROM Banking mode", "[memory][mbc1]") {
 }
 
 TEST_CASE("RAM Banking mode", "[memory][mbc1]") {
-    // Uses a 8 bank ROM.
-    const MemorySize rom_size = 8 * ROM_BANK_SIZE;
-
-    // Generate the ROM.
-    std::vector<MemoryValue> rom(rom_size);
-    fill_rom_bank(&rom, 0x00, 0x01);
-    fill_rom_bank(&rom, 0x01, 0x02);
-    fill_rom_bank(&rom, 0x07, 0x07);
+    // Generate a ROM with 8 banks, bank 0x00 filled with 0x01, bank 0x01
+    // filled with 0x02, bank 0x07 filled with 0x07.
+    std::vector<MemoryValue> rom = testing::generate_test_rom(
+        8, {{0x00, 0x01}, {0x01, 0x02}, {0x07, 0x07}});
 
     // Create the MBC and load in the ROM.
     // 8 ROM banks, 4 RAM banks.
-    MBC1 mem(rom_size, 4 * RAM_BANK_SIZE);
+    MBC1 mem(rom.size(), 4 * RAM_BANK_SIZE);
     mem.load_rom(rom);
 
     // Change to RAM addressing mode

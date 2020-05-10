@@ -22,6 +22,7 @@ set(UNITTEST_FILES
         "${SOURCE_FILES}"
         "cpu/operands_unittest.cpp"
         memory/memory_unittest.cpp
+        memory/unittest_utils.cpp
         memory/flat_rom_unittest.cpp
         memory/mbc1_unittest.cpp
         peripherals/joypad_unittest.cpp)
