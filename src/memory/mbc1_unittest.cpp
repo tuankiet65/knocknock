@@ -23,7 +23,7 @@ void fill_rom_bank(std::vector<MemoryValue> *rom,
 
 void check_rom_bank_value(MBC1 *mem, uint8_t bank, uint8_t value) {
     if (bank == 0) {
-        for (auto i = ROM_0_BEGIN; i < ROM_0_END; ++i) {
+        for (auto i = ROM_0_BEGIN; i <= ROM_0_END; ++i) {
             REQUIRE((*mem)[i] == value);
         }
     } else {
@@ -33,7 +33,7 @@ void check_rom_bank_value(MBC1 *mem, uint8_t bank, uint8_t value) {
         // Bit 6-5 of the bank number
         mem->write(0x4001, (bank >> 5) & 0b11);
 
-        for (auto i = ROM_SWITCHABLE_BEGIN; i < ROM_SWITCHABLE_END; ++i) {
+        for (auto i = ROM_SWITCHABLE_BEGIN; i <= ROM_SWITCHABLE_END; ++i) {
             REQUIRE((*mem)[i] == value);
         }
     }
@@ -45,14 +45,14 @@ void change_ram_bank(MBC1 *mem, uint8_t bank) {
 
 void fill_ram_bank(MBC1 *mem, uint8_t bank, uint8_t value) {
     change_ram_bank(mem, bank);
-    for (auto i = RAM_EXTERNAL_BEGIN; i < RAM_EXTERNAL_END; ++i) {
+    for (auto i = RAM_EXTERNAL_BEGIN; i <= RAM_EXTERNAL_END; ++i) {
         (*mem)[i] = value;
     }
 }
 
 void check_ram_bank_value(MBC1 *mem, uint8_t bank, uint8_t value) {
     change_ram_bank(mem, bank);
-    for (auto i = RAM_EXTERNAL_BEGIN; i < RAM_EXTERNAL_END; ++i) {
+    for (auto i = RAM_EXTERNAL_BEGIN; i <= RAM_EXTERNAL_END; ++i) {
         REQUIRE((*mem)[i] == value);
     }
 }
