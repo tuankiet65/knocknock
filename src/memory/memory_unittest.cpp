@@ -53,7 +53,7 @@ TEST_CASE("MemoryAddrProxy", "[memory]") {
         REQUIRE(mem1[0x1111] == 0x11);
         REQUIRE(mem2[0x2222] == 0x22);
 
-        mem1[0x3333] = (memory::MemoryValue)(mem2[0x2222]);
+        mem1[0x3333] = *mem2[0x2222];
         REQUIRE(mem1[0x3333] == 0x22);
     }
 }

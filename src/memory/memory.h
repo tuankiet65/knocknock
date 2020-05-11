@@ -36,6 +36,7 @@ public:
     MemoryAddrProxy(Memory *memory, MemoryAddr addr);
 
     operator MemoryValue() const;
+    MemoryValue operator*() const;
 
     MemoryAddrProxy &operator=(MemoryValue value);
 

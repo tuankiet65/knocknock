@@ -31,6 +31,10 @@ MemoryAddrProxy::operator MemoryValue() const {
     return memory_->read(addr_);
 }
 
+MemoryValue MemoryAddrProxy::operator*() const {
+    return memory_->read(addr_);
+}
+
 MemoryAddrProxy &MemoryAddrProxy::operator=(MemoryValue value) {
     memory_->write(addr_, value);
     return *this;
