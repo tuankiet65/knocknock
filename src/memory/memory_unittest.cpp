@@ -8,8 +8,10 @@
 
 #include "memory/test_memory.h"
 
+namespace memory {
+
 TEST_CASE("read16 + write16", "[memory]") {
-    memory::TestMemory mem;
+    TestMemory mem;
 
     SECTION("8-bit write, 16-bit read") {
         mem.write(0x3456, 0xff);
@@ -30,7 +32,7 @@ TEST_CASE("read16 + write16", "[memory]") {
 }
 
 TEST_CASE("MemoryAddrProxy", "[memory]") {
-    memory::TestMemory mem1, mem2;
+    TestMemory mem1, mem2;
 
     SECTION("raw write, proxy read") {
         mem1.write(0x7162, 0x17);
@@ -57,3 +59,5 @@ TEST_CASE("MemoryAddrProxy", "[memory]") {
         REQUIRE(mem1[0x3333] == 0x22);
     }
 }
+
+}  // namespace memory
