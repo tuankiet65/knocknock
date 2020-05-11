@@ -37,12 +37,14 @@ public:
 
     operator MemoryValue() const;
 
-    MemoryAddrProxy &operator=(MemoryAddrProxy other);
     MemoryAddrProxy &operator=(MemoryValue value);
 
 private:
     Memory *memory_;
     const MemoryAddr addr_;
+
+    MemoryAddrProxy(const MemoryAddrProxy &) = delete;
+    MemoryAddrProxy &operator=(MemoryAddrProxy other) = delete;
 };
 
 }  // namespace memory

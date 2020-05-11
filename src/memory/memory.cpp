@@ -31,15 +31,7 @@ MemoryAddrProxy::operator MemoryValue() const {
     return memory_->read(addr_);
 }
 
-// TODO: reevaluate this copy operator.
-// Should it be like this, or should it copy the memory_ and addr_ field
-// of other to this.
-MemoryAddrProxy& MemoryAddrProxy::operator=(MemoryAddrProxy other) {
-    *this = (MemoryValue)(other);
-    return *this;
-}
-
-MemoryAddrProxy& MemoryAddrProxy::operator=(MemoryValue value) {
+MemoryAddrProxy &MemoryAddrProxy::operator=(MemoryValue value) {
     memory_->write(addr_, value);
     return *this;
 }
