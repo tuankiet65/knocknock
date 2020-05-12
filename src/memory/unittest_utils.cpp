@@ -44,4 +44,20 @@ bool verify_rom_switchable_value(const Memory& memory, MemoryValue value) {
     return true;
 }
 
+void fill_external_ram(Memory *mem, uint8_t value) {
+    for (auto i = RAM_EXTERNAL_BEGIN; i <= RAM_EXTERNAL_END; ++i) {
+        (*mem)[i] = value;
+    }
+}
+
+bool verify_external_ram_value(const Memory &memory, uint8_t value) {
+    for (auto i = RAM_EXTERNAL_BEGIN; i <= RAM_EXTERNAL_END; ++i) {
+        if (memory.read(i) != value) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 }  // namespace memory::testing

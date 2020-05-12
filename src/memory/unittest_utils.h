@@ -17,4 +17,8 @@ bool verify_rom_0_value(const Memory& memory, MemoryValue value);
 
 bool verify_rom_switchable_value(const Memory& memory, MemoryValue value);
 
+void fill_external_ram(Memory *mem, uint8_t value);
+
+bool verify_external_ram_value(const Memory &memory, uint8_t value);
+
 }  // namespace memory::testing.

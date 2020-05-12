@@ -10,9 +10,7 @@ namespace {
 
 constexpr MemorySize RAM_BANK_SIZE = 0x2000;
 
-}  // namespace
-
-void change_rom_bank(MBC1* mem, uint8_t bank) {
+void change_rom_bank(MBC1 *mem, uint8_t bank) {
     // First five bits of the bank number
     mem->write(0x2420, bank & 0b00011111);
     // Bit 6-5 of the bank number
@@ -23,19 +21,7 @@ void change_ram_bank(MBC1 *mem, uint8_t bank) {
     mem->write(0x4001, bank & 0b11);
 }
 
-void fill_ram_bank(MBC1 *mem, uint8_t bank, uint8_t value) {
-    change_ram_bank(mem, bank);
-    for (auto i = RAM_EXTERNAL_BEGIN; i <= RAM_EXTERNAL_END; ++i) {
-        (*mem)[i] = value;
-    }
-}
-
-void check_ram_bank_value(MBC1 *mem, uint8_t bank, uint8_t value) {
-    change_ram_bank(mem, bank);
-    for (auto i = RAM_EXTERNAL_BEGIN; i <= RAM_EXTERNAL_END; ++i) {
-        REQUIRE((*mem)[i] == value);
-    }
-}
+}  // namespace
 
 TEST_CASE("ROM Banking mode", "[memory][mbc1]") {
     // Generate a ROM with 64 banks, bank 0x00 filled with 0x01, bank 0x01
@@ -71,8 +57,9 @@ TEST_CASE("ROM Banking mode", "[memory][mbc1]") {
     mem.write(0x1010, 0xfa);
 
     // Then test the RAM.
-    fill_ram_bank(&mem, 0x00, 0x40);
-    check_ram_bank_value(&mem, 0x00, 0x40);
+    change_ram_bank(&mem, 0x00);
+    testing::fill_external_ram(&mem, 0x40);
+    REQUIRE(testing::verify_external_ram_value(mem, 0x40));
 }
 
 TEST_CASE("RAM Banking mode", "[memory][mbc1]") {
@@ -101,11 +88,15 @@ TEST_CASE("RAM Banking mode", "[memory][mbc1]") {
     mem.write(0x1010, 0xfa);
 
     // Then test the RAM.
-    fill_ram_bank(&mem, 0x00, 0x40);
-    fill_ram_bank(&mem, 0x03, 0x41);
+    change_ram_bank(&mem, 0x00);
+    testing::fill_external_ram(&mem, 0x40);
+    change_ram_bank(&mem, 0x03);
+    testing::fill_external_ram(&mem, 0x41);
 
-    check_ram_bank_value(&mem, 0x00, 0x40);
-    check_ram_bank_value(&mem, 0x03, 0x41);
+    change_ram_bank(&mem, 0x00);
+    REQUIRE(testing::verify_external_ram_value(mem, 0x40));
+    change_ram_bank(&mem, 0x03);
+    REQUIRE(testing::verify_external_ram_value(mem, 0x41));
 }
 
 }  // namespace memory
