@@ -24,4 +24,24 @@ std::vector<MemoryValue> generate_test_rom(
     return rom;
 }
 
+bool verify_rom_0_value(const Memory& memory, MemoryValue value) {
+    for (auto i = ROM_0_BEGIN; i <= ROM_0_END; ++i) {
+        if (memory.read(i) != value) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool verify_rom_switchable_value(const Memory& memory, MemoryValue value) {
+    for (auto i = ROM_SWITCHABLE_BEGIN; i <= ROM_SWITCHABLE_END; ++i) {
+        if (memory.read(i) != value) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 }  // namespace memory::testing

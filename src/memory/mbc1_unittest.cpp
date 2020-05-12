@@ -12,22 +12,11 @@ constexpr MemorySize RAM_BANK_SIZE = 0x2000;
 
 }  // namespace
 
-void check_rom_bank_value(MBC1 *mem, uint8_t bank, uint8_t value) {
-    if (bank == 0) {
-        for (auto i = ROM_0_BEGIN; i <= ROM_0_END; ++i) {
-            REQUIRE((*mem)[i] == value);
-        }
-    } else {
-        // Change the ROM bank to the specified bank.
-        // First five bits of the bank number
-        mem->write(0x2420, bank & 0b00011111);
-        // Bit 6-5 of the bank number
-        mem->write(0x4001, (bank >> 5) & 0b11);
-
-        for (auto i = ROM_SWITCHABLE_BEGIN; i <= ROM_SWITCHABLE_END; ++i) {
-            REQUIRE((*mem)[i] == value);
-        }
-    }
+void change_rom_bank(MBC1* mem, uint8_t bank) {
+    // First five bits of the bank number
+    mem->write(0x2420, bank & 0b00011111);
+    // Bit 6-5 of the bank number
+    mem->write(0x4001, (bank >> 5) & 0b11);
 }
 
 void change_ram_bank(MBC1 *mem, uint8_t bank) {
@@ -62,12 +51,21 @@ TEST_CASE("ROM Banking mode", "[memory][mbc1]") {
     // Change to ROM addressing mode.
     mem.write(0x6069, 0);
 
-    check_rom_bank_value(&mem, 0x00, 0x01);
-    check_rom_bank_value(&mem, 0x01, 0x02);
-    check_rom_bank_value(&mem, 0x10, 0x10);
+    // Check value in ROM bank 0.
+    REQUIRE(testing::verify_rom_0_value(mem, 0x01));
+
+    // Check value in ROM bank 0x01.
+    change_rom_bank(&mem, 0x01);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x02));
+
+    // Check value in ROM bank 0x10.
+    change_rom_bank(&mem, 0x10);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x10));
+
     // We previously filled bank 0x21 to 0x20. If we attempt to read from
     // bank 0x20 now, it should read from bank 0x21 instead.
-    check_rom_bank_value(&mem, 0x20, 0x20);
+    change_rom_bank(&mem, 0x20);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x20));
 
     // Enable RAM.
     mem.write(0x1010, 0xfa);
@@ -91,9 +89,13 @@ TEST_CASE("RAM Banking mode", "[memory][mbc1]") {
     // Change to RAM addressing mode
     mem.write(0x6069, 1);
 
-    check_rom_bank_value(&mem, 0x00, 0x01);
-    check_rom_bank_value(&mem, 0x01, 0x02);
-    check_rom_bank_value(&mem, 0x07, 0x07);
+    REQUIRE(testing::verify_rom_0_value(mem, 0x01));
+
+    change_rom_bank(&mem, 0x01);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x02));
+
+    change_rom_bank(&mem, 0x07);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x07));
 
     // Enable RAM
     mem.write(0x1010, 0xfa);
