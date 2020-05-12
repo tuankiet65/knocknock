@@ -38,21 +38,16 @@ private:
      */
     enum class AddressingMode {
         /**
-         * In this mode, all 7 bits in the bank selection register is used to
-         * address the switchable ROM bank. As such, the switchable RAM block
-         * points to RAM bank 0. Because the RAM bank can't be changed, the
-         * effective external RAM size is 8Kbyte
+         * In this mode, the ROM_0 region always points to ROM bank 0, and the
+         * external RAM region always points to RAM bank 0.
          */
-        ROM_BANKING,
+        MODE_0,
         /**
-         * In this mode, the lower 5 bits in the bank selection register is used
-         * to address the switchable ROM bank, while the upper 3 bits is used
-         * to address the switchable RAM bank. Because the RAM bank can be
-         * changed, the effective external RAM size is 32kByte. However,
-         * since only 5 bits is allocated for ROM bank selection, only
-         * ROM bank xx-xx can be addressed.
+         * In this mode, the ROM_0 region points to ROM bank (bank2_ << 5),
+         * allowing access to bank 0x20, 0x40 and 0x60 which is inaccessible
+         * in Mode 0. The external RAM region points to RAM bank (bank2_).
          */
-        RAM_BANKING
+        MODE_1
     };
 
     uint32_t translate_ram_address(MemoryAddr addr) const;
@@ -77,14 +72,14 @@ private:
 
     /**
      * ROM region. There are a maximum of 128 ROM banks, which resolves to
-     * the maximum size of 2048kByte.
+     * the maximum size of 2MByte.
      */
     MemoryValue rom_[128 * ROM_BANK_SIZE];
     MemorySize rom_size_;
 
     /**
      * RAM region. There are a maximum of 4 RAM banks, which resolves to
-     * the maximum size of 512kByte.
+     * the maximum size of 32KByte.
      */
     MemoryValue ram_[4 * RAM_BANK_SIZE];
     MemorySize ram_size_;

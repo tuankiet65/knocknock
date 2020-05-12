@@ -27,7 +27,7 @@ MBC1::MBC1(MemorySize rom_size, MemorySize ram_size)
     : ram_enabled_(false),
       bank1_(0),
       bank2_(0),
-      mode_(AddressingMode::ROM_BANKING),
+      mode_(AddressingMode::MODE_0),
       rom_(),
       rom_size_(rom_size),
       ram_(),
@@ -53,17 +53,15 @@ uint32_t MBC1::translate_rom_address(MemoryAddr addr) const {
 
     if (BETWEEN(ROM_0_BEGIN, addr, ROM_0_END)) {
         // Reading from bank 0.
-        bank = 0;
+        switch (mode_ ) {
+            case AddressingMode::MODE_0: bank = 0; break;
+            case AddressingMode::MODE_1: bank = bank2_ << 5; break;
+        }
+
         addr_in_bank = addr - ROM_0_BEGIN;
     } else if (BETWEEN(ROM_SWITCHABLE_BEGIN, addr, ROM_SWITCHABLE_END)) {
         // Reading from switchable bank area.
-        switch (mode_) {
-            case AddressingMode::ROM_BANKING:
-                bank = (bank2_ << 5 | bank1_);
-                break;
-            case AddressingMode::RAM_BANKING: bank = bank1_; break;
-        }
-
+        bank = (bank2_ << 5) | bank1_;
         addr_in_bank = addr - ROM_SWITCHABLE_BEGIN;
     } else {
         DCHECK(false);
@@ -77,9 +75,9 @@ uint32_t MBC1::translate_ram_address(MemoryAddr addr) const {
     uint32_t bank = 0;
     uint32_t addr_in_bank = addr - RAM_EXTERNAL_BEGIN;
 
-    if (mode_ == AddressingMode::ROM_BANKING) {
+    if (mode_ == AddressingMode::MODE_0) {
         bank = 0;
-    } else if (mode_ == AddressingMode::RAM_BANKING) {
+    } else if (mode_ == AddressingMode::MODE_1) {
         bank = bank2_;
     }
 
@@ -88,11 +86,8 @@ uint32_t MBC1::translate_ram_address(MemoryAddr addr) const {
 }
 
 MemoryValue MBC1::read(MemoryAddr addr) const {
-    if (BETWEEN(ROM_0_BEGIN, addr, ROM_0_END)) {
-        return rom_[addr];
-    }
-
-    if (BETWEEN(ROM_SWITCHABLE_BEGIN, addr, ROM_SWITCHABLE_END)) {
+    if (BETWEEN(ROM_0_BEGIN, addr, ROM_0_END) ||
+        BETWEEN(ROM_SWITCHABLE_BEGIN, addr, ROM_SWITCHABLE_END)) {
         uint32_t real_addr = translate_rom_address(addr);
 
         if (real_addr >= rom_size_) {
@@ -106,7 +101,7 @@ MemoryValue MBC1::read(MemoryAddr addr) const {
 
     if (BETWEEN(RAM_EXTERNAL_BEGIN, addr, RAM_EXTERNAL_END)) {
         if (!ram_enabled_) {
-            LOG(ERROR) << "RAM not enabled, returning junk value";
+            LOG(INFO) << "RAM not enabled, returning junk value";
             return 0xff;
         }
 
@@ -155,9 +150,9 @@ void MBC1::write(MemoryAddr addr, MemoryValue value) {
     //   S: 0 for ROM banking mode, 1 for RAM banking mode.
     if (BETWEEN(ADDR_MODE_BEGIN, addr, ADDR_MODE_END)) {
         if ((value & 1u) == 0) {
-            mode_ = AddressingMode::ROM_BANKING;
+            mode_ = AddressingMode::MODE_0;
         } else {
-            mode_ = AddressingMode::RAM_BANKING;
+            mode_ = AddressingMode::MODE_1;
         }
 
         return;

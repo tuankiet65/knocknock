@@ -1,7 +1,6 @@
 #include <catch2/catch.hpp>
 
 #include "memory/mbc1.h"
-#include "memory/regions.h"
 #include "memory/unittest_utils.h"
 
 namespace memory {
@@ -23,80 +22,104 @@ void change_ram_bank(MBC1 *mem, uint8_t bank) {
 
 }  // namespace
 
-TEST_CASE("ROM Banking mode", "[memory][mbc1]") {
-    // Generate a ROM with 64 banks, bank 0x00 filled with 0x01, bank 0x01
-    // filled with 0x02, bank 0x10 filled with 0x10, bank 0x21 filled with 0x20.
-    std::vector<MemoryValue> rom = testing::generate_test_rom(
-        64, {{0x00, 0x01}, {0x01, 0x02}, {0x10, 0x10}, {0x21, 0x20}});
+TEST_CASE("ROM Bank 0 region", "[memory][mbc1]") {
+    // Generate a ROM with 128 banks, bank 0x00 filled with 0x01, bank 0x20
+    // filled with 0x20.
+    auto rom = testing::generate_test_rom(0x80, {{0x00, 0x01}, {0x20, 0x20}});
 
-    // Then we create the MBC and load the generated ROM in.
-    // 64 ROM banks, 1 RAM bank.
-    MBC1 mem(rom.size(), RAM_BANK_SIZE);
+    // Create the MBC.
+    MBC1 mem(rom.size(), 0);
     mem.load_rom(rom);
 
-    // Change to ROM addressing mode.
+    // Set to mode 0.
     mem.write(0x6069, 0);
 
-    // Check value in ROM bank 0.
+    // Randomly switch the ROM bank to something else.
+    change_rom_bank(&mem, 0x35);
+
+    // In mode 0, ROM_0 region always points to bank 0 regardless of which bank
+    // is switched to. Verify that is correct.
     REQUIRE(testing::verify_rom_0_value(mem, 0x01));
 
-    // Check value in ROM bank 0x01.
-    change_rom_bank(&mem, 0x01);
-    REQUIRE(testing::verify_rom_switchable_value(mem, 0x02));
+    // Set to mode 1
+    mem.write(0x6069, 1);
 
-    // Check value in ROM bank 0x10.
-    change_rom_bank(&mem, 0x10);
-    REQUIRE(testing::verify_rom_switchable_value(mem, 0x10));
+    // Then switch to bank 0x25.
+    change_rom_bank(&mem, 0x25);
 
-    // We previously filled bank 0x21 to 0x20. If we attempt to read from
-    // bank 0x20 now, it should read from bank 0x21 instead.
-    change_rom_bank(&mem, 0x20);
-    REQUIRE(testing::verify_rom_switchable_value(mem, 0x20));
+    // bank2_ should be 0x1, which means that ROM_0 should actually points to
+    // bank 0x20.
+    REQUIRE(testing::verify_rom_0_value(mem, 0x20));
+}
+
+TEST_CASE("ROM Switchable bank region", "[memory][mbc1]") {
+    // Generate a ROM with 128 banks, bank 0x24 filled with 0x24, bank 0x41
+    // filled with 0x41, bank 0x69 filled with 0x69 (nice).
+    auto rom = testing::generate_test_rom(
+        0x80, {{0x24, 0x24}, {0x41, 0x41}, {0x69, 0x69}});
+
+    MBC1 mem(rom.size(), 0);
+    mem.load_rom(rom);
+
+    // Set to mode 0
+    mem.write(0x6069, 0);
+
+    change_rom_bank(&mem, 0x24);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x24));
+    // When bank 0x40 is selected then the switchable bank region should switch
+    // to bank 0x41 instead.
+    change_rom_bank(&mem, 0x40);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x41));
+    change_rom_bank(&mem, 0x69);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x69));
+
+    // Set to mode 1
+    mem.write(0x6069, 1);
+
+    // Same test as above, since the mode should not affect the switchable bank
+    // region.
+    change_rom_bank(&mem, 0x24);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x24));
+    // When bank 0x40 is selected then the switchable bank region should switch
+    // to bank 0x41 instead.
+    change_rom_bank(&mem, 0x40);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x41));
+    change_rom_bank(&mem, 0x69);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x69));
+}
+
+TEST_CASE("External RAM region", "[memory][mbc1]") {
+    MBC1 mem(0, 4 * RAM_BANK_SIZE);
 
     // Enable RAM.
     mem.write(0x1010, 0xfa);
 
-    // Then test the RAM.
-    change_ram_bank(&mem, 0x00);
-    testing::fill_external_ram(&mem, 0x40);
-    REQUIRE(testing::verify_external_ram_value(mem, 0x40));
-}
+    // Set to mode 0.
+    mem.write(0x6069, 0);
 
-TEST_CASE("RAM Banking mode", "[memory][mbc1]") {
-    // Generate a ROM with 8 banks, bank 0x00 filled with 0x01, bank 0x01
-    // filled with 0x02, bank 0x07 filled with 0x07.
-    std::vector<MemoryValue> rom = testing::generate_test_rom(
-        8, {{0x00, 0x01}, {0x01, 0x02}, {0x07, 0x07}});
+    // Fill bank 0 to 0x01.
+    // In Mode 0, the external RAM region should always point to RAM bank 0.
+    testing::fill_external_ram(&mem, 0x01);
 
-    // Create the MBC and load in the ROM.
-    // 8 ROM banks, 4 RAM banks.
-    MBC1 mem(rom.size(), 4 * RAM_BANK_SIZE);
-    mem.load_rom(rom);
+    // Randomly switch to another RAM bank.
+    change_ram_bank(&mem, 0x03);
 
-    // Change to RAM addressing mode
+    // In Mode 0, the external RAM region should always point to RAM bank 0.
+    // Verify this.
+    REQUIRE(testing::verify_external_ram_value(mem, 0x01));
+
+    // Set to mode 1
     mem.write(0x6069, 1);
 
-    REQUIRE(testing::verify_rom_0_value(mem, 0x01));
-
-    change_rom_bank(&mem, 0x01);
-    REQUIRE(testing::verify_rom_switchable_value(mem, 0x02));
-
-    change_rom_bank(&mem, 0x07);
-    REQUIRE(testing::verify_rom_switchable_value(mem, 0x07));
-
-    // Enable RAM
-    mem.write(0x1010, 0xfa);
-
-    // Then test the RAM.
-    change_ram_bank(&mem, 0x00);
-    testing::fill_external_ram(&mem, 0x40);
+    change_ram_bank(&mem, 0x02);
+    testing::fill_external_ram(&mem, 0x02);
     change_ram_bank(&mem, 0x03);
-    testing::fill_external_ram(&mem, 0x41);
+    testing::fill_external_ram(&mem, 0x03);
 
-    change_ram_bank(&mem, 0x00);
-    REQUIRE(testing::verify_external_ram_value(mem, 0x40));
+    change_ram_bank(&mem, 0x02);
+    REQUIRE(testing::verify_external_ram_value(mem, 0x02));
     change_ram_bank(&mem, 0x03);
-    REQUIRE(testing::verify_external_ram_value(mem, 0x41));
+    REQUIRE(testing::verify_external_ram_value(mem, 0x03));
 }
 
 }  // namespace memory
