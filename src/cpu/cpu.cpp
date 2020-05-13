@@ -195,6 +195,7 @@ void CPU::execute_instruction(Instruction inst) {
         case Opcode::RRCA: rrca(); break;
         case Opcode::SLA: sla(inst.lhs()); break;
         case Opcode::SRA: sra(inst.lhs()); break;
+        case Opcode::RST: rst(inst.lhs()); break;
         case Opcode::BIT: bit(inst.lhs(), inst.rhs()); break;
         case Opcode::RES: res(inst.lhs(), inst.rhs()); break;
         case Opcode::SET: set(inst.lhs(), inst.rhs()); break;
@@ -743,6 +744,13 @@ void CPU::sra(Operand lhs) {
     f_.subtract = false;
     f_.half_carry = false;
     f_.carry = (value & 0x1u);
+}
+
+void CPU::rst(Operand lhs) {
+    DCHECK(lhs == Operand::Imm8);
+
+    push_to_stack(pc_);
+    pc_ = imm8_.read();
 }
 
 void CPU::bit(Operand lhs, Operand rhs) {
