@@ -136,7 +136,7 @@ void CPU::execute_instruction(Instruction inst) {
         case Opcode::DI: di(); break;
         case Opcode::EI: ei(); break;
         case Opcode::CALL: call(inst.lhs(), inst.rhs()); break;
-        case Opcode::RET: ret(); break;
+        case Opcode::RET: ret(inst.lhs()); break;
         case Opcode::PUSH: push(inst.lhs()); break;
         case Opcode::POP: pop(inst.lhs()); break;
         case Opcode::INC: inc(inst.lhs()); break;
@@ -347,8 +347,20 @@ void CPU::call(Operand lhs, Operand rhs) {
     }
 }
 
-void CPU::ret() {
-    pc_ = pop_from_stack();
+void CPU::ret(Operand lhs) {
+    bool should_return = false;
+
+    switch (lhs) {
+        case Operand::None: should_return = true; break;
+        case Operand::FlagC: should_return = f_.carry; break;
+        case Operand::FlagNC: should_return = !f_.carry; break;
+        case Operand::FlagZ: should_return = f_.zero; break;
+        case Operand::FlagNZ: should_return = !f_.zero; break;
+    }
+
+    if (should_return) {
+        pc_ = pop_from_stack();
+    }
 }
 
 void CPU::push(Operand lhs) {

@@ -51,7 +51,7 @@ private:
     void di();
     void ei();
     void call(Instruction::Operand lhs, Instruction::Operand rhs);
-    void ret();
+    void ret(Instruction::Operand lhs);
     void push(Instruction::Operand lhs);
     void pop(Instruction::Operand lhs);
     void inc(Instruction::Operand lhs);
