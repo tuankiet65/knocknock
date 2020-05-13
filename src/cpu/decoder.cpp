@@ -22,20 +22,26 @@ namespace {
 
 #define INSTRUCTION(...) GET_IMPL(__VA_ARGS__, INST3, INST2, INST1)(__VA_ARGS__)
 
-#define INST1(__opcode__)                      \
-    opcode_ = Instruction::Opcode::__opcode__; \
-    lhs_ = Instruction::Operand::None;         \
-    rhs_ = Instruction::Operand::None;
+#define INST1(__opcode__)                          \
+    do {                                           \
+        opcode_ = Instruction::Opcode::__opcode__; \
+        lhs_ = Instruction::Operand::None;         \
+        rhs_ = Instruction::Operand::None;         \
+    } while (false)
 
-#define INST2(__opcode__, __lhs__)             \
-    opcode_ = Instruction::Opcode::__opcode__; \
-    lhs_ = Instruction::Operand::__lhs__;      \
-    rhs_ = Instruction::Operand::None;
+#define INST2(__opcode__, __lhs__)                 \
+    do {                                           \
+        opcode_ = Instruction::Opcode::__opcode__; \
+        lhs_ = Instruction::Operand::__lhs__;      \
+        rhs_ = Instruction::Operand::None;         \
+    } while (false)
 
-#define INST3(__opcode__, __lhs__, __rhs__)    \
-    opcode_ = Instruction::Opcode::__opcode__; \
-    lhs_ = Instruction::Operand::__lhs__;      \
-    rhs_ = Instruction::Operand::__rhs__;
+#define INST3(__opcode__, __lhs__, __rhs__)        \
+    do {                                           \
+        opcode_ = Instruction::Opcode::__opcode__; \
+        lhs_ = Instruction::Operand::__lhs__;      \
+        rhs_ = Instruction::Operand::__rhs__;      \
+    } while (false)
 
 constexpr Instruction::Operand r[] = {
     Instruction::Operand::B,      // 0
