@@ -13,7 +13,7 @@ public:
 
     void step();
 
-    std::optional<Instruction> decoded_instruction() {
+    [[nodiscard]] std::optional<Instruction> decoded_instruction() const {
         return decoded_instruction_;
     }
 
