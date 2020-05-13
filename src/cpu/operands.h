@@ -78,13 +78,13 @@ private:
 
 class Register16Mirror : public Operand16 {
 public:
-    Register16Mirror(Register8 *msb, Register8 *lsb);
+    Register16Mirror(Operand8 *msb, Operand8 *lsb);
 
     uint16_t read() const override;
     void write(uint16_t value) override;
 
 private:
-    Register8 *msb_, *lsb_;
+    Operand8 *msb_, *lsb_;
 };
 
 class Immediate8 : public Operand8 {
