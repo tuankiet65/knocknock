@@ -37,7 +37,7 @@ namespace {
     lhs_ = Instruction::Operand::__lhs__;      \
     rhs_ = Instruction::Operand::__rhs__;
 
-static const Instruction::Operand r[] = {
+constexpr Instruction::Operand r[] = {
     Instruction::Operand::B,      // 0
     Instruction::Operand::C,      // 1
     Instruction::Operand::D,      // 2
@@ -48,7 +48,7 @@ static const Instruction::Operand r[] = {
     Instruction::Operand::A       // 7
 };
 
-static const Instruction::Opcode rot[] = {
+constexpr Instruction::Opcode rot[] = {
     Instruction::Opcode::RLC,   // 0
     Instruction::Opcode::RRC,   // 1
     Instruction::Opcode::RL,    // 2
