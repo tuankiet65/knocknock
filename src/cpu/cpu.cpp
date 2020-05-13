@@ -198,6 +198,7 @@ void CPU::execute_instruction(Instruction inst) {
         case Opcode::BIT: bit(inst.lhs(), inst.rhs()); break;
         case Opcode::RES: res(inst.lhs(), inst.rhs()); break;
         case Opcode::SET: set(inst.lhs(), inst.rhs()); break;
+        case Opcode::DAA: daa(); break;
 
         default:
             DCHECK(false) << "Instruction not recognized: "
@@ -777,6 +778,42 @@ void CPU::set(Operand lhs, Operand rhs) {
     uint8_t x = imm8_.read(), y = (*op8)->read();
     uint8_t new_value = y | (1u << x);
     (*op8)->write(new_value);
+}
+
+void CPU::daa() {
+    uint8_t a = a_.read();
+
+    if (!f_.subtract) {
+        if (f_.half_carry || ((a & 0x0f) > 0x09)) {
+            // Explanation: a is an uint8_t, so if the below addition overflows
+            // and f_.carry is false, then the condition (a > 0x9f) below fails,
+            // which is not we're looking for when a is between 0xf0 and 0xff.
+            // So we "abuse" the f_.carry flag to also indicate that the
+            // addition will overflow, thus making sure the below condition is
+            // true.
+            f_.carry |= ((0xffu - a) < 0x06);
+
+            a += 0x06;
+        }
+
+        if (f_.carry || (a > 0x9f)) {
+            a += 0x60;
+            f_.carry = true;
+        }
+    } else {
+        if (f_.half_carry) {
+            a -= 0x06;
+        }
+
+        if (f_.carry) {
+            a -= 0x60;
+        }
+    }
+
+    a_.write(a);
+
+    f_.half_carry = false;
+    f_.zero = (a == 0);
 }
 
 }  // namespace cpu
