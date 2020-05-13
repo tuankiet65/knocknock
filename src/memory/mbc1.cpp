@@ -25,7 +25,7 @@ constexpr int ADDR_MODE_END = 0x7fff;
 
 MBC1::MBC1(MemorySize rom_size, MemorySize ram_size)
     : ram_enabled_(false),
-      bank1_(0),
+      bank1_(1),
       bank2_(0),
       mode_(AddressingMode::MODE_0),
       rom_(),

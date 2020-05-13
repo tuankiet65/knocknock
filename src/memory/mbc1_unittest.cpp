@@ -22,6 +22,25 @@ void change_ram_bank(MBC1 *mem, uint8_t bank) {
 
 }  // namespace
 
+TEST_CASE("Initial bank in switchable region", "[memory][mbc1]") {
+    // Generate a ROM with 128 banks, bank 0x00 filled with 0x01, bank 0x01
+    // filled with 0x02.
+    auto rom = testing::generate_test_rom(0x80, {{0x00, 0x01}, {0x01, 0x02}});
+
+    // Create the MBC.
+    MBC1 mem(rom.size(), 0);
+    mem.load_rom(rom);
+
+    // Set to mode 0.
+    mem.write(0x6069, 0);
+
+    // Verify that in mode 0, ROM_0 region always points to bank 0.
+    REQUIRE(testing::verify_rom_0_value(mem, 0x01));
+
+    // Verify that the switchable region initially points to bank 1.
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x02));
+}
+
 TEST_CASE("ROM Bank 0 region", "[memory][mbc1]") {
     // Generate a ROM with 128 banks, bank 0x00 filled with 0x01, bank 0x20
     // filled with 0x20.
