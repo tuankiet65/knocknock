@@ -34,24 +34,17 @@ private:
     uint8_t value_;
 };
 
-class FlagRegister : public Register8 {
-private:
-    class Flag {
-    public:
-        Flag(FlagRegister *reg, uint8_t mask);
-        operator bool() const;
-        Flag &operator=(Flag value);
-        Flag &operator=(bool value);
-
-    private:
-        FlagRegister *reg_;
-        uint8_t mask_;
-    };
-
+class FlagRegister : public Operand8 {
 public:
     FlagRegister();
 
-    Flag zero, subtract, half_carry, carry;
+    uint8_t read() const override;
+    void write(uint8_t value) override;
+
+    bool zero;
+    bool subtract;
+    bool half_carry;
+    bool carry;
 };
 
 class Register8Sign : public Operand8Sign {

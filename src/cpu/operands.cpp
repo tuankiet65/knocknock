@@ -6,6 +6,15 @@
 
 namespace cpu {
 
+namespace {
+
+constexpr uint8_t ZERO_MASK = 1 << 7;
+constexpr uint8_t SUBTRACT_MASK = 1 << 6;
+constexpr uint8_t HALF_CARRY_MASK = 1 << 5;
+constexpr uint8_t CARRY_MASK = 1 << 4;
+
+}  // namespace
+
 Register8::Register8() : value_(0) {}
 uint8_t Register8::read() const {
     return value_;
@@ -14,37 +23,30 @@ void Register8::write(uint8_t value) {
     value_ = value;
 }
 
-FlagRegister::Flag::Flag(FlagRegister *reg, uint8_t mask)
-    : reg_(reg), mask_(mask) {}
-
-FlagRegister::Flag::operator bool() const {
-    return (reg_->read() & mask_);
-}
-
-FlagRegister::Flag &FlagRegister::Flag::operator=(FlagRegister::Flag value) {
-    *this = (bool)(value);
-    return *this;
-}
-
-FlagRegister::Flag &FlagRegister::Flag::operator=(bool value) {
-    uint8_t current_value = reg_->read();
-    if (value) {
-        // Turn on the bit.
-        current_value |= mask_;
-    } else {
-        // Turn off the bit.
-        current_value &= (~(mask_));
-    }
-    reg_->write(current_value);
-    return *this;
-}
-
 FlagRegister::FlagRegister()
-    : Register8::Register8(),
-      zero(this, 1u << 7u),
-      subtract(this, 1u << 6u),
-      half_carry(this, 1u << 5u),
-      carry(this, 1u << 4u) {}
+    : zero(false), subtract(false), half_carry(false), carry(false) {}
+
+uint8_t FlagRegister::read() const {
+    uint8_t result = 0;
+
+    if (zero)
+        result |= ZERO_MASK;
+    if (subtract)
+        result |= SUBTRACT_MASK;
+    if (half_carry)
+        result |= HALF_CARRY_MASK;
+    if (carry)
+        result |= CARRY_MASK;
+
+    return result;
+}
+
+void FlagRegister::write(uint8_t value) {
+    zero = value & ZERO_MASK;
+    subtract = value & SUBTRACT_MASK;
+    half_carry = value & HALF_CARRY_MASK;
+    carry = value & CARRY_MASK;
+}
 
 Register8Sign::Register8Sign() : value_(0) {}
 int8_t Register8Sign::read() const {
