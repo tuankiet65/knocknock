@@ -27,7 +27,7 @@ bool MMU::register_region(Memory *region, MemoryAddr start, MemoryAddr end) {
         return false;
     }
 
-    regions_.emplace_back(MemoryRegion(region, start, end));
+    regions_.emplace_back(region, start, end);
     return true;
 }
 
