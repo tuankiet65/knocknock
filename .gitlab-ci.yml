@@ -17,7 +17,10 @@ build:
         - mkdir build
         - cmake -B build -DCMAKE_BUILD_TYPE=Release
         - make -C build knocknock knocknock_unittest
-        - ./build/src/knocknock_unittest
+        - ./build/src/knocknock_unittest -r junit -o test_result.xml
+    artifacts:
+        reports:
+            junit: test_result.xml
 
 pages:
     stage: docs
