@@ -9,14 +9,14 @@ namespace {
 
 constexpr MemorySize RAM_BANK_SIZE = 0x2000;
 
-void change_rom_bank(MBC1 *mem, uint8_t bank) {
+void switch_rom_bank(MBC1 *mem, uint8_t bank) {
     // First five bits of the bank number
     mem->write(0x2420, bank & 0b00011111);
     // Bit 6-5 of the bank number
     mem->write(0x4001, (bank >> 5) & 0b11);
 }
 
-void change_ram_bank(MBC1 *mem, uint8_t bank) {
+void switch_ram_bank(MBC1 *mem, uint8_t bank) {
     mem->write(0x4001, bank & 0b11);
 }
 
@@ -54,7 +54,7 @@ TEST_CASE("ROM Bank 0 region", "[memory][mbc1]") {
     mem.write(0x6069, 0);
 
     // Randomly switch the ROM bank to something else.
-    change_rom_bank(&mem, 0x35);
+    switch_rom_bank(&mem, 0x35);
 
     // In mode 0, ROM_0 region always points to bank 0 regardless of which bank
     // is switched to. Verify that is correct.
@@ -64,7 +64,7 @@ TEST_CASE("ROM Bank 0 region", "[memory][mbc1]") {
     mem.write(0x6069, 1);
 
     // Then switch to bank 0x25.
-    change_rom_bank(&mem, 0x25);
+    switch_rom_bank(&mem, 0x25);
 
     // bank2_ should be 0x1, which means that ROM_0 should actually points to
     // bank 0x20.
@@ -83,13 +83,13 @@ TEST_CASE("ROM Switchable bank region", "[memory][mbc1]") {
     // Set to mode 0
     mem.write(0x6069, 0);
 
-    change_rom_bank(&mem, 0x24);
+    switch_rom_bank(&mem, 0x24);
     REQUIRE(testing::verify_rom_switchable_value(mem, 0x24));
     // When bank 0x40 is selected then the switchable bank region should switch
     // to bank 0x41 instead.
-    change_rom_bank(&mem, 0x40);
+    switch_rom_bank(&mem, 0x40);
     REQUIRE(testing::verify_rom_switchable_value(mem, 0x41));
-    change_rom_bank(&mem, 0x69);
+    switch_rom_bank(&mem, 0x69);
     REQUIRE(testing::verify_rom_switchable_value(mem, 0x69));
 
     // Set to mode 1
@@ -97,13 +97,13 @@ TEST_CASE("ROM Switchable bank region", "[memory][mbc1]") {
 
     // Same test as above, since the mode should not affect the switchable bank
     // region.
-    change_rom_bank(&mem, 0x24);
+    switch_rom_bank(&mem, 0x24);
     REQUIRE(testing::verify_rom_switchable_value(mem, 0x24));
     // When bank 0x40 is selected then the switchable bank region should switch
     // to bank 0x41 instead.
-    change_rom_bank(&mem, 0x40);
+    switch_rom_bank(&mem, 0x40);
     REQUIRE(testing::verify_rom_switchable_value(mem, 0x41));
-    change_rom_bank(&mem, 0x69);
+    switch_rom_bank(&mem, 0x69);
     REQUIRE(testing::verify_rom_switchable_value(mem, 0x69));
 }
 
@@ -121,7 +121,7 @@ TEST_CASE("External RAM region", "[memory][mbc1]") {
     testing::fill_external_ram(&mem, 0x01);
 
     // Randomly switch to another RAM bank.
-    change_ram_bank(&mem, 0x03);
+    switch_ram_bank(&mem, 0x03);
 
     // In Mode 0, the external RAM region should always point to RAM bank 0.
     // Verify this.
@@ -130,14 +130,14 @@ TEST_CASE("External RAM region", "[memory][mbc1]") {
     // Set to mode 1
     mem.write(0x6069, 1);
 
-    change_ram_bank(&mem, 0x02);
+    switch_ram_bank(&mem, 0x02);
     testing::fill_external_ram(&mem, 0x02);
-    change_ram_bank(&mem, 0x03);
+    switch_ram_bank(&mem, 0x03);
     testing::fill_external_ram(&mem, 0x03);
 
-    change_ram_bank(&mem, 0x02);
+    switch_ram_bank(&mem, 0x02);
     REQUIRE(testing::verify_external_ram_value(mem, 0x02));
-    change_ram_bank(&mem, 0x03);
+    switch_ram_bank(&mem, 0x03);
     REQUIRE(testing::verify_external_ram_value(mem, 0x03));
 }
 
