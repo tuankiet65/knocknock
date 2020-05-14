@@ -3,8 +3,6 @@
 #include <fmt/format.h>
 #include <glog/logging.h>
 
-#include "memory/memory.h"
-
 namespace memory {
 
 FlatROM::FlatROM(MemorySize ram_size)

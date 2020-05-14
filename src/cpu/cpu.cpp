@@ -5,8 +5,6 @@
 
 #include <iostream>
 
-#include "memory/memory.h"
-
 namespace cpu {
 
 namespace {

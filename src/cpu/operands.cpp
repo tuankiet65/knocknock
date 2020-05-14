@@ -2,8 +2,6 @@
 
 #include <glog/logging.h>
 
-#include "memory/regions.h"
-
 namespace cpu {
 
 namespace {

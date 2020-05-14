@@ -4,11 +4,6 @@
 #include <glog/logging.h>
 
 #include <fstream>
-#include <optional>
-#include <stdexcept>
-#include <string>
-
-#include "base/filesystem.h"
 
 namespace {
 

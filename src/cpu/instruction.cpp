@@ -3,10 +3,6 @@
 #include <fmt/format.h>
 #include <glog/logging.h>
 
-#include <optional>
-
-#include "memory/memory.h"
-
 namespace cpu {
 
 std::string Instruction::disassemble_opcode() const {

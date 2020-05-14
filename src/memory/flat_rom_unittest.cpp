@@ -2,8 +2,6 @@
 
 #include <catch2/catch.hpp>
 
-#include "memory/regions.h"
-
 namespace memory {
 
 TEST_CASE("ROM read + write", "[memory][FlatROM]") {
