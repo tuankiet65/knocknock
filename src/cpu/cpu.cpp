@@ -532,12 +532,21 @@ void CPU::add(Operand lhs, Operand rhs) {
     }
 
     if (lhs == Operand::SP && rhs == Operand::Imm8Sign) {
-        sp_.write(sp_.read() + imm8sign_.read());
+        uint16_t x = sp_.read();
+        int8_t y = imm8sign_.read();
 
-        LOG(ERROR) << "Carry flag not implemented";
-        LOG(ERROR) << "Half-carry flag not implemented";
-        f_.subtract = false;
+        sp_.write(x + y);
+
         f_.zero = false;
+        f_.subtract = false;
+        // The half_carry flag here signifies carry from bit 3 to 4, not 11
+        // to 12.
+        f_.half_carry = ((x & 0x000Fu) + low_nibble(y) > 0x000Fu);
+        // The half_carry flag here signifies carry from bit 7 to 8, not 15
+        // to 16.
+        f_.carry = ((x & 0x00FFu) > (0x00FFu - (uint8_t)(y)));
+
+        return;
     }
 
     DCHECK(false);
