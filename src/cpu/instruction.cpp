@@ -53,7 +53,7 @@ std::string Instruction::disassemble_opcode() const {
         case Instruction::Opcode::SUB: return "SUB";
         case Instruction::Opcode::XOR: return "XOR";
         case Instruction::Opcode::RST: return "RST";
-    };
+    }
 
     DCHECK(false) << fmt::format("Unknown opcode: {}", opcode_);
     return fmt::format("[unknown opcode: {}]", opcode_);
