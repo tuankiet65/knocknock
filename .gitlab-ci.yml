@@ -6,7 +6,6 @@ variables:
 
 stages:
     - build
-    - test
     - docs
 
 build:
@@ -17,17 +16,7 @@ build:
     script:
         - mkdir build
         - cmake -B build -DCMAKE_BUILD_TYPE=Release
-        - make -C build knocknock
-
-unittest:
-    stage: test
-    before_script:
-        - apk update && apk upgrade
-        - apk add build-base cmake
-    script:
-        - mkdir build
-        - cmake -B build -DCMAKE_BUILD_TYPE=Release
-        - make -C build knocknock_unittest
+        - make -C build knocknock knocknock_unittest
         - ./build/src/knocknock_unittest
 
 pages:
