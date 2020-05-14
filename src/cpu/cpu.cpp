@@ -165,6 +165,7 @@ void CPU::execute_instruction(Instruction inst) {
         case Opcode::RES: res(inst.lhs(), inst.rhs()); break;
         case Opcode::SET: set(inst.lhs(), inst.rhs()); break;
         case Opcode::DAA: daa(); break;
+        case Opcode::LDHL: ldhl(inst.lhs(), inst.rhs()); break;
 
         default:
             DCHECK(false) << "Instruction not recognized: "
@@ -799,6 +800,23 @@ void CPU::daa() {
 
     f_.half_carry = false;
     f_.zero = (a == 0);
+}
+
+void CPU::ldhl(Instruction::Operand lhs, Instruction::Operand rhs) {
+    DCHECK(lhs == Instruction::Operand::SP);
+    DCHECK(rhs == Instruction::Operand::Imm8Sign);
+
+    uint16_t x = sp_.read();
+    int8_t y = imm8sign_.read();
+
+    hl_.write(x + y);
+
+    f_.zero = false;
+    f_.subtract = false;
+    // The half_carry flag here signifies carry from bit 3 to 4, not 11 to 12.
+    f_.half_carry = ((x & 0x000Fu) + low_nibble(y) > 0x000Fu);
+    // The half_carry flag here signifies carry from bit 7 to 8, not 15 to 16.
+    f_.carry = ((x & 0x00FFu) > (0x00FFu - (uint8_t)(y)));
 }
 
 }  // namespace cpu

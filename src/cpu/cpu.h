@@ -85,6 +85,7 @@ private:
     void res(Instruction::Operand lhs, Instruction::Operand rhs);
     void set(Instruction::Operand lhs, Instruction::Operand rhs);
     void daa();
+    void ldhl(Instruction::Operand lhs, Instruction::Operand rhs);
 
     void push_to_stack(uint16_t value);
     uint16_t pop_from_stack();
