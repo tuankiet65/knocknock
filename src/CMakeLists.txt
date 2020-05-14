@@ -10,6 +10,7 @@ set(SOURCE_FILES
         "memory/mbc2.cpp"
         "cpu/operands.cpp"
         "cartridge.cpp"
+        peripherals/clock.cpp
         peripherals/joypad.cpp)
 add_executable(knocknock "${SOURCE_FILES}" "knocknock.cpp")
 target_include_directories(knocknock PRIVATE .)
@@ -27,6 +28,7 @@ set(UNITTEST_FILES
         memory/flat_rom_unittest.cpp
         memory/mbc1_unittest.cpp
         memory/mbc2_unittest.cpp
+        peripherals/clock_unittest.cpp
         peripherals/joypad_unittest.cpp)
 add_executable(knocknock_unittest "${UNITTEST_FILES}" "knocknock_unittest.cpp")
 target_include_directories(knocknock_unittest PRIVATE .)
