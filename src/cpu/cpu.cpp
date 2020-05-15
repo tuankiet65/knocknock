@@ -91,7 +91,7 @@ std::optional<Operand16 *> CPU::get_operand16(Operand operand) {
     }
 }
 
-bool CPU::step() {
+void CPU::tick() {
     // TODO remove this
     if (pc_ < 0x100) {
         return false;
@@ -100,7 +100,7 @@ bool CPU::step() {
     decoder_.step();
 
     if (!decoder_.decoded_instruction().has_value()) {
-        return true;
+        return;
     }
 
     Instruction inst = decoder_.decoded_instruction().value();
@@ -118,7 +118,6 @@ bool CPU::step() {
 
     execute_instruction(inst);
 
-    return true;
 }
 
 void CPU::execute_instruction(Instruction inst) {

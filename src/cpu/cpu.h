@@ -5,14 +5,16 @@
 #include "cpu/decoder.h"
 #include "cpu/operands.h"
 #include "memory/memory.h"
+#include "peripherals/tickable.h"
 
 namespace cpu {
 
-class CPU {
+class CPU : public peripherals::Tickable {
 public:
     CPU(memory::Memory *mem);
 
-    bool step();
+    // clock::Tickable::
+    void tick() override;
 
 private:
     Register8 a_, b_, c_, d_, e_, h_, l_;
