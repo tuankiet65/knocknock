@@ -4,8 +4,8 @@
 
 namespace memory {
 
-MemoryAddrProxy Memory::operator[](MemoryAddr addr) {
-    return MemoryAddrProxy(this, addr);
+Memory::Proxy Memory::operator[](MemoryAddr addr) {
+    return Proxy(this, addr);
 }
 
 uint16_t Memory::read16(MemoryAddr addr) const {
@@ -22,20 +22,20 @@ void Memory::write16(MemoryAddr addr, uint16_t value) {
     write(addr + 1, value >> 8);  // MSB by discarding the last 8 bits
 }
 
-MemoryAddrProxy::MemoryAddrProxy(Memory *memory, MemoryAddr addr)
+Memory::Proxy::Proxy(Memory *memory, MemoryAddr addr)
     : memory_(memory), addr_(addr) {
     DCHECK(memory);
 }
 
-MemoryAddrProxy::operator MemoryValue() const {
+Memory::Proxy::operator MemoryValue() const {
     return memory_->read(addr_);
 }
 
-MemoryValue MemoryAddrProxy::operator*() const {
+MemoryValue Memory::Proxy::operator*() const {
     return memory_->read(addr_);
 }
 
-MemoryAddrProxy &MemoryAddrProxy::operator=(MemoryValue value) {
+Memory::Proxy &Memory::Proxy::operator=(MemoryValue value) {
     memory_->write(addr_, value);
     return *this;
 }

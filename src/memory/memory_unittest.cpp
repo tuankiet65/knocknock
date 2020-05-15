@@ -1,5 +1,5 @@
 /**
- * Test the functionality of read16(), write16() and the MemoryAddrProxy.
+ * Test the functionality of read16(), write16() and the Proxy.
  * @file memory_unittest.cpp
  */
 #include "memory/memory.h"
@@ -31,7 +31,7 @@ TEST_CASE("read16 + write16", "[memory]") {
     }
 }
 
-TEST_CASE("MemoryAddrProxy", "[memory]") {
+TEST_CASE("Proxy", "[memory]") {
     TestMemory mem1, mem2;
 
     SECTION("raw write, proxy read") {
