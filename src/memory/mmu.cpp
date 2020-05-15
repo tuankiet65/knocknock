@@ -18,7 +18,7 @@ bool MMU::has_overlapping_regions(MemoryAddr start, MemoryAddr end) const {
 }
 
 bool MMU::register_region(Memory *region, MemoryAddr start, MemoryAddr end) {
-    DCHECK(start >= end) << fmt::format("end ({}) < start({})", end, start);
+    DCHECK(start <= end) << fmt::format("end ({}) < start({})", end, start);
 
     if (has_overlapping_regions(start, end)) {
         LOG(ERROR) << "Region overlaps with existing regions: "
