@@ -92,10 +92,6 @@ std::optional<Operand16 *> CPU::get_operand16(Operand operand) {
 }
 
 void CPU::tick() {
-    // TODO remove this
-    if (pc_ < 0x100) {
-        return false;
-    }
 
     decoder_.step();
 
