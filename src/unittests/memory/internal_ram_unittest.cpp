@@ -42,8 +42,7 @@ TEST_CASE("Echo RAM", "[memory]") {
         REQUIRE(ram[i] == 0x2f);
     }
 
-    // Check that the part not mirrored to the echo RAM region still stays the
-    // same value
+    // Check the part not mirrored to the echo RAM region stays intact.
     for (auto i = RAM_INTERNAL_BEGIN + RAM_ECHO_SIZE; i <= RAM_INTERNAL_END;
          ++i) {
         REQUIRE(ram[i] == 0x39);
