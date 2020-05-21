@@ -2,11 +2,10 @@
  * Test the functionality of read16(), write16() and the Proxy.
  * @file memory_unittest.cpp
  */
-#include "memory/memory.h"
-
 #include <catch2/catch.hpp>
 
-#include "memory/test_memory.h"
+#include <knocknock/memory/memory.h>
+#include <knocknock/memory/test_memory.h>
 
 namespace memory {
 

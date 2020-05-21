@@ -1,6 +1,6 @@
-#include "memory/flat_rom.h"
-
 #include <catch2/catch.hpp>
+
+#include <knocknock/memory/flat_rom.h>
 
 namespace memory {
 

@@ -2,7 +2,7 @@
 
 #include <optional>
 
-#include "cartridge.h"
+#include <knocknock/cartridge.h>
 
 int main(int argc, char *argv[]) {
     google::InitGoogleLogging(argv[0]);

@@ -1,8 +1,8 @@
 #include <catch2/catch.hpp>
 
-#include "memory/mbc2.h"
+#include <knocknock/memory/mbc2.h>
+#include <knocknock/memory/regions.h>
 
-#include "memory/regions.h"
 #include "memory/unittest_utils.h"
 
 namespace memory {

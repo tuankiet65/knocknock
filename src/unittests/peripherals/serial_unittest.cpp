@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include "peripherals/serial.h"
+#include <knocknock/peripherals/serial.h>
 
 namespace peripherals {
 

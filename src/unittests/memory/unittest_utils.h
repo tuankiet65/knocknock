@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include "memory/memory.h"
-#include "memory/regions.h"
+#include <knocknock/memory/memory.h>
+#include <knocknock/memory/regions.h>
 
 namespace memory::testing {
 

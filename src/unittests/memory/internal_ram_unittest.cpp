@@ -1,8 +1,7 @@
 #include <catch2/catch.hpp>
 
-#include "memory/internal_ram.h"
-
-#include "memory/regions.h"
+#include <knocknock/memory/internal_ram.h>
+#include <knocknock/memory/regions.h>
 
 namespace memory {
 

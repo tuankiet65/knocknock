@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include "peripherals/clock.h"
+#include <knocknock/peripherals/clock.h>
 
 namespace peripherals {
 

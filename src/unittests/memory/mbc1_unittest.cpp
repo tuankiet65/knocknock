@@ -1,6 +1,7 @@
 #include <catch2/catch.hpp>
 
-#include "memory/mbc1.h"
+#include <knocknock/memory/mbc1.h>
+
 #include "memory/unittest_utils.h"
 
 namespace memory {

@@ -1,6 +1,6 @@
-#include "peripherals/joypad.h"
-
 #include <catch2/catch.hpp>
+
+#include <knocknock/peripherals/joypad.h>
 
 using peripherals::Joypad;
 

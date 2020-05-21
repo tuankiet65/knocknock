@@ -1,8 +1,7 @@
-#include "cpu/operands.h"
-
 #include <catch2/catch.hpp>
 
-#include "memory/test_memory.h"
+#include <knocknock/cpu/operands.h>
+#include <knocknock/memory/test_memory.h>
 
 TEST_CASE("Register8", "[cpu][operands]") {
     cpu::Register8 reg8;
