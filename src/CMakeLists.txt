@@ -1,5 +1,4 @@
 add_subdirectory(knocknock)
-add_subdirectory(unittests)
 
 add_executable(knocknock-cli knocknock.cpp)
 target_link_libraries(knocknock-cli PRIVATE knocknock)
