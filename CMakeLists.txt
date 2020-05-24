@@ -1,7 +1,22 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.9.0)
 project(knocknock
         VERSION 0.1
         LANGUAGES CXX)
+
+if (NOT (CMAKE_BUILD_TYPE MATCHES DEBUG))
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT LTO_SUPPORTED OUTPUT error LANGUAGES CXX)
+
+    if (LTO_SUPPORTED)
+        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+        # Force enable policy CMP0069 to force third party dependencies to honor the
+        # INTERPROCEDURAL_OPTIMIZATION flag.
+        set(CMAKE_POLICY_DEFAULT_CMP0069 NEW)
+        message(STATUS "LTO enabled for all targets")
+    else ()
+        message(STATUS "LTO not available: ${error}")
+    endif ()
+endif ()
 
 option(USE_SYSTEM_GLOG "If enabled, use system supplied glog instead of the included version in third_party/" OFF)
 set(WITH_GFLAGS OFF CACHE BOOL "Disable gflags")
