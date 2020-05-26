@@ -514,8 +514,7 @@ void CPU::add(Operand lhs, Operand rhs) {
         DCHECK(op16);
 
         uint16_t x = hl_.read(), y = (*op16)->read();
-        uint16_t new_value = x + y;
-        hl_.write(new_value);
+        hl_.write(x + y);
 
         f_.subtract = false;
         f_.half_carry = ((x & 0x0FFFu) + (y & 0x0FFFu) > 0x0FFFu);
