@@ -1,7 +1,6 @@
 #include <catch2/catch.hpp>
 
 #include <knocknock/memory/internal_ram.h>
-#include <knocknock/memory/regions.h>
 
 namespace memory {
 
