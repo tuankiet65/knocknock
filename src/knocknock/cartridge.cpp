@@ -119,7 +119,7 @@ Cartridge::Cartridge(std::string title,
       content_(std::move(content)) {}
 
 // static
-std::optional<Cartridge> Cartridge::from_file(fs::path path) {
+std::optional<Cartridge> Cartridge::from_file(const fs::path &path) {
     if (!fs::is_regular_file(path)) {
         LOG(ERROR) << fmt::format("{} is not a regular file", path.string());
         return {};
