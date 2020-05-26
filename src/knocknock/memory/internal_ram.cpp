@@ -1,6 +1,6 @@
 #include "knocknock/memory/internal_ram.h"
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 namespace memory {
 
