@@ -11,9 +11,9 @@ using CartridgeContent = std::vector<memory::MemoryValue>;
 
 class Cartridge {
 public:
-    enum GameBoyType { GameBoy, ColorGameBoy };
+    enum class GameBoyType { GameBoy, ColorGameBoy };
 
-    enum CartridgeType {
+    enum class CartridgeType {
         ROM = 0x00,
 
         ROM_MBC1 = 0x01,
