@@ -49,12 +49,12 @@ public:
         HUDSON_HUC1 = 0xff
     };
 
-    Cartridge(const std::string &title,
+    Cartridge(std::string title,
               GameBoyType game_boy_type,
               CartridgeType type,
               size_t rom_size,
               size_t ram_size,
-              const CartridgeContent &content_);
+              CartridgeContent content_);
 
     static std::optional<Cartridge> from_file(fs::path path);
 

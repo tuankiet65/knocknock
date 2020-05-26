@@ -105,18 +105,18 @@ uint8_t calculate_header_checksum(const CartridgeContent &content) {
 
 }  // namespace
 
-Cartridge::Cartridge(const std::string &title,
+Cartridge::Cartridge(std::string title,
                      GameBoyType game_boy_type,
                      CartridgeType type,
                      size_t rom_size,
                      size_t ram_size,
-                     const CartridgeContent &content)
-    : title_(title),
+                     CartridgeContent content)
+    : title_(std::move(title)),
       game_boy_type_(game_boy_type),
       type_(type),
       rom_size_(rom_size),
       ram_size_(ram_size),
-      content_(content) {}
+      content_(std::move(content)) {}
 
 // static
 std::optional<Cartridge> Cartridge::from_file(fs::path path) {
