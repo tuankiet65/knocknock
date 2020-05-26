@@ -7,17 +7,17 @@
 
 namespace {
 
-static const size_t TITLE_BEGIN_ADDR = 0x0134;
-static const size_t TITLE_END_ADDR = 0x0142;
-static const size_t GAMEBOY_TYPE_ADDR = 0x0143;
-static const size_t CARTRIDGE_TYPE_ADDR = 0x0147;
-static const size_t ROM_SIZE_ADDR = 0x0148;
-static const size_t RAM_SIZE_ADDR = 0x0149;
-static const size_t HEADER_BEGIN_ADDR = 0x0134;
-static const size_t HEADER_END_ADDR = 0x014c;
-static const size_t HEADER_CHECKSUM_ADDR = 0x014d;
+constexpr size_t TITLE_BEGIN_ADDR = 0x0134;
+constexpr size_t TITLE_END_ADDR = 0x0142;
+constexpr size_t GAMEBOY_TYPE_ADDR = 0x0143;
+constexpr size_t CARTRIDGE_TYPE_ADDR = 0x0147;
+constexpr size_t ROM_SIZE_ADDR = 0x0148;
+constexpr size_t RAM_SIZE_ADDR = 0x0149;
+constexpr size_t HEADER_BEGIN_ADDR = 0x0134;
+constexpr size_t HEADER_END_ADDR = 0x014c;
+constexpr size_t HEADER_CHECKSUM_ADDR = 0x014d;
 
-static const size_t KBYTE = 1024;
+constexpr size_t KBYTE = 1024;
 
 std::string get_title(const CartridgeContent &content) {
     std::string result;
