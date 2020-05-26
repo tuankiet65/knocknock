@@ -42,13 +42,6 @@ Cartridge::GameBoyType get_gameboy_type(const CartridgeContent &content) {
     return Cartridge::GameBoyType::GameBoy;
 }
 
-// Cartridge::CartridgeType get_cartridge_type(const CartridgeContent &content)
-// {
-//     uint8_t raw_type = content.at(CARTRIDGE_TYPE_ADDR);
-
-//     return static_cast<Cartridge::CartridgeType>(raw_type);
-// }
-
 bool get_rom_size(const CartridgeContent &content, size_t *result) {
     uint8_t raw_type = content.at(ROM_SIZE_ADDR);
 
@@ -114,22 +107,15 @@ uint8_t calculate_header_checksum(const CartridgeContent &content) {
 
 Cartridge::Cartridge(const std::string &title,
                      GameBoyType game_boy_type,
-                     /* uint8_t licensee_code, */
-                     /* SuperGameBoyIndicator sbg_indicator, */
                      CartridgeType type,
                      size_t rom_size,
                      size_t ram_size,
-                     /* Region region, */
-                     /* uint8_t mask_rom_version, */
                      const CartridgeContent &content)
     : title_(title),
       game_boy_type_(game_boy_type),
-      //   sbg_indicator_(sbg_indicator),
       type_(type),
       rom_size_(rom_size),
       ram_size_(ram_size),
-      //   region_(region),
-      //   mask_rom_version_(mask_rom_version),
       content_(content) {}
 
 // static
