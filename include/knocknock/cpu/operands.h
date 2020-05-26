@@ -12,7 +12,7 @@ public:
     virtual T read() const = 0;
     virtual void write(T value) = 0;
 
-    virtual ~OperandT() {}
+    virtual ~OperandT() = default;
 
     // Disable copy and move constructor
     OperandT(const OperandT<T> &) = delete;

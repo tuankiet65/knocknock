@@ -35,7 +35,7 @@ public:
     virtual MemoryValue read(MemoryAddr addr) const = 0;
     virtual void write(MemoryAddr addr, MemoryValue value) = 0;
 
-    virtual ~Memory() {}
+    virtual ~Memory() = default;
 
     // Helper function to read and write 16-bit values using read() and write()
     uint16_t read16(MemoryAddr addr) const;
@@ -48,7 +48,7 @@ class ROMLoadableMemory : public Memory {
 public:
     virtual bool load_rom(const std::vector<MemoryValue> &rom) = 0;
 
-    virtual ~ROMLoadableMemory() {}
+    virtual ~ROMLoadableMemory() = default;
 };
 
 }  // namespace memory
