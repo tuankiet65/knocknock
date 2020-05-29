@@ -20,7 +20,5 @@ target_include_directories(knocknock
         PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(knocknock PRIVATE glog::glog fmt::fmt)
 
-# TODO: fix this for MSVC.
-target_compile_options(knocknock PRIVATE -Wall -Wextra -pedantic)
 target_compile_features(knocknock PRIVATE cxx_std_17)
 

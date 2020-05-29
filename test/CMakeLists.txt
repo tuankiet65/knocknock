@@ -16,5 +16,4 @@ target_link_libraries(knocknock_unittest PRIVATE
         Catch2::Catch2
         glog::glog
         fmt::fmt)
-target_compile_options(knocknock_unittest PRIVATE -Wall -Wextra -pedantic)
 target_compile_features(knocknock_unittest PRIVATE cxx_std_17)

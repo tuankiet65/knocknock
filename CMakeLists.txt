@@ -3,6 +3,13 @@ project(knocknock
         VERSION 0.1
         LANGUAGES CXX)
 
+# Enable all warnings. Unfortunately MSVC and GCC/Clang require different flags.
+if (MSVC)
+    add_compile_options(/W4)
+else ()
+    add_compile_options(-Wall -Wextra -pedantic)
+endif ()
+
 if (NOT (CMAKE_BUILD_TYPE MATCHES DEBUG))
     include(CheckIPOSupported)
     check_ipo_supported(RESULT LTO_SUPPORTED OUTPUT error LANGUAGES CXX)
