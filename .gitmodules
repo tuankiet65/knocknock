@@ -10,3 +10,9 @@
 [submodule "roms/gb-test-roms"]
 	path = roms/gb-test-roms
 	url = https://github.com/retrio/gb-test-roms.git
+[submodule "third_party/glbinding"]
+	path = third_party/glbinding
+	url = https://github.com/cginternals/glbinding.git
+[submodule "third_party/imgui"]
+	path = third_party/imgui
+	url = https://github.com/ocornut/imgui.git
