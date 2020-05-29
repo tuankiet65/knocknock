@@ -10,7 +10,7 @@ else ()
     add_compile_options(-Wall -Wextra -pedantic)
 endif ()
 
-if (NOT (CMAKE_BUILD_TYPE MATCHES DEBUG))
+if (NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
     include(CheckIPOSupported)
     check_ipo_supported(RESULT LTO_SUPPORTED OUTPUT error LANGUAGES CXX)
 
