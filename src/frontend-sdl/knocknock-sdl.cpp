@@ -90,7 +90,6 @@ int main(int argc, const char *argv[]) {
 #ifndef NDEBUG
     ::SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 #endif
-    ::SDL_GL_SetSwapInterval(1);
 
     SDLGLContextPtr gl_context(::SDL_GL_CreateContext(window.get()),
                                ::SDL_GL_DeleteContext);
@@ -98,6 +97,8 @@ int main(int argc, const char *argv[]) {
         LOG(ERROR) << "Unable to create OpenGL context: " << SDL_GetError();
         return 1;
     }
+
+    ::SDL_GL_SetSwapInterval(1);
 
     ImGuiGLRenderer renderer(
         [](const char *proc) {
