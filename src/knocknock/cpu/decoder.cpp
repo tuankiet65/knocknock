@@ -16,10 +16,12 @@ namespace {
 // Bits 2-0 of n
 #define Z(n) ((n)&0b00000111)
 
+#define EXPAND(x) x
+
 #define GET_IMPL(_1, _2, _3, IMPL, ...) IMPL
 
 #define INSTRUCTION(...) \
-    GET_IMPL(__VA_ARGS__, INST3, INST2, INST1, )(__VA_ARGS__)
+    EXPAND (GET_IMPL(__VA_ARGS__, INST3, INST2, INST1, )(__VA_ARGS__) )
 
 #define INST1(__opcode__)                          \
     do {                                           \
