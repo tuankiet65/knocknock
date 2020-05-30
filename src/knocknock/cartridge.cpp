@@ -185,7 +185,7 @@ std::optional<Cartridge> Cartridge::from_file(const fs::path &path) {
         LOG(WARNING) << fmt::format(
             "Calculated header complement ({0:#x}) does not match "
             "expected complement stored in header ({1:#x})",
-            calculate_header_checksum, header_checksum);
+            calculated_header_checksum, header_checksum);
     }
 
     // uint16_t checksum = get_checksum(content),
