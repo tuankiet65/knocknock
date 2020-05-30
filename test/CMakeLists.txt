@@ -17,3 +17,9 @@ target_link_libraries(knocknock_unittest PRIVATE
         glog::glog
         fmt::fmt)
 target_compile_features(knocknock_unittest PRIVATE cxx_std_17)
+
+# MSVC sets the program stack size to 1MB by default, but the unittest
+# allocates quite a lot stack memory, so we increase it to 10MB.
+if (MSVC)
+    target_link_options(knocknock_unittest PRIVATE /STACK:10485760)
+endif ()
