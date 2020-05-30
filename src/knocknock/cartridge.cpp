@@ -89,18 +89,16 @@ Cartridge::CartridgeType get_type(const CartridgeContent &content) {
     return static_cast<Cartridge::CartridgeType>(raw_type);
 }
 
-uint8_t get_header_checksum(const CartridgeContent &content) {
-    return content.at(HEADER_CHECKSUM_ADDR);
-}
+bool verify_header_checksum(const CartridgeContent &content) {
+    uint8_t checksum = content.at(HEADER_CHECKSUM_ADDR);
 
-uint8_t calculate_header_checksum(const CartridgeContent &content) {
-    uint8_t checksum = 0;
-
-    for (size_t i = HEADER_BEGIN_ADDR; i != HEADER_END_ADDR; ++i) {
-        checksum = checksum - content.at(i) - 1;
+    uint8_t calculated_checksum = 0;
+    for (size_t i = HEADER_BEGIN_ADDR; i <= HEADER_END_ADDR; ++i) {
+        calculated_checksum += content.at(i);
     }
+    calculated_checksum += 0x19 + checksum;
 
-    return checksum;
+    return (calculated_checksum == 0);
 }
 
 }  // namespace
@@ -179,13 +177,8 @@ std::optional<Cartridge> Cartridge::from_file(const fs::path &path) {
         return {};
     }
 
-    uint8_t header_checksum = get_header_checksum(content),
-            calculated_header_checksum = calculate_header_checksum(content);
-    if (calculated_header_checksum != header_checksum) {
-        LOG(WARNING) << fmt::format(
-            "Calculated header complement ({0:#x}) does not match "
-            "expected complement stored in header ({1:#x})",
-            calculated_header_checksum, header_checksum);
+    if (!verify_header_checksum(content)) {
+        LOG(WARNING) << "Wrong header checksum";
     }
 
     // uint16_t checksum = get_checksum(content),
