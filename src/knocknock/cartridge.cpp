@@ -181,13 +181,5 @@ std::optional<Cartridge> Cartridge::from_file(const fs::path &path) {
         LOG(WARNING) << "Wrong header checksum";
     }
 
-    // uint16_t checksum = get_checksum(content),
-    //          calculated_checksum = calculate_checksum(content);
-    // if (checksum != calculated_checksum) {
-    //     LOG(WARNING) << fmt::format(
-    //         "Calculated checksum ({0:#x}) does not match checksum in header "
-    //         "({1:#x})", calculated_checksum, checksum);
-    // }
-
     return Cartridge(title, gameboy_type, type, rom_size, ram_size, content);
 }
