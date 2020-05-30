@@ -38,7 +38,7 @@ const ImVec4 BACKGROUND_COLOR(0.45f, 0.55f, 0.60f, 1.00f);
 
 }  // namespace
 
-int main(int argc, const char *argv[]) {
+int main(int argc, char *argv[]) {
     google::InitGoogleLogging(argv[0]);
     google::InstallFailureSignalHandler();
 
