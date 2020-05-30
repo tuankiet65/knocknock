@@ -10,6 +10,11 @@ else ()
     add_compile_options(-Wall -Wextra -pedantic)
 endif ()
 
+# Force MSVC to correctly report the value of __cplusplus.
+if (MSVC)
+    add_compile_options(-Zc:__cplusplus)
+endif ()
+
 if (NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
     include(CheckIPOSupported)
     check_ipo_supported(RESULT LTO_SUPPORTED OUTPUT error LANGUAGES CXX)
