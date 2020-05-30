@@ -15,3 +15,8 @@ add_executable(knocknock-sdl
 target_link_libraries(knocknock-sdl PRIVATE imgui knocknock glbinding::glbinding SDL2 glog::glog fmt::fmt)
 target_include_directories(knocknock-sdl PRIVATE .)
 target_compile_features(knocknock-sdl PRIVATE cxx_std_17)
+
+# Target the Windows subsystem to disable the console window.
+if (MSVC)
+    target_link_options(knocknock-sdl PRIVATE /SUBSYSTEM:WINDOWS)
+endif ()
