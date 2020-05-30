@@ -12,7 +12,7 @@ add_executable(knocknock-sdl
         imgui_gl_renderer.cpp
         knocknock-sdl.cpp
         imgui_sdl_input.cpp)
-target_link_libraries(knocknock-sdl PRIVATE imgui knocknock glbinding::glbinding SDL2 glog::glog fmt::fmt)
+target_link_libraries(knocknock-sdl PRIVATE imgui knocknock glbinding::glbinding SDL2::SDL2 SDL2::SDL2main glog::glog fmt::fmt)
 target_include_directories(knocknock-sdl PRIVATE .)
 target_compile_features(knocknock-sdl PRIVATE cxx_std_17)
 
