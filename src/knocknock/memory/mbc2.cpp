@@ -64,7 +64,7 @@ void MBC2::write(MemoryAddr addr, MemoryValue value) {
                 selected_bank_ = 1;
             }
         } else {
-            ram_enabled_ = (value & 0x0a);
+            ram_enabled_ = ((value & 0x0f) == 0x0a);
         }
 
         return;
