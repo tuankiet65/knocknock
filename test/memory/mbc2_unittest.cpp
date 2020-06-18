@@ -70,4 +70,25 @@ TEST_CASE("External RAM", "[memory][mbc2]") {
     }
 }
 
+TEST_CASE("ROM: Out-of-bound read", "[memory][mbc2]") {
+    auto rom = testing::generate_test_rom(4, {{0x00, 0x01}, {0x01, 0x02}});
+
+    MBC2 mem(rom.size());
+    mem.load_rom(rom);
+
+    REQUIRE(testing::verify_rom_0_value(mem, 0x01));
+
+    switch_rom_bank(&mem, 0x01);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x02));
+
+    // We switch to bank 0x04, however since the ROM only contains 4 banks,
+    // reading from it will return values from bank 0x04 instead.
+    switch_rom_bank(&mem, 0x04);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x01));
+
+    // Ditto with bank 0x05, reads will return values from bank 0x01.
+    switch_rom_bank(&mem, 0x05);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x02));
+}
+
 }  // namespace memory

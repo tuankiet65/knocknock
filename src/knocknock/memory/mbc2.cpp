@@ -34,11 +34,7 @@ MemoryValue MBC2::read(MemoryAddr addr) const {
         uint32_t real_addr =
             (selected_bank_ * ROM_BANK_SIZE) + (addr - ROM_SWITCHABLE_BEGIN);
 
-        if (real_addr >= rom_size_) {
-            LOG(ERROR) << "Out of bound read to switchable region, returning "
-                          "dummy value";
-            return 0xff;
-        }
+        real_addr %= rom_size_;
 
         return rom_[real_addr];
     }
