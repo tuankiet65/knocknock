@@ -142,4 +142,54 @@ TEST_CASE("External RAM region", "[memory][mbc1]") {
     REQUIRE(testing::verify_external_ram_value(mem, 0x03));
 }
 
+TEST_CASE("Out-of-bound ROM read", "[memory][mbc1]") {
+    auto rom = testing::generate_test_rom(4, {{0x00, 0x01}, {0x01, 0x02}});
+
+    MBC1 mem(rom.size(), 0);
+    mem.load_rom(rom);
+
+    // Set to mode 0
+    mem.write(0x6069, 0);
+
+    REQUIRE(testing::verify_rom_0_value(mem, 0x01));
+
+    switch_rom_bank(&mem, 0x01);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x02));
+
+    // We switch to bank 0x04, however since the ROM only contains 4 banks,
+    // reading from it will return values from bank 0x00 instead.
+    switch_rom_bank(&mem, 0x04);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x01));
+
+    // Ditto with bank 0x05, reads will return values from bank 0x01.
+    switch_rom_bank(&mem, 0x05);
+    REQUIRE(testing::verify_rom_switchable_value(mem, 0x02));
+}
+
+TEST_CASE("Out-of-bound RAM read", "[memory][mbc1]") {
+    // Create a RAM-only MBC1 with 2 RAM banks.
+    MBC1 mem(0, 2 * RAM_BANK_SIZE);
+
+    // Enable RAM.
+    mem.write(0x1010, 0xfa);
+
+    // Set to mode 1 so we can address all RAM banks.
+    mem.write(0x6069, 1);
+
+    // Fill the first RAM bank with 0x01 and the second bank with 0x02.
+    switch_ram_bank(&mem, 0x00);
+    testing::fill_external_ram(&mem, 0x01);
+    switch_ram_bank(&mem, 0x01);
+    testing::fill_external_ram(&mem, 0x02);
+
+    // Switch to RAM bank 0x02. Since the MBC only contains 2 RAM banks, reading
+    // from it will return values from bank 0x00 instead.
+    switch_ram_bank(&mem, 0x02);
+    REQUIRE(testing::verify_external_ram_value(mem, 0x01));
+
+    // Ditto with RAM bank 0x03, reads will return values from bank 0x01.
+    switch_ram_bank(&mem, 0x03);
+    REQUIRE(testing::verify_external_ram_value(mem, 0x02));
+}
+
 }  // namespace memory

@@ -53,7 +53,7 @@ uint32_t MBC1::translate_rom_address(MemoryAddr addr) const {
 
     if (BETWEEN(ROM_0_BEGIN, addr, ROM_0_END)) {
         // Reading from bank 0.
-        switch (mode_ ) {
+        switch (mode_) {
             case AddressingMode::MODE_0: bank = 0; break;
             case AddressingMode::MODE_1: bank = bank2_ << 5; break;
         }
@@ -68,6 +68,8 @@ uint32_t MBC1::translate_rom_address(MemoryAddr addr) const {
     }
 
     uint32_t real_addr = bank * ROM_BANK_SIZE + addr_in_bank;
+    real_addr %= rom_size_;
+
     return real_addr;
 }
 
@@ -82,6 +84,8 @@ uint32_t MBC1::translate_ram_address(MemoryAddr addr) const {
     }
 
     uint32_t real_addr = bank * RAM_BANK_SIZE + addr_in_bank;
+    real_addr %= ram_size_;
+
     return real_addr;
 }
 
@@ -89,12 +93,6 @@ MemoryValue MBC1::read(MemoryAddr addr) const {
     if (BETWEEN(ROM_0_BEGIN, addr, ROM_0_END) ||
         BETWEEN(ROM_SWITCHABLE_BEGIN, addr, ROM_SWITCHABLE_END)) {
         uint32_t real_addr = translate_rom_address(addr);
-
-        if (real_addr >= rom_size_) {
-            LOG(ERROR)
-                << "Attempt to read past the ROM area, returning junk value";
-            return 0xff;
-        }
 
         return rom_[real_addr];
     }
@@ -106,11 +104,6 @@ MemoryValue MBC1::read(MemoryAddr addr) const {
         }
 
         uint32_t real_addr = translate_ram_address(addr);
-        if (real_addr >= ram_size_) {
-            LOG(ERROR)
-                << "Attempt to read past the RAM area, returning junk value";
-            return 0xff;
-        }
 
         return ram_[real_addr];
     }
