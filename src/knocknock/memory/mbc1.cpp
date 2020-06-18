@@ -119,7 +119,7 @@ void MBC1::write(MemoryAddr addr, MemoryValue value) {
     //   X: Don't care
     //   S: 1010 (0xA) to enable the RAM, any other value to disable it.
     if (BETWEEN(RAM_ENABLE_BEGIN, addr, RAM_ENABLE_END)) {
-        ram_enabled_ = (value & 0xAu);
+        ram_enabled_ = ((value & 0x0f) == 0xAu);
         return;
     }
 
