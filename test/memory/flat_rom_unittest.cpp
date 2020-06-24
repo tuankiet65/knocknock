@@ -2,32 +2,18 @@
 
 #include <knocknock/memory/flat_rom.h>
 
+#include "memory/unittest_utils.h"
+
 namespace memory {
 
-TEST_CASE("ROM read + write", "[memory][FlatROM]") {
+TEST_CASE("ROM read", "[memory][FlatROM]") {
+    auto rom = testing::generate_test_rom(2, {{0x00, 0x01}, {0x01, 0x02}});
+
     FlatROM flat_rom(0);
+    flat_rom.load_rom(rom);
 
-    SECTION("Bank 0") {
-        for (MemoryAddr i = ROM_0_BEGIN; i <= ROM_0_END; ++i) {
-            flat_rom.write(i, i % 256);
-        }
-
-        for (MemoryAddr i = ROM_0_BEGIN; i <= ROM_0_END; ++i) {
-            REQUIRE(flat_rom.read(i) == (i % 256));
-        }
-    }
-
-    SECTION("Switchable bank") {
-        for (MemoryAddr i = ROM_SWITCHABLE_BEGIN; i <= ROM_SWITCHABLE_END;
-             ++i) {
-            flat_rom.write(i, i % 128);
-        }
-
-        for (MemoryAddr i = ROM_SWITCHABLE_BEGIN; i <= ROM_SWITCHABLE_END;
-             ++i) {
-            REQUIRE(flat_rom.read(i) == (i % 128));
-        }
-    }
+    REQUIRE(testing::verify_rom_0_value(flat_rom, 0x01));
+    REQUIRE(testing::verify_rom_switchable_value(flat_rom, 0x02));
 }
 
 TEST_CASE("RAM read + write", "[memory][FlatROM]") {

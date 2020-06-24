@@ -30,7 +30,8 @@ MemoryValue FlatROM::read(MemoryAddr addr) const {
 void FlatROM::write(MemoryAddr addr, MemoryValue value) {
     if (BETWEEN(ROM_0_BEGIN, addr, ROM_0_END) ||
         BETWEEN(ROM_SWITCHABLE_BEGIN, addr, ROM_SWITCHABLE_END)) {
-        rom_[addr] = value;
+        LOG(ERROR) << fmt::format(
+            FMT_STRING("Invalid write to ROM at {:#04x}, ignoring"), addr);
         return;
     }
 
