@@ -38,6 +38,13 @@ private:
     bool interrupt_enabled_;
 
     /**
+     * Whether the CPU is in a state that interrupts can be serviced. An
+     * interrupt can't be serviced while the CPU is decoding an instruction
+     * for example. Controlled internally by the CPU.
+     */
+    bool allow_interrupt_service_;
+
+    /**
      * When this flag is true then interrupts should be enabled at the earliest
      * convenience. EI sets this flag so interrupts are enabled after its
      * following instruction is executed.

@@ -48,6 +48,7 @@ CPU::CPU(memory::Memory *memory)
       mem_(memory),
       decoder_(mem_, &pc_),
       interrupt_enabled_(false),
+      allow_interrupt_service_(true),
       schedule_interrupt_enable_(false),
       ptr_bc_(mem_, bc_),
       ptr_de_(mem_, de_),
@@ -99,6 +100,7 @@ std::optional<Operand16 *> CPU::get_operand16(Operand operand) {
 }
 
 void CPU::tick() {
+    allow_interrupt_service_ = false;
 
     decoder_.step();
 
@@ -124,10 +126,16 @@ void CPU::tick() {
         interrupt_enabled_ = true;
         schedule_interrupt_enable_ = false;
     }
+
+    allow_interrupt_service_ = true;
 }
 
 bool CPU::interrupt(interrupt::InterruptType reason) {
     if (!interrupt_enabled_) {
+        return false;
+    }
+
+    if (!allow_interrupt_service_) {
         return false;
     }
 
