@@ -1,5 +1,6 @@
 set(SOURCE_FILES
         cartridge.cpp
+        interrupt.cpp
         cpu/cpu.cpp
         cpu/instruction.cpp
         cpu/decoder.cpp

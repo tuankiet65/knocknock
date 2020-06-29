@@ -1,4 +1,5 @@
 set(UNITTEST_FILES
+        interrupt_unittest.cpp
         cpu/operands_unittest.cpp
         memory/memory_unittest.cpp
         memory/unittest_utils.cpp
