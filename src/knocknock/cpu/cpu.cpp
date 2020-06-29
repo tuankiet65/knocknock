@@ -110,7 +110,6 @@ void CPU::tick() {
         imm16_.write(inst.imm16().value());
     }
 
-    LOG(ERROR) << fmt::format("{:#05x} {}", pc_, inst.disassemble());
 
     execute_instruction(inst);
 
