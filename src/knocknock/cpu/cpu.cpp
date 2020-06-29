@@ -42,6 +42,7 @@ CPU::CPU(memory::Memory *memory)
       mem_(memory),
       decoder_(mem_, &pc_),
       interrupt_enabled_(false),
+      schedule_interrupt_enable_(false),
       ptr_bc_(mem_, bc_),
       ptr_de_(mem_, de_),
       ptr_hl_(mem_, hl_),
@@ -113,6 +114,10 @@ void CPU::tick() {
 
     execute_instruction(inst);
 
+    if (schedule_interrupt_enable_) {
+        interrupt_enabled_ = true;
+        schedule_interrupt_enable_ = false;
+    }
 }
 
 void CPU::execute_instruction(Instruction inst) {
@@ -311,13 +316,13 @@ void CPU::rla() {
 }
 
 void CPU::di() {
-    // TODO: Interrupt is disabled after the instruction AFTER DI is executed.
     interrupt_enabled_ = false;
+    // Also cancel any pending interrupt enable requests.
+    schedule_interrupt_enable_ = false;
 }
 
 void CPU::ei() {
-    // TODO: Interrupt is enabled after the instruction AFTER DI is executed.
-    interrupt_enabled_ = true;
+    schedule_interrupt_enable_ = true;
 }
 
 void CPU::call(Operand lhs, Operand rhs) {

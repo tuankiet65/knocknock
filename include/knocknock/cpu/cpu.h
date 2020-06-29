@@ -33,6 +33,13 @@ private:
 
     bool interrupt_enabled_;
 
+    /**
+     * When this flag is true then interrupts should be enabled at the earliest
+     * convenience. EI sets this flag so interrupts are enabled after its
+     * following instruction is executed.
+     */
+    bool schedule_interrupt_enable_;
+
     std::optional<Operand8 *> get_operand8(Instruction::Operand lhs);
     std::optional<Operand16 *> get_operand16(Instruction::Operand lhs);
 
