@@ -51,6 +51,12 @@ private:
      */
     bool schedule_interrupt_enable_;
 
+    /**
+     * Whether the CPU is halted or not. The CPU halts when the HALT instruction
+     * is executed.
+     */
+    bool halted_;
+
     std::optional<Operand8 *> get_operand8(Instruction::Operand lhs);
     std::optional<Operand16 *> get_operand16(Instruction::Operand lhs);
 
@@ -107,6 +113,7 @@ private:
     void set(Instruction::Operand lhs, Instruction::Operand rhs);
     void daa();
     void ldhl(Instruction::Operand lhs, Instruction::Operand rhs);
+    void halt();
 
     void push_to_stack(uint16_t value);
     uint16_t pop_from_stack();

@@ -50,6 +50,7 @@ CPU::CPU(memory::Memory *memory)
       interrupt_enabled_(false),
       allow_interrupt_service_(true),
       schedule_interrupt_enable_(false),
+      halted_(false),
       ptr_bc_(mem_, bc_),
       ptr_de_(mem_, de_),
       ptr_hl_(mem_, hl_),
@@ -100,6 +101,10 @@ std::optional<Operand16 *> CPU::get_operand16(Operand operand) {
 }
 
 void CPU::tick() {
+    if (halted_) {
+        return;
+    }
+
     allow_interrupt_service_ = false;
 
     decoder_.step();
@@ -131,6 +136,12 @@ void CPU::tick() {
 }
 
 bool CPU::interrupt(interrupt::InterruptType reason) {
+    // The CPU exits the halted state upon an interrupt. However, any pending
+    // interrupts are only serviced if interrupts are enabled. That's why the
+    // CPU must be taken out of the halted state before any interrupt handling
+    // logic is done.
+    halted_ = false;
+
     if (!interrupt_enabled_) {
         return false;
     }
@@ -203,6 +214,7 @@ void CPU::execute_instruction(Instruction inst) {
         case Opcode::SET: set(inst.lhs(), inst.rhs()); break;
         case Opcode::DAA: daa(); break;
         case Opcode::LDHL: ldhl(inst.lhs(), inst.rhs()); break;
+        case Opcode::HALT: halt(); break;
 
         default:
             DCHECK(false) << "Instruction not recognized: "
@@ -867,6 +879,10 @@ void CPU::ldhl(Instruction::Operand lhs, Instruction::Operand rhs) {
     f_.half_carry = ((x & 0x000Fu) + low_nibble(y) > 0x000Fu);
     // The half_carry flag here signifies carry from bit 7 to 8, not 15 to 16.
     f_.carry = ((x & 0x00FFu) > (0x00FFu - (uint8_t)(y)));
+}
+
+void CPU::halt() {
+    halted_ = true;
 }
 
 }  // namespace cpu
