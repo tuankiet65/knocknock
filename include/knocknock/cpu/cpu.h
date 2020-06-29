@@ -33,8 +33,8 @@ private:
 
     bool interrupt_enabled_;
 
-    std::optional<Operand8*> get_operand8(Instruction::Operand lhs);
-    std::optional<Operand16*> get_operand16(Instruction::Operand lhs);
+    std::optional<Operand8 *> get_operand8(Instruction::Operand lhs);
+    std::optional<Operand16 *> get_operand16(Instruction::Operand lhs);
 
     void execute_instruction(Instruction inst);
 
