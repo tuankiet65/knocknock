@@ -17,16 +17,16 @@ TEST_CASE("ROM read", "[memory][FlatROM]") {
 }
 
 TEST_CASE("RAM read + write", "[memory][FlatROM]") {
-    const MemorySize size = 0x100;
+    const MemorySize ram_size = 0x100;
 
-    FlatROM flat_rom(size);
+    FlatROM flat_rom(ram_size);
 
-    for (MemoryAddr i = RAM_EXTERNAL_BEGIN; i < RAM_EXTERNAL_BEGIN + size;
+    for (MemoryAddr i = RAM_EXTERNAL_BEGIN; i < RAM_EXTERNAL_BEGIN + ram_size;
          ++i) {
         flat_rom.write(i, i % 256);
     }
 
-    for (MemoryAddr i = RAM_EXTERNAL_BEGIN; i < RAM_EXTERNAL_BEGIN + size;
+    for (MemoryAddr i = RAM_EXTERNAL_BEGIN; i < RAM_EXTERNAL_BEGIN + ram_size;
          ++i) {
         REQUIRE(flat_rom.read(i) == (i % 256));
     }
