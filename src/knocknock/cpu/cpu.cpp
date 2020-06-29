@@ -134,6 +134,7 @@ void CPU::execute_instruction(Instruction inst) {
         case Opcode::EI: ei(); break;
         case Opcode::CALL: call(inst.lhs(), inst.rhs()); break;
         case Opcode::RET: ret(inst.lhs()); break;
+        case Opcode::RETI: reti(); break;
         case Opcode::PUSH: push(inst.lhs()); break;
         case Opcode::POP: pop(inst.lhs()); break;
         case Opcode::INC: inc(inst.lhs()); break;
@@ -359,6 +360,11 @@ void CPU::ret(Operand lhs) {
     if (should_return) {
         pc_ = pop_from_stack();
     }
+}
+
+void CPU::reti() {
+    pc_ = pop_from_stack();
+    interrupt_enabled_ = true;
 }
 
 void CPU::push(Operand lhs) {
