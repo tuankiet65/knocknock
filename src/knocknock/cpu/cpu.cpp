@@ -751,7 +751,8 @@ void CPU::rrc(Operand lhs) {
     f_.carry = (value & 0x1u);
 }
 
-// Specialization of RRC for A register. RRCA set the zero flag to 0, unlike RRC.
+// Specialization of RRC for A register. RRCA set the zero flag to 0, unlike
+// RRC.
 void CPU::rrca() {
     rrc(Operand::A);
 
