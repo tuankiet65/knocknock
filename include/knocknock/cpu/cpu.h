@@ -4,17 +4,21 @@
 
 #include "knocknock/cpu/decoder.h"
 #include "knocknock/cpu/operands.h"
+#include "knocknock/interrupt.h"
 #include "knocknock/memory/memory.h"
 #include "knocknock/peripherals/tickable.h"
 
 namespace cpu {
 
-class CPU : public peripherals::Tickable {
+class CPU : public peripherals::Tickable, public interrupt::Interruptible {
 public:
     CPU(memory::Memory *mem);
 
     // clock::Tickable::
     void tick() override;
+
+    // interrupt::Interruptible
+    bool interrupt(interrupt::InterruptType reason) override;
 
 private:
     Register8 a_, b_, c_, d_, e_, h_, l_;

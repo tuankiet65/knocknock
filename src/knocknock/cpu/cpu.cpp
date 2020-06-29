@@ -17,6 +17,12 @@ uint8_t high_nibble(uint8_t value) {
     return value >> 4u;
 }
 
+constexpr memory::MemoryAddr IRQ_VBLANK = 0x0040;
+constexpr memory::MemoryAddr IRQ_LCD_STATUS = 0x0048;
+constexpr memory::MemoryAddr IRQ_TIMER = 0x0050;
+constexpr memory::MemoryAddr IRQ_SERIAL = 0x0058;
+constexpr memory::MemoryAddr IRQ_JOYPAD = 0x0060;
+
 }  // namespace
 
 using Opcode = Instruction::Opcode;
@@ -118,6 +124,29 @@ void CPU::tick() {
         interrupt_enabled_ = true;
         schedule_interrupt_enable_ = false;
     }
+}
+
+bool CPU::interrupt(interrupt::InterruptType reason) {
+    if (!interrupt_enabled_) {
+        return false;
+    }
+
+    // Disable interrupt.
+    di();
+
+    // Push the current PC onto the stack.
+    push_to_stack(pc_);
+
+    // Then jump to the interrupt handler, depending on the interrupt reason.
+    switch (reason) {
+        case interrupt::InterruptType::VBLANK: pc_ = IRQ_VBLANK; break;
+        case interrupt::InterruptType::LCD_STATUS: pc_ = IRQ_LCD_STATUS; break;
+        case interrupt::InterruptType::TIMER: pc_ = IRQ_TIMER; break;
+        case interrupt::InterruptType::JOYPAD: pc_ = IRQ_JOYPAD; break;
+        case interrupt::InterruptType::SERIAL: pc_ = IRQ_SERIAL; break;
+    }
+
+    return true;
 }
 
 void CPU::execute_instruction(Instruction inst) {
