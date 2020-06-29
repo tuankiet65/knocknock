@@ -35,6 +35,9 @@ private:
 
     Decoder decoder_;
 
+    /**
+     * Whether interrupts are enabled. Controlled by the EI and DI instruction.
+     */
     bool interrupt_enabled_;
 
     /**
