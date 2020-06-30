@@ -30,8 +30,8 @@ public:
         ROM_MMM01_SRAM = 0x0c,
         ROM_MMM01_SRAM_BATT = 0x0d,
 
-        ROM_MBC3_TIMER_BATT = 0x0f,
-        ROM_MBC3_TIMER_RAM_BATT = 0x10,
+        ROM_MBC3_RTC_BATT = 0x0f,
+        ROM_MBC3_RTC_RAM_BATT = 0x10,
         ROM_MBC3 = 0x11,
         ROM_MBC3_RAM = 0x12,
         ROM_MBC3_RAM_BATT = 0x13,
