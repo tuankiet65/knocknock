@@ -164,7 +164,7 @@ void MBC1::write(MemoryAddr addr, MemoryValue value) {
         }
 
         if (ram_size_ == 0) {
-            LOG(ERROR) << "Writing to empty MBC1 RAM, returning garbage";
+            LOG(ERROR) << "Writing to empty MBC1 RAM, ignoring";
             return;
         }
 
