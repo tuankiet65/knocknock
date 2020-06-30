@@ -159,11 +159,6 @@ void MBC1::write(MemoryAddr addr, MemoryValue value) {
         }
 
         uint32_t real_addr = translate_ram_address(addr);
-        if (real_addr >= ram_size_) {
-            LOG(ERROR) << "Attempt to read past the RAM area, ignoring";
-            return;
-        }
-
         ram_[real_addr] = value;
 
         return;
