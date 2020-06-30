@@ -103,6 +103,11 @@ MemoryValue MBC1::read(MemoryAddr addr) const {
             return 0xff;
         }
 
+        if (ram_size_ == 0) {
+            LOG(ERROR) << "Reading from empty MBC1 RAM, returning garbage";
+            return 0xff;
+        }
+
         uint32_t real_addr = translate_ram_address(addr);
 
         return ram_[real_addr];
@@ -155,6 +160,11 @@ void MBC1::write(MemoryAddr addr, MemoryValue value) {
         if (!ram_enabled_) {
             LOG(ERROR) << fmt::format(
                 "RAM not enabled, ignoring write to addr {:#04x}", addr);
+            return;
+        }
+
+        if (ram_size_ == 0) {
+            LOG(ERROR) << "Writing to empty MBC1 RAM, returning garbage";
             return;
         }
 
