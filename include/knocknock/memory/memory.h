@@ -46,7 +46,9 @@ public:
 
 class ROMLoadableMemory : public Memory {
 public:
-    virtual bool load_rom(const std::vector<MemoryValue> &rom) = 0;
+    [[deprecated]] virtual bool load_rom(const std::vector<MemoryValue> &rom) {
+        return false;
+    }
 
     virtual ~ROMLoadableMemory() = default;
 };
