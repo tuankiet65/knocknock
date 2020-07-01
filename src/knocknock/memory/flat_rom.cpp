@@ -5,10 +5,10 @@
 
 namespace memory {
 
-FlatROM::FlatROM(MemorySize ram_size)
+FlatROM::FlatROM(std::vector<MemoryValue> rom, MemorySize ram_size)
     : ram_size_(ram_size),
       ram_end_addr_(RAM_EXTERNAL_BEGIN + ram_size_ - 1),
-      rom_(),
+      rom_(std::move(rom)),
       ram_() {
     DCHECK(ram_size_ <= sizeof(ram_));
 }
@@ -41,15 +41,6 @@ void FlatROM::write(MemoryAddr addr, MemoryValue value) {
     }
 
     DCHECK(false) << fmt::format("Invalid write at {:#04x}", addr);
-}
-
-bool FlatROM::load_rom(const std::vector<MemoryValue> &rom) {
-    if (rom.size() > sizeof(this->rom_)) {
-        return false;
-    }
-
-    std::copy(rom.begin(), rom.end(), rom_);
-    return true;
 }
 
 }  // namespace memory
