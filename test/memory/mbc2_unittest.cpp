@@ -20,8 +20,7 @@ void switch_rom_bank(MBC2 *mem, uint8_t bank) {
 TEST_CASE("Default", "[memory][mbc2]") {
     auto rom = testing::generate_test_rom(2, {{0x00, 0x01}, {0x01, 0x02}});
 
-    MBC2 mem(rom.size());
-    mem.load_rom(rom);
+    MBC2 mem(rom);
 
     REQUIRE(testing::verify_rom_0_value(mem, 0x01));
     REQUIRE(testing::verify_rom_switchable_value(mem, 0x02));
@@ -31,8 +30,7 @@ TEST_CASE("ROM", "[memory][mbc2]") {
     auto rom = testing::generate_test_rom(
         16, {{0x00, 0x01}, {0x01, 0x02}, {0x08, 0x08}, {0x0f, 0x0f}});
 
-    MBC2 mem(rom.size());
-    mem.load_rom(rom);
+    MBC2 mem(rom);
 
     REQUIRE(testing::verify_rom_0_value(mem, 0x01));
 
@@ -48,7 +46,7 @@ TEST_CASE("ROM", "[memory][mbc2]") {
 }
 
 TEST_CASE("External RAM", "[memory][mbc2]") {
-    memory::MBC2 mem(0);
+    memory::MBC2 mem({});
 
     // Enable RAM.
     mem.write(0x0038, 0x0a);
@@ -73,8 +71,7 @@ TEST_CASE("External RAM", "[memory][mbc2]") {
 TEST_CASE("ROM: Out-of-bound read", "[memory][mbc2]") {
     auto rom = testing::generate_test_rom(4, {{0x00, 0x01}, {0x01, 0x02}});
 
-    MBC2 mem(rom.size());
-    mem.load_rom(rom);
+    MBC2 mem(rom);
 
     REQUIRE(testing::verify_rom_0_value(mem, 0x01));
 

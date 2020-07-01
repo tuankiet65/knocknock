@@ -1,5 +1,6 @@
 #include "knocknock/memory/mbc2.h"
 
+#include <fmt/format.h>
 #include <glog/logging.h>
 
 #include "knocknock/memory/regions.h"
@@ -16,13 +17,12 @@ uint8_t low_nibble(uint8_t value) {
 
 }  // namespace
 
-MBC2::MBC2(MemorySize rom_size)
-    : ram_enabled_(false),
-      selected_bank_(1),
-      rom_(),
-      rom_size_(rom_size),
-      ram_() {
-    DCHECK(rom_size <= sizeof(rom_));
+MBC2::MBC2(std::vector<MemoryValue> rom)
+    : ram_enabled_(false), selected_bank_(1), rom_(std::move(rom)), ram_() {
+    LOG_IF(ERROR, rom_.size() > MAX_ROM_SIZE)
+        << fmt::format(FMT_STRING("ROM (size = {}) is bigger than the maximum "
+                                  "addressable ROM size ({})"),
+                       rom_.size(), MAX_ROM_SIZE);
 }
 
 MemoryValue MBC2::read(MemoryAddr addr) const {
@@ -33,8 +33,7 @@ MemoryValue MBC2::read(MemoryAddr addr) const {
     if (BETWEEN(ROM_SWITCHABLE_BEGIN, addr, ROM_SWITCHABLE_END)) {
         uint32_t real_addr =
             (selected_bank_ * ROM_BANK_SIZE) + (addr - ROM_SWITCHABLE_BEGIN);
-
-        real_addr %= rom_size_;
+        real_addr %= rom_.size();
 
         return rom_[real_addr];
     }
@@ -82,15 +81,6 @@ void MBC2::write(MemoryAddr addr, MemoryValue value) {
     }
 
     LOG(ERROR) << "Unknown write to MBC2, ignoring.";
-}
-
-bool MBC2::load_rom(const std::vector<MemoryValue> &rom) {
-    if (rom.size() > rom_size_) {
-        return false;
-    }
-
-    std::copy(rom.begin(), rom.end(), rom_);
-    return true;
 }
 
 }  // namespace memory
