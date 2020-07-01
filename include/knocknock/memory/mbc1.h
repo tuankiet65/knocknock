@@ -24,13 +24,10 @@ public:
      * @param rom_size ROM size.
      * @param ram_size RAM size.
      */
-    MBC1(MemorySize rom_size, MemorySize ram_size);
+    MBC1(std::vector<MemoryValue> rom, MemorySize ram_size);
 
     MemoryValue read(MemoryAddr addr) const override;
     void write(MemoryAddr addr, MemoryValue value) override;
-
-    // ROMLoadableMemory::
-    bool load_rom(const std::vector<MemoryValue> &rom) override;
 
 private:
     /**
@@ -68,14 +65,19 @@ private:
     AddressingMode mode_;
 
     static constexpr MemorySize ROM_BANK_SIZE = 0x4000;
+
+    /**
+     * Maximum ROM size. There are a maximum of 128 ROM banks, which resolves to
+     * the maximum size of 2MByte.
+     */
+    static constexpr MemorySize MAX_ROM_SIZE = 128 * ROM_BANK_SIZE;
+
     static constexpr MemorySize RAM_BANK_SIZE = 0x2000;
 
     /**
-     * ROM region. There are a maximum of 128 ROM banks, which resolves to
-     * the maximum size of 2MByte.
+     * Constant ROM data.
      */
-    MemoryValue rom_[128 * ROM_BANK_SIZE];
-    MemorySize rom_size_;
+    const std::vector<MemoryValue> rom_;
 
     /**
      * RAM region. There are a maximum of 4 RAM banks, which resolves to

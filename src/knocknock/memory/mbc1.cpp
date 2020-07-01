@@ -23,28 +23,20 @@ constexpr int ADDR_MODE_END = 0x7fff;
 
 }  // namespace
 
-MBC1::MBC1(MemorySize rom_size, MemorySize ram_size)
+MBC1::MBC1(std::vector<MemoryValue> rom, MemorySize ram_size)
     : ram_enabled_(false),
       bank1_(1),
       bank2_(0),
       mode_(AddressingMode::MODE_0),
-      rom_(),
-      rom_size_(rom_size),
+      rom_(std::move(rom)),
       ram_(),
       ram_size_(ram_size) {
-    DCHECK(rom_size_ <= sizeof(rom_))
-        << fmt::format("ROM size too large: {}", rom_size_);
+    LOG_IF(ERROR, rom_.size() > MAX_ROM_SIZE) << fmt::format(
+        "ROM (size = {}) is larger than the maximum addressable size ({})",
+        rom_.size(), MAX_ROM_SIZE);
+
     DCHECK(ram_size_ <= sizeof(ram_))
         << fmt::format("RAM size too large: {}", ram_size_);
-}
-
-bool MBC1::load_rom(const std::vector<MemoryValue> &rom) {
-    if (rom.size() > rom_size_) {
-        return false;
-    }
-
-    std::copy(rom.begin(), rom.end(), rom_);
-    return true;
 }
 
 uint32_t MBC1::translate_rom_address(MemoryAddr addr) const {
@@ -68,7 +60,7 @@ uint32_t MBC1::translate_rom_address(MemoryAddr addr) const {
     }
 
     uint32_t real_addr = bank * ROM_BANK_SIZE + addr_in_bank;
-    real_addr %= rom_size_;
+    real_addr %= rom_.size();
 
     return real_addr;
 }

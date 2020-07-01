@@ -29,8 +29,7 @@ TEST_CASE("Initial bank in switchable region", "[memory][mbc1]") {
     auto rom = testing::generate_test_rom(0x80, {{0x00, 0x01}, {0x01, 0x02}});
 
     // Create the MBC.
-    MBC1 mem(rom.size(), 0);
-    mem.load_rom(rom);
+    MBC1 mem(rom, 0);
 
     // Set to mode 0.
     mem.write(0x6069, 0);
@@ -48,8 +47,7 @@ TEST_CASE("ROM Bank 0 region", "[memory][mbc1]") {
     auto rom = testing::generate_test_rom(0x80, {{0x00, 0x01}, {0x20, 0x20}});
 
     // Create the MBC.
-    MBC1 mem(rom.size(), 0);
-    mem.load_rom(rom);
+    MBC1 mem(rom, 0);
 
     // Set to mode 0.
     mem.write(0x6069, 0);
@@ -78,8 +76,7 @@ TEST_CASE("ROM Switchable bank region", "[memory][mbc1]") {
     auto rom = testing::generate_test_rom(
         0x80, {{0x24, 0x24}, {0x41, 0x41}, {0x69, 0x69}});
 
-    MBC1 mem(rom.size(), 0);
-    mem.load_rom(rom);
+    MBC1 mem(rom, 0);
 
     // Set to mode 0
     mem.write(0x6069, 0);
@@ -109,7 +106,7 @@ TEST_CASE("ROM Switchable bank region", "[memory][mbc1]") {
 }
 
 TEST_CASE("External RAM region", "[memory][mbc1]") {
-    MBC1 mem(0, 4 * RAM_BANK_SIZE);
+    MBC1 mem({}, 4 * RAM_BANK_SIZE);
 
     // Enable RAM.
     mem.write(0x1010, 0xfa);
@@ -145,8 +142,7 @@ TEST_CASE("External RAM region", "[memory][mbc1]") {
 TEST_CASE("Out-of-bound ROM read", "[memory][mbc1]") {
     auto rom = testing::generate_test_rom(4, {{0x00, 0x01}, {0x01, 0x02}});
 
-    MBC1 mem(rom.size(), 0);
-    mem.load_rom(rom);
+    MBC1 mem(rom, 0);
 
     // Set to mode 0
     mem.write(0x6069, 0);
@@ -168,7 +164,7 @@ TEST_CASE("Out-of-bound ROM read", "[memory][mbc1]") {
 
 TEST_CASE("Out-of-bound RAM read", "[memory][mbc1]") {
     // Create a RAM-only MBC1 with 2 RAM banks.
-    MBC1 mem(0, 2 * RAM_BANK_SIZE);
+    MBC1 mem({}, 2 * RAM_BANK_SIZE);
 
     // Enable RAM.
     mem.write(0x1010, 0xfa);
