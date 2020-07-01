@@ -15,7 +15,6 @@ public:
 
     MemoryValue read(MemoryAddr addr) const override;
     void write(MemoryAddr addr, MemoryValue value) override;
-    bool load_rom(const std::vector<MemoryValue> &rom) override;
 
 private:
     MemoryValue memory_[0x10000];
