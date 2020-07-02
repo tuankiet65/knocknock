@@ -9,7 +9,8 @@ set(UNITTEST_FILES
         memory/internal_ram_unittest.cpp
         peripherals/clock_unittest.cpp
         peripherals/serial_unittest.cpp
-        peripherals/joypad_unittest.cpp)
+        peripherals/joypad_unittest.cpp
+        ppu/dma_unittest.cpp)
 add_executable(knocknock_unittest "${UNITTEST_FILES}" "knocknock_unittest.cpp")
 target_include_directories(knocknock_unittest PRIVATE .)
 target_link_libraries(knocknock_unittest PRIVATE

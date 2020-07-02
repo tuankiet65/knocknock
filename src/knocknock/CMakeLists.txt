@@ -14,7 +14,8 @@ set(SOURCE_FILES
         memory/internal_ram.cpp
         peripherals/clock.cpp
         peripherals/serial.cpp
-        peripherals/joypad.cpp)
+        peripherals/joypad.cpp
+        ppu/dma.cpp)
 
 add_library(knocknock STATIC "${SOURCE_FILES}")
 target_include_directories(knocknock
