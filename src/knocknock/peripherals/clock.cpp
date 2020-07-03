@@ -12,7 +12,7 @@ Clock::Clock(uint64_t in_frequency, uint64_t out_frequency)
         << "Input frequency is larger than output frequency";
 }
 
-void Clock::addOutput(Tickable *output) {
+void Clock::add_output(Tickable *output) {
     outputs_.push_back(output);
 }
 

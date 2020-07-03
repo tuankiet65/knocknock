@@ -11,7 +11,7 @@ class Clock : public Tickable {
 public:
     Clock(uint64_t in_frequency, uint64_t out_frequency);
 
-    void addOutput(Tickable *output);
+    void add_output(Tickable *output);
 
     // Tickable::
     void tick() override;

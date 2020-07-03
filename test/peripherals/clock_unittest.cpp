@@ -25,7 +25,7 @@ TEST_CASE("Divisible frequency", "[peripherals][clock]") {
     ClockCounter counter;
 
     Clock clock(5, 50);
-    clock.addOutput(&counter);
+    clock.add_output(&counter);
 
     for (int i = 1; i <= 5; ++i) {
         clock.tick();
@@ -37,7 +37,7 @@ TEST_CASE("Non divisible frequency", "[peripherals][clock]") {
     ClockCounter counter;
 
     Clock clock(15, 17263);
-    clock.addOutput(&counter);
+    clock.add_output(&counter);
 
     for (int i = 0; i < 15; ++i) {
         clock.tick();
