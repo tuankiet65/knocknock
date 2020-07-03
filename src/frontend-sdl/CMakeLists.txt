@@ -1,11 +1,13 @@
 # Custom CMake code for imgui because it doesn't come with a CMakeLists.txt
 add_library(imgui
         STATIC
-        ../../third_party/imgui/imgui.cpp
-        ../../third_party/imgui/imgui_demo.cpp
-        ../../third_party/imgui/imgui_draw.cpp
-        ../../third_party/imgui/imgui_widgets.cpp)
-target_include_directories(imgui PUBLIC ../../third_party/imgui)
+        ${PROJECT_SOURCE_DIR}/third_party/imgui/imgui.cpp
+        ${PROJECT_SOURCE_DIR}/third_party/imgui/imgui_demo.cpp
+        ${PROJECT_SOURCE_DIR}/third_party/imgui/imgui_draw.cpp
+        ${PROJECT_SOURCE_DIR}/third_party/imgui/imgui_widgets.cpp)
+target_include_directories(imgui
+        PUBLIC
+        ${PROJECT_SOURCE_DIR}/third_party/imgui)
 target_compile_definitions(imgui PUBLIC IMGUI_DISABLE_OBSOLETE_FUNCTIONS IMGUI_USE_WCHAR32)
 
 add_executable(knocknock-sdl
