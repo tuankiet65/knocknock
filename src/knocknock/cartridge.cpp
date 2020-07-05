@@ -117,7 +117,7 @@ Cartridge::Cartridge(std::string title,
       content_(std::move(content)) {}
 
 // static
-std::optional<Cartridge> Cartridge::from_file(std::string path) {
+std::optional<Cartridge> Cartridge::from_file(const std::string& path) {
     std::ifstream in(path, std::ios::in | std::ios::binary);
     if (!in) {
         LOG(ERROR) << fmt::format(FMT_STRING("Unable to open file {}"), path);
