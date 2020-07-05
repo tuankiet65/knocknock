@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-#include "knocknock/base/filesystem.h"
 #include "knocknock/memory/memory.h"
 
 using CartridgeContent = std::vector<memory::MemoryValue>;
@@ -56,7 +55,7 @@ public:
               size_t ram_size,
               CartridgeContent content_);
 
-    static std::optional<Cartridge> from_file(const fs::path &path);
+    static std::optional<Cartridge> from_file(std::string path);
 
     CartridgeContent content() const { return content_; }
     std::string title() const { return title_; }

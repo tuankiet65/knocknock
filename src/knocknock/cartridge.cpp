@@ -117,15 +117,10 @@ Cartridge::Cartridge(std::string title,
       content_(std::move(content)) {}
 
 // static
-std::optional<Cartridge> Cartridge::from_file(const fs::path &path) {
-    if (!fs::is_regular_file(path)) {
-        LOG(ERROR) << fmt::format("{} is not a regular file", path.string());
-        return {};
-    }
-
-    std::ifstream in(path.native(), std::ios::in | std::ios::binary);
+std::optional<Cartridge> Cartridge::from_file(std::string path) {
+    std::ifstream in(path, std::ios::in | std::ios::binary);
     if (!in) {
-        LOG(ERROR) << fmt::format("Unable to open file {}", path.string());
+        LOG(ERROR) << fmt::format(FMT_STRING("Unable to open file {}"), path);
         return {};
     }
 
@@ -143,8 +138,8 @@ std::optional<Cartridge> Cartridge::from_file(const fs::path &path) {
         }
 
         if (in.fail()) {
-            LOG(ERROR) << fmt::format("Error while reading file {}",
-                                      path.string());
+            LOG(ERROR) << fmt::format(FMT_STRING("Error while reading file {}"),
+                                      path);
             return {};
         }
 
