@@ -57,12 +57,12 @@ public:
 
     static std::optional<Cartridge> from_file(const std::string& path);
 
-    CartridgeContent content() const { return content_; }
-    std::string title() const { return title_; }
-    GameBoyType game_boy_type() const { return game_boy_type_; }
-    CartridgeType type() const { return type_; }
-    size_t rom_size() const { return rom_size_; }
-    size_t ram_size() const { return ram_size_; }
+    [[nodiscard]] CartridgeContent content() const { return content_; }
+    [[nodiscard]] std::string title() const { return title_; }
+    [[nodiscard]] GameBoyType game_boy_type() const { return game_boy_type_; }
+    [[nodiscard]] CartridgeType type() const { return type_; }
+    [[nodiscard]] size_t rom_size() const { return rom_size_; }
+    [[nodiscard]] size_t ram_size() const { return ram_size_; }
 
 private:
     std::string title_;
