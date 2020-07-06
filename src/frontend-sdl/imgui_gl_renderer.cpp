@@ -188,6 +188,17 @@ const GLchar *FRAGMENT_SHADER_SOURCE =
 
 }  // namespace
 
+void ImGuiGLRenderer::RGBATexture::update(const void *texture) {
+    GLint prev_bound_texture;
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &prev_bound_texture);
+
+    glBindTexture(GL_TEXTURE_2D, id_);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width_, height_, GL_RGBA,
+                    GL_UNSIGNED_BYTE, texture);
+
+    glBindTexture(GL_TEXTURE_2D, prev_bound_texture);
+}
+
 ImGuiGLRenderer::ImGuiGLRenderer(glbinding::GetProcAddress get_proc_addr_func,
                                  ImGuiIO &io)
     : io_(io),
@@ -345,8 +356,8 @@ ImGuiGLRenderer::~ImGuiGLRenderer() {
     vao_ = 0;
 }
 
-ImGuiGLRenderer::RGBATexture
-ImGuiGLRenderer::create_texture(const void *texture, int width, int height) {
+ImGuiGLRenderer::RGBATexture ImGuiGLRenderer::create_texture(int width,
+                                                             int height) {
     GLint prev_bound_texture;
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &prev_bound_texture);
 
@@ -357,13 +368,13 @@ ImGuiGLRenderer::create_texture(const void *texture, int width, int height) {
     // https://github.com/ocornut/imgui/pull/752
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, texture);
+                 GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     glBindTexture(GL_TEXTURE_2D, prev_bound_texture);
 
-    return RGBATexture(texture_id);
+    return RGBATexture(texture_id, width, height);
 }
 
 void ImGuiGLRenderer::setup_render_state(float framebuffer_width,

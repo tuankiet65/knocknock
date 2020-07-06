@@ -10,7 +10,10 @@ class ImGuiGLRenderer {
 private:
     class RGBATexture {
     public:
-        explicit RGBATexture(GLuint id) : id_(id) {}
+        explicit RGBATexture(GLuint id, GLsizei width, GLsizei height)
+            : id_(id), width_(width), height_(height) {}
+
+        void update(const void *texture);
 
         [[nodiscard]] GLuint id() const { return id_; }
 
@@ -26,6 +29,7 @@ private:
 
     private:
         GLuint id_;
+        GLsizei width_, height_;
     };
 
 public:
@@ -36,7 +40,7 @@ public:
     void render(ImDrawData *data);
     void clear(ImVec4 color);
 
-    RGBATexture create_texture(const void *texture, int width, int height);
+    RGBATexture create_texture(int width, int height);
 
     [[nodiscard]] bool initialized() const { return initialized_; }
 

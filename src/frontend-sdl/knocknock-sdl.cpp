@@ -115,8 +115,9 @@ int main(int argc, char *argv[]) {
     int font_texture_width, font_texture_height;
     io.Fonts->GetTexDataAsRGBA32(&font_texture_data, &font_texture_width,
                                  &font_texture_height);
-    auto font_texture = renderer.create_texture(
-        font_texture_data, font_texture_width, font_texture_height);
+    auto font_texture =
+        renderer.create_texture(font_texture_width, font_texture_height);
+    font_texture.update(font_texture_data);
     io.Fonts->SetTexID(reinterpret_cast<void *>(&font_texture));
 
     ImGuiSDLInput sdl_input(io);
