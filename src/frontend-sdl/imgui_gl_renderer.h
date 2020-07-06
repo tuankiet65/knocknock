@@ -8,21 +8,21 @@ using namespace gl;
 
 class ImGuiGLRenderer {
 private:
-    class Texture {
+    class RGBATexture {
     public:
-        explicit Texture(GLuint id) : id_(id) {}
+        explicit RGBATexture(GLuint id) : id_(id) {}
 
         [[nodiscard]] GLuint id() const { return id_; }
 
-        ~Texture() {
+        ~RGBATexture() {
             ::glDeleteTextures(1, &id_);
             id_ = 0;
         }
 
         // Textures are a pain to copy so might as well disallow it.
         // TODO: allow move constructors?
-        Texture(const Texture &) = delete;
-        Texture &operator=(const Texture &) = delete;
+        RGBATexture(const RGBATexture &) = delete;
+        RGBATexture &operator=(const RGBATexture &) = delete;
 
     private:
         GLuint id_;
@@ -36,7 +36,7 @@ public:
     void render(ImDrawData *data);
     void clear(ImVec4 color);
 
-    Texture create_texture(const void *texture, int width, int height);
+    RGBATexture create_texture(const void *texture, int width, int height);
 
     [[nodiscard]] bool initialized() const { return initialized_; }
 

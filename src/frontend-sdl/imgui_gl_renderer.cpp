@@ -345,9 +345,8 @@ ImGuiGLRenderer::~ImGuiGLRenderer() {
     vao_ = 0;
 }
 
-ImGuiGLRenderer::Texture ImGuiGLRenderer::create_texture(const void *texture,
-                                                         int width,
-                                                         int height) {
+ImGuiGLRenderer::RGBATexture
+ImGuiGLRenderer::create_texture(const void *texture, int width, int height) {
     GLint prev_bound_texture;
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &prev_bound_texture);
 
@@ -364,7 +363,7 @@ ImGuiGLRenderer::Texture ImGuiGLRenderer::create_texture(const void *texture,
 
     glBindTexture(GL_TEXTURE_2D, prev_bound_texture);
 
-    return Texture(texture_id);
+    return RGBATexture(texture_id);
 }
 
 void ImGuiGLRenderer::setup_render_state(float framebuffer_width,
@@ -455,7 +454,7 @@ void ImGuiGLRenderer::render(ImDrawData *data) {
                 // Load the specified texture.
                 glBindTexture(
                     GL_TEXTURE_2D,
-                    reinterpret_cast<Texture *>(draw_cmd.TextureId)->id());
+                    reinterpret_cast<RGBATexture *>(draw_cmd.TextureId)->id());
 
                 glDrawElements(
                     GL_TRIANGLES, draw_cmd.ElemCount, GL_UNSIGNED_SHORT,
