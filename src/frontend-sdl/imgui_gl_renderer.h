@@ -7,12 +7,9 @@
 using namespace gl;
 
 class ImGuiGLRenderer {
-private:
+public:
     class RGBATexture {
     public:
-        explicit RGBATexture(GLuint id, GLsizei width, GLsizei height)
-            : id_(id), width_(width), height_(height) {}
-
         void update(const void *texture);
 
         [[nodiscard]] GLuint id() const { return id_; }
@@ -23,16 +20,19 @@ private:
         }
 
         // Textures are a pain to copy so might as well disallow it.
-        // TODO: allow move constructors?
         RGBATexture(const RGBATexture &) = delete;
         RGBATexture &operator=(const RGBATexture &) = delete;
 
     private:
+        explicit RGBATexture(GLuint id, GLsizei width, GLsizei height)
+            : id_(id), width_(width), height_(height) {}
+
         GLuint id_;
         GLsizei width_, height_;
+
+        friend ImGuiGLRenderer;
     };
 
-public:
     explicit ImGuiGLRenderer(glbinding::GetProcAddress get_proc_addr_func,
                              ImGuiIO &io);
     ~ImGuiGLRenderer();
