@@ -9,17 +9,17 @@ namespace memory {
 
 namespace {
 
-constexpr int RAM_ENABLE_BEGIN = 0x0000;
-constexpr int RAM_ENABLE_END = 0x1fff;
+constexpr MemoryAddr RAM_ENABLE_BEGIN = 0x0000;
+constexpr MemoryAddr RAM_ENABLE_END = 0x1fff;
 
-constexpr int BANK1_BEGIN = 0x2000;
-constexpr int BANK1_END = 0x3fff;
+constexpr MemoryAddr BANK1_BEGIN = 0x2000;
+constexpr MemoryAddr BANK1_END = 0x3fff;
 
-constexpr int BANK2_BEGIN = 0x4000;
-constexpr int BANK2_END = 0x5fff;
+constexpr MemoryAddr BANK2_BEGIN = 0x4000;
+constexpr MemoryAddr BANK2_END = 0x5fff;
 
-constexpr int ADDR_MODE_BEGIN = 0x6000;
-constexpr int ADDR_MODE_END = 0x7fff;
+constexpr MemoryAddr ADDR_MODE_BEGIN = 0x6000;
+constexpr MemoryAddr ADDR_MODE_END = 0x7fff;
 
 }  // namespace
 
