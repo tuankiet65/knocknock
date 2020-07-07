@@ -103,10 +103,6 @@ CompilationStatus get_program_status(GLuint program) {
     return {false, log.data()};
 }
 
-inline GLuint VOIDP_TO_GLUINT(void *voidp) {
-    return (GLuint)(intptr_t)(voidp);
-}
-
 bool extension_available(const std::string &requested_extension) {
     GLint extension_count;
     glGetIntegerv(GL_NUM_EXTENSIONS, &extension_count);
