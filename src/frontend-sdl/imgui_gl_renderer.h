@@ -14,10 +14,7 @@ public:
 
         [[nodiscard]] GLuint id() const { return id_; }
 
-        ~RGBATexture() {
-            ::glDeleteTextures(1, &id_);
-            id_ = 0;
-        }
+        ~RGBATexture();
 
         // Textures are a pain to copy so might as well disallow it.
         RGBATexture(const RGBATexture &) = delete;

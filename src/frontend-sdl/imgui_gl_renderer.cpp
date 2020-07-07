@@ -199,6 +199,11 @@ void ImGuiGLRenderer::RGBATexture::update(const void *texture) {
     glBindTexture(GL_TEXTURE_2D, prev_bound_texture);
 }
 
+ImGuiGLRenderer::RGBATexture::~RGBATexture() {
+    ::glDeleteTextures(1, &id_);
+    id_ = 0;
+}
+
 ImGuiGLRenderer::ImGuiGLRenderer(glbinding::GetProcAddress get_proc_addr_func,
                                  ImGuiIO &io)
     : io_(io),
