@@ -184,6 +184,24 @@ const GLchar *FRAGMENT_SHADER_SOURCE =
 
 }  // namespace
 
+ImGuiGLRenderer::RGBATexture::RGBATexture(GLsizei width, GLsizei height)
+    : width_(width), height_(height) {
+    GLint prev_bound_texture;
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &prev_bound_texture);
+
+    glGenTextures(1, &id_);
+    glBindTexture(GL_TEXTURE_2D, id_);
+    // Apparently SDL is messing with this parameter.
+    // https://github.com/ocornut/imgui/pull/752
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glBindTexture(GL_TEXTURE_2D, prev_bound_texture);
+}
+
 void ImGuiGLRenderer::RGBATexture::update(const void *texture) {
     GLint prev_bound_texture;
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &prev_bound_texture);
@@ -359,23 +377,7 @@ ImGuiGLRenderer::~ImGuiGLRenderer() {
 
 ImGuiGLRenderer::RGBATexture ImGuiGLRenderer::create_texture(int width,
                                                              int height) {
-    GLint prev_bound_texture;
-    glGetIntegerv(GL_TEXTURE_BINDING_2D, &prev_bound_texture);
-
-    GLuint texture_id;
-    glGenTextures(1, &texture_id);
-    glBindTexture(GL_TEXTURE_2D, texture_id);
-    // Apparently SDL is messing with this parameter.
-    // https://github.com/ocornut/imgui/pull/752
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glBindTexture(GL_TEXTURE_2D, prev_bound_texture);
-
-    return RGBATexture(texture_id, width, height);
+    return RGBATexture(width, height);
 }
 
 void ImGuiGLRenderer::setup_render_state(float framebuffer_width,

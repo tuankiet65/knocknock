@@ -21,8 +21,7 @@ public:
         RGBATexture &operator=(const RGBATexture &) = delete;
 
     private:
-        explicit RGBATexture(GLuint id, GLsizei width, GLsizei height)
-            : id_(id), width_(width), height_(height) {}
+        explicit RGBATexture(GLsizei width, GLsizei height);
 
         GLuint id_;
         GLsizei width_, height_;
