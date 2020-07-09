@@ -31,11 +31,11 @@ if (NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
 endif ()
 
 option(USE_SYSTEM_GLOG "If enabled, use system supplied glog instead of the included version in third_party/" OFF)
-set(WITH_GFLAGS OFF CACHE BOOL "Disable gflags")
-set(BUILD_TESTING OFF CACHE BOOL "Disable building unittests for glog")
 if (USE_SYSTEM_GLOG)
     find_package(glog REQUIRED)
 else ()
+    set(WITH_GFLAGS OFF)
+    set(BUILD_TESTING OFF)
     add_subdirectory("third_party/glog")
 endif ()
 
