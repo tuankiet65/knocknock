@@ -16,19 +16,12 @@ TEST_CASE("ROM read", "[memory][FlatROM]") {
 }
 
 TEST_CASE("RAM read + write", "[memory][FlatROM]") {
-    const MemorySize ram_size = 0x100;
+    const MemorySize ram_size = 0x2000;  // the size of the external RAM area.
 
     FlatROM flat_rom({}, ram_size);
 
-    for (MemoryAddr i = RAM_EXTERNAL_BEGIN; i < RAM_EXTERNAL_BEGIN + ram_size;
-         ++i) {
-        flat_rom.write(i, i % 256);
-    }
-
-    for (MemoryAddr i = RAM_EXTERNAL_BEGIN; i < RAM_EXTERNAL_BEGIN + ram_size;
-         ++i) {
-        REQUIRE(flat_rom.read(i) == (i % 256));
-    }
+    testing::fill_external_ram(&flat_rom, 0x8a);
+    REQUIRE(testing::verify_external_ram_value(flat_rom, 0x8a));
 }
 
 }  // namespace memory
