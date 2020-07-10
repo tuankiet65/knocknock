@@ -55,7 +55,7 @@ public:
               size_t ram_size,
               CartridgeContent content_);
 
-    static std::optional<Cartridge> from_file(const std::string& path);
+    static std::optional<Cartridge> from_file(const std::string &path);
 
     [[nodiscard]] CartridgeContent content() const { return content_; }
     [[nodiscard]] std::string title() const { return title_; }
