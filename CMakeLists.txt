@@ -34,8 +34,8 @@ option(USE_SYSTEM_GLOG "If enabled, use system supplied glog instead of the incl
 if (USE_SYSTEM_GLOG)
     find_package(glog REQUIRED)
 else ()
-    set(WITH_GFLAGS OFF)
-    set(BUILD_TESTING OFF)
+    set(WITH_GFLAGS OFF CACHE BOOL "Disable gflags")
+    set(BUILD_TESTING OFF CACHE BOOL "Disable building unittests for glog")
     add_subdirectory("third_party/glog")
 endif ()
 
