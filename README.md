@@ -6,22 +6,85 @@ as an exercise for the reader)~~ downtime in school, I've left that company for
 undergraduate studies.
 
 Current status:
-* Can load a cartridge from file and parse its header.
-* The decoder is able to decode instructions, however the CPU can't execute them
-  (yet)
+* Pass all blargg's cpu_instrs tests.
+* Runs some games with none or minor graphics glitches.
 
-## Build
+## Features
+
+### Core library
+
+- CPU
+    - [x] All instructions implemented
+    - [x] Cycle-accurate decoder
+    - [ ] Cycle-accurate instructions
+- Memory bank controllers
+    - [x] FlatROM aka no memory bank controller
+    - [x] MBC1 (verified using mooneye)
+    - [x] MBC2 (verified using mooneye)
+    - [ ] MBC3
+    - [ ] MBC5
+- Peripherals
+    - [x] Serial
+    - [x] Joypad
+    - [x] Clock
+    - [ ] Timer (partly implemented, not accurate)
+- PPU
+    - [x] Tile
+    - [x] Tile Map
+    - [x] Tile Data
+    - [x] OAM Sprite
+    - [ ] Renderer (partly implemented, not accurate)
+- [ ] Audio
+
+### knocknock-sdl
+- [x] Memory viewer
+- [x] Memory map viewer
+- PPU debugger
+    - [x] Tile Data viewer
+    - [x] Window / background viewer
+    - [x] Rendered frame viewer
+    - [ ] OAM viewer
+    - [ ] Jump to next scanline
+- CPU debugger
+    - [ ] Disassembly viewer
+    - [ ] Register viewer
+    - [ ] Step into, over, to next instruction, ...
+    - [ ] Breakpoints
+- [ ] Interrupt viewer
+
+## Building knocknock
+
+### Dependencies
 You'll need:
-* CMake
-* A recent C++ compiler that supports C++17 (tested: GCC)
+* CMake.
+* A recent C++ compiler that supports C++17 (tested: GCC 10.0, Clang 10.0, latest Microsoft Visual C++)
 * Doxygen for generating documents.
+* SDL2.
+* FFmpeg.
 
-## Roadmap
-* Implement all instructions
-* Implement all memory modules
-* Implement all peripherals: timers, interrupts
-* Integrate ImGui
-* Documents
+Some dependencies are bundled with the source, but you can use flags to force knocknock to use the
+system version instead:
+* fmt (flag: `USE_SYSTEM_FMT`)
+* Catch2 (flag: `USE_SYSTEM_CATCH2`) (only needed for tests)
+* glog (flag: `USE_SYSTEM_GLOG`)
+
+### Linux
+Create a build directory and change to it:
+```
+mkdir build
+cd build
+```
+
+Then invoke CMake and make:
+```
+cmake -DCMAKE_BUILD_TYPE=BUILD_TYPE ..
+make -jCORES
+```
+
+Replace `CORES` with the number of CPU cores and `BUILD_TYPE` with one of these build types:
+* `Release` for a release build (recommemded, most performance)
+* `MinSizeRel` for a release build, optimized for binary size (might be faster than Release)
+* `Debug` if you want to debug the emulator (and please send a pull request or issue!)
 
 ## References
 * [Game Boy: Complete Technical Reference](https://gekkio.fi/files/gb-docs/gbctr.pdf) by Joonas Javanainen
@@ -36,3 +99,5 @@ You'll need:
 * https://github.com/floooh/emu-info
 * http://rvbelzen.tripod.com/z80prgtemp/
 * http://rvbelzen.tripod.com/z80prgtemp/fig2-27.htm
+* https://hacktix.github.io/GBEDG/timers/ (timers)
+* https://github.com/AntonioND/giibiiadvance/blob/master/docs/TCAGBD.pdf (HALT instruction)
