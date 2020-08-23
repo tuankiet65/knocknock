@@ -15,7 +15,7 @@ build:
         - apk add gcc g++ make cmake sdl2-dev sdl2-static
     script:
         - mkdir build
-        - cmake -B build -DCMAKE_BUILD_TYPE=Release
+        - cmake -B build -DCMAKE_BUILD_TYPE=Release -DWITH_CLI_FRONTEND=On -DWITH_SDL_FRONTEND=On -DWITH_TESTS=On
         - make -C build -j $(nproc)
         - ./build/test/knocknock_unittest -r junit -o test_result.xml
     artifacts:
