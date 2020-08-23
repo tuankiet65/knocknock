@@ -7,7 +7,8 @@ add_library(imgui
         ${PROJECT_SOURCE_DIR}/third_party/imgui/imgui_widgets.cpp)
 target_include_directories(imgui
         PUBLIC
-        ${PROJECT_SOURCE_DIR}/third_party/imgui)
+        ${PROJECT_SOURCE_DIR}/third_party/imgui
+        ${PROJECT_SOURCE_DIR}/third_party/imgui_club)
 target_compile_definitions(imgui PUBLIC IMGUI_DISABLE_OBSOLETE_FUNCTIONS IMGUI_USE_WCHAR32)
 
 add_executable(knocknock-sdl
