@@ -59,14 +59,14 @@ You'll need:
 * CMake.
 * A recent C++ compiler that supports C++17 (tested: GCC 10.0, Clang 10.0, latest Microsoft Visual C++)
 * Doxygen for generating documents.
-* SDL2.
-* FFmpeg.
+* SDL2 (only needed for the SDL frontend)
+* FFmpeg (only needed for the SDL frontend)
 
 Some dependencies are bundled with the source, but you can use flags to force knocknock to use the
 system version instead:
 * fmt (flag: `USE_SYSTEM_FMT`)
-* Catch2 (flag: `USE_SYSTEM_CATCH2`) (only needed for tests)
 * glog (flag: `USE_SYSTEM_GLOG`)
+* Catch2 (flag: `USE_SYSTEM_CATCH2`) (only needed for tests)
 
 ### Linux
 Create a build directory and change to it:
@@ -77,14 +77,20 @@ cd build
 
 Then invoke CMake and make:
 ```
-cmake -DCMAKE_BUILD_TYPE=BUILD_TYPE ..
+cmake -DCMAKE_BUILD_TYPE=BUILD_TYPE [additional options] ..
 make -jCORES
 ```
 
 Replace `CORES` with the number of CPU cores and `BUILD_TYPE` with one of these build types:
 * `Release` for a release build (recommemded, most performance)
 * `MinSizeRel` for a release build, optimized for binary size (might be faster than Release)
-* `Debug` if you want to debug the emulator (and please send a pull request or issue!)
+* `Debug` if you want to debug the emulator (and please send a pull request or file an issue if you find any bugs!)
+
+This will only build the core `knocknock` library. To also build other components, use these additional options:
+* `-DWITH_SDL_FRONTEND=On` to build the SDL GUI frontend (recommended, this is probably what you want)
+* `-DWITH_CLI_FRONTEND=On` to build the CLI (command-line) frontend. This frontend is pretty useless, as it emulates the
+  ROM, but only prints out the serial output to stdout.
+* `-DWITH_TESTS=On` to build the unittests.
 
 ## References
 * [Game Boy: Complete Technical Reference](https://gekkio.fi/files/gb-docs/gbctr.pdf) by Joonas Javanainen

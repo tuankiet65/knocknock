@@ -1,4 +1,10 @@
 add_subdirectory(knocknock)
-add_subdirectory(frontend-cli)
-add_subdirectory(frontend-sdl)
+
+if (WITH_CLI_FRONTEND)
+    add_subdirectory(frontend-cli)
+endif()
+
+if (WITH_SDL_FRONTEND)
+    add_subdirectory(frontend-sdl)
+endif()
 

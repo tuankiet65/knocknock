@@ -61,5 +61,12 @@ set(OPTION_BUILD_EXAMPLES OFF)
 set(OPTION_BUILD_WITH_LTO ON)
 add_subdirectory(third_party/glbinding)
 
+option(WITH_CLI_FRONTEND "Build the CLI frontend" OFF)
+option(WITH_SDL_FRONTEND "Build the SDL frontend" OFF)
+option(WITH_TESTS "Build tests" OFF)
+
 add_subdirectory("src")
-add_subdirectory("test")
+
+if (WITH_TESTS)
+    add_subdirectory("test")
+endif()
