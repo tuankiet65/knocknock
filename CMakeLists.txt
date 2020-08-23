@@ -58,6 +58,7 @@ find_package(SDL2 REQUIRED)
 # Do not build glbinding tools and examples
 set(OPTION_BUILD_TOOLS OFF)
 set(OPTION_BUILD_EXAMPLES OFF)
+set(OPTION_BUILD_WITH_LTO ON)
 add_subdirectory(third_party/glbinding)
 
 add_subdirectory("src")
