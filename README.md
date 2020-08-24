@@ -5,6 +5,8 @@ choosen after the company I'm doing an intern at (exactly which company is left
 as an exercise for the reader)~~ downtime in school, I've left that company for
 undergraduate studies.
 
+[![knocknock screenshot](docs/screenshot.png)](https://www.youtube.com/watch?v=vdDloirSG6E)
+
 Current status:
 * Pass all blargg's cpu_instrs tests.
 * Runs some games with none or minor graphics glitches.
